@@ -1,12 +1,15 @@
-package com.decagon.avalanche
+package com.decagon.avalanche.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.decagon.avalanche.R
 import com.decagon.avalanche.model.Product
+import com.decagon.avalanche.ui.ProductDetails
 import com.squareup.picasso.Picasso
 
 class ProductsAdapter(private val products: ArrayList<Product>) :
@@ -21,7 +24,14 @@ class ProductsAdapter(private val products: ArrayList<Product>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.product_row, parent, false)
-        return ViewHolder(view)
+        val holder = ViewHolder(view)
+        val intent = Intent(parent.context, ProductDetails::class.java)
+
+        view.setOnClickListener {
+            intent.putExtra("title", products[holder.adapterPosition].title)
+            parent.context.startActivity(intent)
+        }
+        return holder
     }
 
     override fun getItemCount() = products.size

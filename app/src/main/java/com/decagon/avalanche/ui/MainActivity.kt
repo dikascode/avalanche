@@ -11,7 +11,7 @@ import com.decagon.avalanche.R
 import com.decagon.avalanche.adapter.ProductsAdapter
 import com.decagon.avalanche.databinding.ActivityMainBinding
 import com.decagon.avalanche.model.Product
-import kotlin.math.log
+import com.decagon.avalanche.ui.fragments.MainFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -25,21 +25,16 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        val products = arrayListOf<Product>()
-
-        for(i in 0..10) products.add(Product("Lady Gown $i", "https://picsum.photos/id/1037/200", 4, 1000))
-        recyclerView = findViewById(R.id.content_main_rv)
-        recyclerView.apply {
-            layoutManager = GridLayoutManager(this@MainActivity, 2)
-            adapter = ProductsAdapter(products)
-        }
-
+        //Replace fragment layout with  Main fragment xml on launch of app
+        supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, MainFragment())
+            .commit()
 
         //Select only one item per time in Navigation Drawer
         binding.navigationView.setNavigationItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.actionHome -> {
-                    d("action", "Home was pressed")
+                    supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, MainFragment())
+                        .commit()
                 }
             }
             it.isChecked = true
@@ -56,9 +51,8 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
     }
-    
+
     //Open Navigation drawer on click of icon
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         binding.drawerLayout.openDrawer(GravityCompat.START)

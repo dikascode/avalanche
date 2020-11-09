@@ -1,8 +1,13 @@
 package com.decagon.avalanche.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Product(
+    @SerializedName("name")
     val title: String,
+
+    @SerializedName("photo_url")
     val photoUrl: String,
-    val units: Int,
-    val price: Int
+
+    val price: Double
 )

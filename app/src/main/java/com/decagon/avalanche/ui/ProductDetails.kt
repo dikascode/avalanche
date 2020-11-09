@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.ActivityProductDetailsBinding
+import com.squareup.picasso.Picasso
 
 class ProductDetails : AppCompatActivity() {
     private lateinit var binding: ActivityProductDetailsBinding
@@ -14,5 +15,7 @@ class ProductDetails : AppCompatActivity() {
         setContentView(view)
 
         binding.productTitleTv.text = intent.getStringExtra("title")
+        val photoUrl = intent.getStringExtra("photo_url")
+        Picasso.get().load(photoUrl).into(binding.productImageIv)
     }
 }

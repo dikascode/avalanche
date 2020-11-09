@@ -29,6 +29,7 @@ class ProductsAdapter(private val products: ArrayList<Product>) :
 
         view.setOnClickListener {
             intent.putExtra("title", products[holder.adapterPosition].title)
+            intent.putExtra("photo_url", products[holder.adapterPosition].photoUrl)
             parent.context.startActivity(intent)
         }
         return holder

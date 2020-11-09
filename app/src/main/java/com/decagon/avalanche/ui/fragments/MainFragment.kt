@@ -45,10 +45,10 @@ class MainFragment : Fragment() {
                         adapter = ProductsAdapter(products as ArrayList<Product>)
                     }
 
+                    //Make progress bar invisible after UI has been updated
+                    binding.fragmentMainProgressBar.visibility = View.GONE
                 })
 
-                //Make progress bar invisible after UI has been updated
-                binding.fragmentMainProgressBar.visibility = View.GONE
 
             } catch (e: Exception) {
                 e.printStackTrace()

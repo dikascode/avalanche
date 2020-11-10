@@ -12,11 +12,18 @@
 
 
         <item
-            android:id="@+id/actionGown"
+            android:id="@+id/actionSettings"
             android:orderInCategory="100"
             app:showAsAction="never"
             android:icon="@drawable/settings_24"
-            android:title="Gown" />
+            android:title="Settings" />
+
+        <item
+            android:id="@+id/actionAdmin"
+            android:orderInCategory="100"
+            app:showAsAction="never"
+            android:icon="@drawable/admin_icon"
+            android:title="Admin" />
 
     </group>
 

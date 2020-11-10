@@ -11,6 +11,7 @@ import com.decagon.avalanche.R
 import com.decagon.avalanche.adapter.ProductsAdapter
 import com.decagon.avalanche.databinding.ActivityMainBinding
 import com.decagon.avalanche.model.Product
+import com.decagon.avalanche.ui.fragments.AdminFragment
 import com.decagon.avalanche.ui.fragments.MainFragment
 
 class MainActivity : AppCompatActivity() {
@@ -36,6 +37,10 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, MainFragment())
                         .commit()
                 }
+                R.id.actionAdmin -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, AdminFragment())
+                        .commit()
+                }
             }
             it.isChecked = true
             binding.drawerLayout.closeDrawers()
@@ -58,4 +63,6 @@ class MainActivity : AppCompatActivity() {
         binding.drawerLayout.openDrawer(GravityCompat.START)
         return true
     }
+
+
 }

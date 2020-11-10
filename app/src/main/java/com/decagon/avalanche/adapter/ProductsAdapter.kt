@@ -20,6 +20,8 @@ class ProductsAdapter(private val products: ArrayList<Product>) :
         Picasso.get().load(product.photoUrl).into(holder.image)
         holder.title.text = product.title
         holder.price.text = product.price.toString()
+
+        if(product.isOnSale) holder.isOnSaleIcon.visibility = View.VISIBLE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,6 +44,7 @@ class ProductsAdapter(private val products: ArrayList<Product>) :
         val image: ImageView = itemView.findViewById(R.id.product_row_iv)
         val title: TextView = itemView.findViewById(R.id.product_title_tv)
         val price: TextView = itemView.findViewById(R.id.product_price)
+        val isOnSaleIcon: ImageView = itemView.findViewById(R.id.isOnSaleIcon)
 
     }
 }

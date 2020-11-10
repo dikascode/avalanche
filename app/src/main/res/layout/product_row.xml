@@ -17,6 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/isOnSaleIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:visibility="gone"
+        android:src="@drawable/monetization_icon"
+        app:layout_constraintEnd_toEndOf="@+id/product_row_iv"
+        app:layout_constraintHorizontal_bias="0.111"
+        app:layout_constraintStart_toStartOf="@+id/product_row_iv"
+        app:layout_constraintTop_toTopOf="@+id/product_row_iv" />
+
     <TextView
         android:id="@+id/product_title_tv"
         android:layout_width="wrap_content"

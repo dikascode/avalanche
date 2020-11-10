@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.decagon.avalanche.adapter.CategoriesAdapter
 import com.decagon.avalanche.adapter.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.model.Product
@@ -58,8 +61,15 @@ class MainFragment : Fragment() {
 
         thread.start()
 
-        //for(i in 0..10) products.add(Product("Lady Gown $i", "https://picsum.photos/id/1037/200", 4, 1000))
 
+        //Categories recycler view
+        val categories = listOf("Mini-Skirt", "Palaso", "Native", "Wedding Gown", "Free Gown", "Special Styles")
+
+        val categoriesRecyclerView = binding.categoriesRv
+        categoriesRecyclerView.apply {
+            layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false )
+            adapter = CategoriesAdapter(categories)
+        }
 
         return view
     }

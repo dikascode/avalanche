@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.decagon.avalanche.R
-import com.decagon.avalanche.model.Product
+import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.ui.ProductDetails
 import com.squareup.picasso.Picasso
 

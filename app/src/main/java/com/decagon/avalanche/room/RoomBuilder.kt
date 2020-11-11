@@ -6,16 +6,25 @@ import androidx.room.Room
 class RoomBuilder() {
 
     companion object {
-        lateinit var instance: AppDatabase
+        @Volatile
+        private var INSTANCE: AvalancheDatabase? = null
 
-        fun manageInstance(context: Context) : AppDatabase {
-            instance = Room.databaseBuilder(
-                context,
-                AppDatabase::class.java,
-                "database_name"
-            ).build()
+        fun getDatabase(context: Context) : AvalancheDatabase {
+            val tempInstance = INSTANCE
 
-            return instance
+            if(tempInstance != null) return tempInstance
+
+            synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context,
+                    AvalancheDatabase::class.java,
+                    "avalanche_db"
+                ).build()
+
+                INSTANCE = instance
+                return instance
+
+            }
         }
 
     }

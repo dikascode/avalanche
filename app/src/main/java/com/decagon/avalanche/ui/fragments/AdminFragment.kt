@@ -1,26 +1,15 @@
 package com.decagon.avalanche.ui.fragments
 
-import android.opengl.Visibility
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
-import com.decagon.avalanche.adapter.CategoriesAdapter
-import com.decagon.avalanche.adapter.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentAdminBinding
-import com.decagon.avalanche.databinding.FragmentMainBinding
-import com.decagon.avalanche.model.Product
-import com.decagon.avalanche.room.AppDatabase
+import com.decagon.avalanche.model.ProductModel
+import com.decagon.avalanche.room.AvalancheDatabase
 import com.decagon.avalanche.room.RoomBuilder
-import com.decagon.avalanche.room.RoomProducts
-import com.google.gson.Gson
-import java.net.URL
+import com.decagon.avalanche.room.RoomProduct
 
 
 class AdminFragment : Fragment() {
@@ -36,21 +25,15 @@ class AdminFragment : Fragment() {
         _binding = FragmentAdminBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        //Build room database
+        val db = RoomBuilder.getDatabase(activity!!.applicationContext)
+
         binding.adminFragmentSubmitBtn.setOnClickListener {
-            //make network call on background thread
+            //run room database logic in background thread
             val thread = Thread {
                 try {
-                    //Your code goes here
-
-                    //Build room database and save data into Room
-                    val db = RoomBuilder.manageInstance(activity!!.applicationContext)
-
-                    //Obtain data from input
-                    val title = binding.productNameEt.text
-                    val price: Double = binding.productPriceEt.text.toString().toDouble()
-
-                    db.productDao().insertAll(RoomProducts(null, title.toString(), price))
-                    db.close()
+                    //Save product into room
+                    saveProductToRoom(db)
 
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -62,6 +45,17 @@ class AdminFragment : Fragment() {
 
 
         return view
+    }
+
+    private fun saveProductToRoom(db: AvalancheDatabase) {
+        //Obtain data from input
+        val title = binding.productNameEt.text
+        val price: Double = binding.productPriceEt.text.toString().toDouble()
+
+        //save data to database
+        val product = RoomProduct(null, title.toString(), price)
+        ProductModel(db.productDao()).addProduct(product)
+        db.close()
     }
 
 

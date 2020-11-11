@@ -9,23 +9,24 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import com.decagon.avalanche.R
 import com.decagon.avalanche.adapter.CategoriesAdapter
 import com.decagon.avalanche.adapter.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
-import com.decagon.avalanche.model.Product
-import com.decagon.avalanche.room.AppDatabase
+import com.decagon.avalanche.data.Product
+import com.decagon.avalanche.model.ProductModel
+import com.decagon.avalanche.room.AvalancheDatabase
 import com.decagon.avalanche.room.RoomBuilder
-import com.decagon.avalanche.room.RoomProducts
-import com.google.gson.Gson
-import java.net.URL
+import com.decagon.avalanche.room.RoomProduct
 
 
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
+    lateinit var db: AvalancheDatabase
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -40,36 +41,26 @@ class MainFragment : Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        //Build room database
+        db = RoomBuilder.getDatabase(activity!!.applicationContext)
+
 
         //make network call on background thread
         val thread = Thread {
             try {
                 //Your code goes here
 
-                //Build room database and save data into Room
-                val db = RoomBuilder.manageInstance(activity!!.applicationContext)
+                val productsFromDatabase = ProductModel(db.productDao()).readAllProducts()
 
-                val productsFromDatabase = db.productDao().getAll()
-
-                val products = productsFromDatabase.map {
-                    Product(
-                        it.title, "https://finepointmobile.com/data/jeans2.jpg", it.price, true
-                    )
-                }
+                val products = mapProductListFromDatabaseQuery(productsFromDatabase)
 
                 //Update ui on UI thread
                 requireActivity().runOnUiThread(Runnable {
-                    // Stuff that updates the UI
-                    val recyclerView = binding.fragmentMainRv
-                    recyclerView.apply {
-                        layoutManager = GridLayoutManager(activity, 2)
-                        adapter = ProductsAdapter(products as ArrayList<Product>)
-                    }
-
-                    //Make progress bar invisible after UI has been updated
-                    binding.fragmentMainProgressBar.visibility = View.GONE
+                    // Update recyclerview UI
+                    recyclerViewGridLayout(products)
                 })
 
+                db.close()
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -80,6 +71,12 @@ class MainFragment : Fragment() {
 
 
         //Categories recycler view
+        implementLinearRecyclerViewForCategories()
+
+        return view
+    }
+
+    private fun implementLinearRecyclerViewForCategories() {
         val categories =
             listOf("Mini-Skirt", "Palaso", "Native", "Wedding Gown", "Free Gown", "Special Styles")
 
@@ -88,8 +85,17 @@ class MainFragment : Fragment() {
             layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
             adapter = CategoriesAdapter(categories)
         }
+    }
 
-        return view
+    private fun recyclerViewGridLayout(products: List<Product>) {
+        val recyclerView = binding.fragmentMainRv
+        recyclerView.apply {
+            layoutManager = GridLayoutManager(activity, 2)
+            adapter = ProductsAdapter(products as ArrayList<Product>)
+        }
+
+        //Make progress bar invisible after UI has been updated
+        binding.fragmentMainProgressBar.visibility = View.GONE
     }
 
 
@@ -112,32 +118,17 @@ class MainFragment : Fragment() {
                         try {
                             //Your code goes here
 
-                            //Build room database and save data into Room
-                            val db = RoomBuilder.manageInstance(activity!!.applicationContext)
+                            val productsFromDatabase = ProductModel(db.productDao()).getSearchProducts(searchString)
 
-                            val productsFromDatabase = db.productDao().homeSearch(searchString)
-
-                            val products = productsFromDatabase.map {
-                                Product(
-                                    it.title,
-                                    "https://finepointmobile.com/data/jeans2.jpg",
-                                    it.price,
-                                    true
-                                )
-                            }
+                            val products = mapProductListFromDatabaseQuery(productsFromDatabase)
 
                             //Update ui on UI thread
                             requireActivity().runOnUiThread(Runnable {
-                                // Stuff that updates the UI
-                                val recyclerView = binding.fragmentMainRv
-                                recyclerView.apply {
-                                    layoutManager = GridLayoutManager(activity, 2)
-                                    adapter = ProductsAdapter(products as ArrayList<Product>)
-                                }
-
-                                //Make progress bar invisible after UI has been updated
-                                binding.fragmentMainProgressBar.visibility = View.GONE
+                                // Update recyclerview UI
+                                recyclerViewGridLayout(products)
                             })
+
+                            db.close()
 
 
                         } catch (e: Exception) {
@@ -155,6 +146,14 @@ class MainFragment : Fragment() {
 
         })
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    private fun mapProductListFromDatabaseQuery(productsFromDatabase: List<RoomProduct>): List<Product> {
+        return productsFromDatabase.map {
+            Product(
+                it.title, "https://finepointmobile.com/data/jeans2.jpg", it.price, true
+            )
+        }
     }
 
 

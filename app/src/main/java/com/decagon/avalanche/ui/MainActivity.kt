@@ -2,15 +2,10 @@ package com.decagon.avalanche.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log.d
 import android.view.MenuItem
 import androidx.core.view.GravityCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.decagon.avalanche.R
-import com.decagon.avalanche.adapter.ProductsAdapter
 import com.decagon.avalanche.databinding.ActivityMainBinding
-import com.decagon.avalanche.model.Product
 import com.decagon.avalanche.ui.fragments.AdminFragment
 import com.decagon.avalanche.ui.fragments.MainFragment
 

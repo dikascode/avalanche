@@ -16,7 +16,6 @@ import com.decagon.avalanche.ui.fragments.MainFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var recyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,10 +57,14 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    //Open Navigation drawer on click of icon
+    //Open Navigation drawer on click of hamburger icon
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        binding.drawerLayout.openDrawer(GravityCompat.START)
-        return true
+        //Prevent menu bar search icon from opening drawer
+        if(item.itemId != R.id.action_search){
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+            return true
+        }
+        return false
     }
 
 

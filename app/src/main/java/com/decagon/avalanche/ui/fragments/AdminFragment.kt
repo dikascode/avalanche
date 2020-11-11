@@ -17,6 +17,7 @@ import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.model.Product
 import com.decagon.avalanche.room.AppDatabase
+import com.decagon.avalanche.room.RoomBuilder
 import com.decagon.avalanche.room.RoomProducts
 import com.google.gson.Gson
 import java.net.URL
@@ -35,35 +36,30 @@ class AdminFragment : Fragment() {
         _binding = FragmentAdminBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        //make network call on background thread
-        val thread = Thread {
-            try {
-                //Your code goes here
+        binding.adminFragmentSubmitBtn.setOnClickListener {
+            //make network call on background thread
+            val thread = Thread {
+                try {
+                    //Your code goes here
 
-                //Build room database and save data into Room
-                val db = Room.databaseBuilder(
-                    activity!!.applicationContext,
-                    AppDatabase::class.java,
-                    "database_name"
-                ).build()
+                    //Build room database and save data into Room
+                    val db = RoomBuilder.manageInstance(activity!!.applicationContext)
 
-                db.productDao().insertAll(RoomProducts(null, "Mini-gown", 2999.99))
+                    //Obtain data from input
+                    val title = binding.productNameEt.text
+                    val price: Double = binding.productPriceEt.text.toString().toDouble()
 
-                val productsFromDatabase = db.productDao().getAll()
+                    db.productDao().insertAll(RoomProducts(null, title.toString(), price))
+                    db.close()
 
-                val products = productsFromDatabase.map {
-                    Product(
-                        it.title, "https://finepointmobile.com/data/jeans2.jpg", it.price, true
-                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-
-
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
+
+            thread.start()
         }
 
-        thread.start()
 
         return view
     }

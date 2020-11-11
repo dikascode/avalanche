@@ -10,6 +10,9 @@ interface ProductDao {
     @Query("SELECT * FROM RoomProducts")
     fun getAll(): List<RoomProducts>
 
+    @Query("SELECT * FROM RoomProducts WHERE title LIKE :term")
+    fun homeSearch(term: String): List<RoomProducts>
+
     @Insert
     fun insertAll(vararg products: RoomProducts)
 }

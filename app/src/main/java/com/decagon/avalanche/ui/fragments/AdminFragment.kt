@@ -1,10 +1,13 @@
 package com.decagon.avalanche.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.model.ProductModel
 import com.decagon.avalanche.room.AvalancheDatabase
@@ -48,14 +51,40 @@ class AdminFragment : Fragment() {
     }
 
     private fun saveProductToRoom(db: AvalancheDatabase) {
-        //Obtain data from input
+        //Obtain data from inputs
         val title = binding.productNameEt.text
-        val price: Double = binding.productPriceEt.text.toString().toDouble()
+        val price = binding.productPriceEt.text
 
-        //save data to database
-        val product = RoomProduct(null, title.toString(), price)
-        ProductModel(db.productDao()).addProduct(product)
-        db.close()
+        Log.d("TAG", "saveProductToRoom: $title, $price")
+
+        if (title != null && price!= null) {
+            when {
+                title.isEmpty() -> {
+                    requireActivity().runOnUiThread(Runnable {
+                        binding.productNameEt.error = "Please input a title"
+                        Toast.makeText(requireContext(), "Please fill title field", Toast.LENGTH_LONG).show()
+                    })
+
+                }
+                price.isEmpty() -> {
+                    requireActivity().runOnUiThread(Runnable {
+                        binding.productPriceEt.error = "Price field cannot be empty"
+                        Toast.makeText(requireContext(), "Please fill price field", Toast.LENGTH_LONG).show()
+                    })
+
+                }
+                else -> {
+                    //save data to database
+                    val product = RoomProduct(null, title.toString(), price.toString().toDouble())
+                    ProductModel(db.productDao()).addProduct(product)
+                    db.close()
+
+                    requireActivity().supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, MainFragment())
+                        .commit()
+                }
+            }
+        }
+
     }
 
 

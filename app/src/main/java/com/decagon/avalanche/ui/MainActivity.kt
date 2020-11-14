@@ -1,10 +1,13 @@
 package com.decagon.avalanche.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.core.view.GravityCompat
 import com.decagon.avalanche.R
+import com.decagon.avalanche.cart.CartActivity
 import com.decagon.avalanche.databinding.ActivityMainBinding
 import com.decagon.avalanche.ui.fragments.AdminFragment
 import com.decagon.avalanche.ui.fragments.MainFragment
@@ -55,11 +58,22 @@ class MainActivity : AppCompatActivity() {
     //Open Navigation drawer on click of hamburger icon
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //Prevent menu bar search icon from opening drawer
-        if(item.itemId != R.id.action_search){
+        if(item.itemId != R.id.action_search && item.itemId != R.id.action_cart){
             binding.drawerLayout.openDrawer(GravityCompat.START)
             return true
         }
-        return false
+
+        if(item.itemId == R.id.action_cart) {
+            startActivity(Intent(this, CartActivity::class.java))
+        }
+
+        return true
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar, menu)
+        return true
     }
 
 

@@ -11,10 +11,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Avalanche">
-        <activity android:name=".ui.ProductDetails"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".ui.MainActivity"></activity>
-        <activity android:name=".ui.MainActivity"
+        <activity android:name=".cart.CartActivity"></activity>
+        <activity
+            android:name=".ui.ProductDetails"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

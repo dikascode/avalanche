@@ -11,5 +11,8 @@ data class Product(
 
     val price: Double,
 
+    @SerializedName("description")
+    val desc: String,
+
     val isOnSale: Boolean
 )

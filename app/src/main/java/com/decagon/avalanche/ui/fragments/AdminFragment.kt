@@ -75,7 +75,7 @@ class AdminFragment : Fragment() {
                 }
                 else -> {
                     //save data to database
-                    val product = RoomProduct(null, title.toString(), price.toString().toDouble())
+                    val product = RoomProduct(null, title.toString(), price.toString().toDouble(), "")
                     ProductModel(db.productDao()).addProduct(product)
                     db.close()
 

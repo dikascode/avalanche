@@ -187,7 +187,7 @@ class MainFragment : Fragment() {
     private fun mapProductListFromDatabaseQuery(productsFromDatabase: List<RoomProduct>): List<Product> {
         return productsFromDatabase.map {
             Product(
-                it.title, "https://finepointmobile.com/data/jeans2.jpg", it.price, true
+                it.title, "https://finepointmobile.com/data/jeans2.jpg", it.price, it.desc,  true
             )
         }
     }

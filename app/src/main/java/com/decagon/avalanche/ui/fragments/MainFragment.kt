@@ -1,23 +1,32 @@
 package com.decagon.avalanche.ui.fragments
 
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 
 import android.view.*
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.decagon.avalanche.R
-import com.decagon.avalanche.adapter.CategoriesAdapter
-import com.decagon.avalanche.adapter.ProductsAdapter
+import com.decagon.avalanche.adapters.CategoriesAdapter
+import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.model.ProductModel
+import com.decagon.avalanche.repository.ProductsRepository
 import com.decagon.avalanche.room.AvalancheDatabase
 import com.decagon.avalanche.room.RoomBuilder
 import com.decagon.avalanche.room.RoomProduct
+import com.decagon.avalanche.ui.ProductDetails
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 class MainFragment : Fragment() {
@@ -44,35 +53,40 @@ class MainFragment : Fragment() {
         //Build room database
         db = RoomBuilder.getDatabase(activity!!.applicationContext)
 
+        ProductsRepository().getAllProducts()?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())?.subscribe({
+                recyclerViewGridLayout(it)
+            }, {
+                Log.d("Log", "onSuccess: ${it.message}")
+            })
 
         //make network call on background thread
-        val thread = Thread {
-            try {
-                //Your code goes here
-
-                val productsFromDatabase = ProductModel(db.productDao()).readAllProducts()
-
-                val products = mapProductListFromDatabaseQuery(productsFromDatabase)
-
-                //Update ui on UI thread
-                requireActivity().runOnUiThread(Runnable {
-                    // Update recyclerview UI
-                    recyclerViewGridLayout(products)
-                })
-
-                db.close()
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        thread.start()
+//        val thread = Thread {
+//            try {
+//                //Your code goes here
+//
+//                val productsFromDatabase = ProductModel(db.productDao()).readAllProducts()
+//
+//                val products = mapProductListFromDatabaseQuery(productsFromDatabase)
+//
+//                //Update ui on UI thread
+//                requireActivity().runOnUiThread(Runnable {
+//                    // Update recyclerview UI
+//                    recyclerViewGridLayout(products)
+//                })
+//
+//                db.close()
+//
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        }
+//
+//        thread.start()
 
 
         //Categories recycler view
         implementLinearRecyclerViewForCategories()
-
         return view
     }
 
@@ -91,7 +105,17 @@ class MainFragment : Fragment() {
         val recyclerView = binding.fragmentMainRv
         recyclerView.apply {
             layoutManager = GridLayoutManager(activity, 2)
-            adapter = ProductsAdapter(products as ArrayList<Product>)
+            adapter = ProductsAdapter(products as ArrayList<Product>) { extraTitle, extraImageUrl, photoView ->
+
+                //Go to product details when image is clicked
+                val intent = Intent(activity, ProductDetails::class.java)
+                intent.putExtra("title", extraTitle)
+                intent.putExtra("photo_url", extraImageUrl)
+
+                //Shared elements transition animations
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity as AppCompatActivity, photoView, "photoToAnimate" )
+                startActivity(intent, options.toBundle())
+            }
         }
 
         //Make progress bar invisible after UI has been updated
@@ -118,7 +142,8 @@ class MainFragment : Fragment() {
                         try {
                             //Your code goes here
 
-                            val productsFromDatabase = ProductModel(db.productDao()).getSearchProducts(searchString)
+                            val productsFromDatabase =
+                                ProductModel(db.productDao()).getSearchProducts(searchString)
 
                             val products = mapProductListFromDatabaseQuery(productsFromDatabase)
 

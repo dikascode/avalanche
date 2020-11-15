@@ -1,6 +1,5 @@
-package com.decagon.avalanche.adapter
+package com.decagon.avalanche.adapters
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.decagon.avalanche.R
 import com.decagon.avalanche.data.Product
-import com.decagon.avalanche.ui.ProductDetails
 import com.squareup.picasso.Picasso
 
-class ProductsAdapter(private val products: ArrayList<Product>) :
+class ProductsAdapter(
+    private val products: ArrayList<Product>,
+    private val onClickProduct: (title: String, photoUrl: String, photoView: View) -> Unit
+) :
     RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -21,20 +22,17 @@ class ProductsAdapter(private val products: ArrayList<Product>) :
         holder.title.text = product.title
         holder.price.text = product.price.toString()
 
-        if(product.isOnSale) holder.isOnSaleIcon.visibility = View.VISIBLE
+        if (product.isOnSale) holder.isOnSaleIcon.visibility = View.VISIBLE
+
+        //Invoke onClickProduct on click of image
+        holder.image.setOnClickListener {
+            onClickProduct.invoke(product.title, product.photoUrl, holder.image)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.product_row, parent, false)
-        val holder = ViewHolder(view)
-        val intent = Intent(parent.context, ProductDetails::class.java)
-
-        view.setOnClickListener {
-            intent.putExtra("title", products[holder.adapterPosition].title)
-            intent.putExtra("photo_url", products[holder.adapterPosition].photoUrl)
-            parent.context.startActivity(intent)
-        }
-        return holder
+        return ViewHolder(view)
     }
 
     override fun getItemCount() = products.size

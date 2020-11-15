@@ -1,4 +1,4 @@
-package com.decagon.avalanche.adapter
+package com.decagon.avalanche.adapters
 
 import android.view.LayoutInflater
 import android.view.View

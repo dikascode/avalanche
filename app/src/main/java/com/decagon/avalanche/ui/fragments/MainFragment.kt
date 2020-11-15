@@ -26,6 +26,7 @@ import com.decagon.avalanche.room.RoomBuilder
 import com.decagon.avalanche.room.RoomProduct
 import com.decagon.avalanche.ui.ProductDetails
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 
@@ -53,12 +54,8 @@ class MainFragment : Fragment() {
         //Build room database
         db = RoomBuilder.getDatabase(activity!!.applicationContext)
 
-        ProductsRepository().getAllProducts()?.subscribeOn(Schedulers.io())
-            ?.observeOn(AndroidSchedulers.mainThread())?.subscribe({
-                recyclerViewGridLayout(it)
-            }, {
-                Log.d("Log", "onSuccess: ${it.message}")
-            })
+        //Get all products from repository api call
+        ProductsRepository().getAllProducts()?.let { recyclerViewGridLayout(it) }
 
         //make network call on background thread
 //        val thread = Thread {
@@ -101,22 +98,33 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun recyclerViewGridLayout(products: List<Product>) {
+    private fun recyclerViewGridLayout(productsRepository: Single<List<Product>>) {
         val recyclerView = binding.fragmentMainRv
-        recyclerView.apply {
-            layoutManager = GridLayoutManager(activity, 2)
-            adapter = ProductsAdapter(products as ArrayList<Product>) { extraTitle, extraImageUrl, photoView ->
 
-                //Go to product details when image is clicked
-                val intent = Intent(activity, ProductDetails::class.java)
-                intent.putExtra("title", extraTitle)
-                intent.putExtra("photo_url", extraImageUrl)
+        productsRepository?.subscribeOn(Schedulers.io())
+            ?.observeOn(AndroidSchedulers.mainThread())?.subscribe({
+                recyclerView.apply {
+                    layoutManager = GridLayoutManager(activity, 2)
+                    adapter =
+                        ProductsAdapter(it as ArrayList<Product>) { extraTitle, extraImageUrl, photoView ->
 
-                //Shared elements transition animations
-                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity as AppCompatActivity, photoView, "photoToAnimate" )
-                startActivity(intent, options.toBundle())
-            }
-        }
+                            //Go to product details when image is clicked
+                            val intent = Intent(activity, ProductDetails::class.java)
+                            intent.putExtra("title", extraTitle)
+                            intent.putExtra("photo_url", extraImageUrl)
+
+                            //Shared elements transition animations
+                            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                activity as AppCompatActivity,
+                                photoView,
+                                "photoToAnimate"
+                            )
+                            startActivity(intent, options.toBundle())
+                        }
+                }
+            }, {
+                Log.d("Log", "onSuccess: ${it.message}")
+            })
 
         //Make progress bar invisible after UI has been updated
         binding.fragmentMainProgressBar.visibility = View.GONE
@@ -135,34 +143,37 @@ class MainFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    val searchString = "%$newText%"
+                    val searchString = "$newText"
+
+                    //Get search product from repository api method for search
+                    recyclerViewGridLayout(ProductsRepository().searchForProducts(searchString))
 
                     //make network call on background thread
-                    val thread = Thread {
-                        try {
-                            //Your code goes here
-
-                            val productsFromDatabase =
-                                ProductModel(db.productDao()).getSearchProducts(searchString)
-
-                            val products = mapProductListFromDatabaseQuery(productsFromDatabase)
-
-                            //Update ui on UI thread
-                            requireActivity().runOnUiThread(Runnable {
-                                // Update recyclerview UI
-                                recyclerViewGridLayout(products)
-                            })
-
-                            db.close()
-
-
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-
-
-                    thread.start()
+//                    val thread = Thread {
+//                        try {
+//                            //Your code goes here
+//
+//                            val productsFromDatabase =
+//                                ProductModel(db.productDao()).getSearchProducts(searchString)
+//
+//                            val products = mapProductListFromDatabaseQuery(productsFromDatabase)
+//
+//                            //Update ui on UI thread
+//                            requireActivity().runOnUiThread(Runnable {
+//                                // Update recyclerview UI
+//                                recyclerViewGridLayout(products)
+//                            })
+//
+//                            db.close()
+//
+//
+//                        } catch (e: Exception) {
+//                            e.printStackTrace()
+//                        }
+//                    }
+//
+//
+//                    thread.start()
 
                 }
 

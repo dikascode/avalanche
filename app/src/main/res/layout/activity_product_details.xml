@@ -9,7 +9,7 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/addToCart_btn"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -22,7 +22,6 @@
                 android:id="@+id/product_image_iv"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="52dp"
                 android:scaleType="centerCrop"
                 android:transitionName="photoToAnimate"
                 app:layout_constraintBottom_toTopOf="@+id/guideline"
@@ -43,7 +42,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.068"
+                app:layout_constraintHorizontal_bias="0.034"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/product_image_iv" />
 
@@ -63,14 +62,14 @@
 
             <TextView
                 android:id="@+id/product_desc_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginRight="16dp"
+                android:paddingRight="10dp"
                 android:text="Product Description"
                 android:textColor="@color/black"
+                android:textAlignment="viewStart"
                 android:textSize="18sp"
-                app:layout_constraintHorizontal_bias="0.055"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/product_price_tv"
@@ -89,7 +88,7 @@
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/materialButton"
+        android:id="@+id/addToCart_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"

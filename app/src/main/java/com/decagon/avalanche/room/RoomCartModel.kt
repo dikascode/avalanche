@@ -5,9 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class RoomProduct(
+data class RoomCartModel(
     @PrimaryKey(autoGenerate = true) val uid: Int?,
     @ColumnInfo val title: String,
     @ColumnInfo val price: Double,
-    @ColumnInfo val desc: String
+    @ColumnInfo val quantity: Int
 )

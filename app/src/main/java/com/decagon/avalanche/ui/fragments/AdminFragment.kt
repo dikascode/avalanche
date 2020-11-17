@@ -12,8 +12,7 @@ import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.model.ProductModel
 import com.decagon.avalanche.room.AvalancheDatabase
 import com.decagon.avalanche.room.RoomBuilder
-import com.decagon.avalanche.room.RoomProduct
-
+import com.decagon.avalanche.room.RoomProductModel
 
 class AdminFragment : Fragment() {
 
@@ -29,7 +28,7 @@ class AdminFragment : Fragment() {
         val view = binding.root
 
         //Build room database
-        val db = RoomBuilder.getDatabase(activity!!.applicationContext)
+        val db = RoomBuilder.getDatabase(requireActivity().applicationContext)
 
         binding.adminFragmentSubmitBtn.setOnClickListener {
             //run room database logic in background thread
@@ -75,7 +74,7 @@ class AdminFragment : Fragment() {
                 }
                 else -> {
                     //save data to database
-                    val product = RoomProduct(null, title.toString(), price.toString().toDouble(), "")
+                    val product = RoomProductModel(null, title.toString(), price.toString().toDouble(), "")
                     ProductModel(db.productDao()).addProduct(product)
                     db.close()
 

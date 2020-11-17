@@ -3,14 +3,14 @@ package com.decagon.avalanche.ui.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 
 import android.view.*
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,15 +19,10 @@ import com.decagon.avalanche.adapters.CategoriesAdapter
 import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
-import com.decagon.avalanche.model.ProductModel
-import com.decagon.avalanche.repository.ProductsRepository
 import com.decagon.avalanche.room.AvalancheDatabase
 import com.decagon.avalanche.room.RoomBuilder
-import com.decagon.avalanche.room.RoomProduct
 import com.decagon.avalanche.ui.ProductDetails
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
+import com.decagon.avalanche.viewmodels.ProductsListViewModel
 
 
 class MainFragment : Fragment() {
@@ -36,11 +31,10 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var db: AvalancheDatabase
-
+    lateinit var viewModel: ProductsListViewModel
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -50,41 +44,47 @@ class MainFragment : Fragment() {
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val view = binding.root
+        setHasOptionsMenu(true)
+        viewModel = ViewModelProvider(this).get(ProductsListViewModel::class.java)
+        viewModel.showProducts()
+
+        implementMainGridLayoutRecyclerView(viewModel.productsLiveData)
 
         //Build room database
-        db = RoomBuilder.getDatabase(activity!!.applicationContext)
-
-        //Get all products from repository api call
-        ProductsRepository().getAllProducts()?.let { recyclerViewGridLayout(it) }
-
-        //make network call on background thread
-//        val thread = Thread {
-//            try {
-//                //Your code goes here
-//
-//                val productsFromDatabase = ProductModel(db.productDao()).readAllProducts()
-//
-//                val products = mapProductListFromDatabaseQuery(productsFromDatabase)
-//
-//                //Update ui on UI thread
-//                requireActivity().runOnUiThread(Runnable {
-//                    // Update recyclerview UI
-//                    recyclerViewGridLayout(products)
-//                })
-//
-//                db.close()
-//
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//        }
-//
-//        thread.start()
-
+        db = RoomBuilder.getDatabase(requireActivity().applicationContext)
 
         //Categories recycler view
         implementLinearRecyclerViewForCategories()
         return view
+    }
+
+    private fun implementMainGridLayoutRecyclerView(viewModelLiveData: MutableLiveData<List<Product>>) {
+        val recyclerView = binding.fragmentMainRv
+
+        viewModelLiveData.observe(viewLifecycleOwner, {
+            recyclerView.apply {
+                layoutManager = GridLayoutManager(activity, 2)
+                adapter =
+                    ProductsAdapter(it as ArrayList<Product>) { extraTitle, extraImageUrl, photoView ->
+
+                        //Go to product details when image is clicked
+                        val intent = Intent(activity, ProductDetails::class.java)
+                        intent.putExtra("title", extraTitle)
+                        intent.putExtra("photo_url", extraImageUrl)
+
+                        //Shared elements transition animations
+                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            activity as AppCompatActivity,
+                            photoView,
+                            "photoToAnimate"
+                        )
+                        startActivity(intent, options.toBundle())
+                    }
+            }
+
+            //Hide Progressbar on load of products
+            binding.fragmentMainProgressBar.visibility = View.GONE
+        })
     }
 
     private fun implementLinearRecyclerViewForCategories() {
@@ -96,38 +96,6 @@ class MainFragment : Fragment() {
             layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
             adapter = CategoriesAdapter(categories)
         }
-    }
-
-    private fun recyclerViewGridLayout(productsRepository: Single<List<Product>>) {
-        val recyclerView = binding.fragmentMainRv
-
-        productsRepository?.subscribeOn(Schedulers.io())
-            ?.observeOn(AndroidSchedulers.mainThread())?.subscribe({
-                recyclerView.apply {
-                    layoutManager = GridLayoutManager(activity, 2)
-                    adapter =
-                        ProductsAdapter(it as ArrayList<Product>) { extraTitle, extraImageUrl, photoView ->
-
-                            //Go to product details when image is clicked
-                            val intent = Intent(activity, ProductDetails::class.java)
-                            intent.putExtra("title", extraTitle)
-                            intent.putExtra("photo_url", extraImageUrl)
-
-                            //Shared elements transition animations
-                            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                activity as AppCompatActivity,
-                                photoView,
-                                "photoToAnimate"
-                            )
-                            startActivity(intent, options.toBundle())
-                        }
-                }
-            }, {
-                Log.d("Log", "onSuccess: ${it.message}")
-            })
-
-        //Make progress bar invisible after UI has been updated
-        binding.fragmentMainProgressBar.visibility = View.GONE
     }
 
 
@@ -146,34 +114,8 @@ class MainFragment : Fragment() {
                     val searchString = "$newText"
 
                     //Get search product from repository api method for search
-                    recyclerViewGridLayout(ProductsRepository().searchForProducts(searchString))
-
-                    //make network call on background thread
-//                    val thread = Thread {
-//                        try {
-//                            //Your code goes here
-//
-//                            val productsFromDatabase =
-//                                ProductModel(db.productDao()).getSearchProducts(searchString)
-//
-//                            val products = mapProductListFromDatabaseQuery(productsFromDatabase)
-//
-//                            //Update ui on UI thread
-//                            requireActivity().runOnUiThread(Runnable {
-//                                // Update recyclerview UI
-//                                recyclerViewGridLayout(products)
-//                            })
-//
-//                            db.close()
-//
-//
-//                        } catch (e: Exception) {
-//                            e.printStackTrace()
-//                        }
-//                    }
-//
-//
-//                    thread.start()
+                    viewModel.searchProducts(searchString)
+                    implementMainGridLayoutRecyclerView(viewModel.productsSearchLiveData)
 
                 }
 
@@ -182,14 +124,6 @@ class MainFragment : Fragment() {
 
         })
         super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    private fun mapProductListFromDatabaseQuery(productsFromDatabase: List<RoomProduct>): List<Product> {
-        return productsFromDatabase.map {
-            Product(
-                it.title, "https://finepointmobile.com/data/jeans2.jpg", it.price, it.desc,  true
-            )
-        }
     }
 
 

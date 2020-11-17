@@ -31,11 +31,13 @@ class MainActivity : AppCompatActivity() {
         binding.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.actionHome -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, MainFragment())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.content_main_fl, MainFragment())
                         .commit()
                 }
                 R.id.actionAdmin -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, AdminFragment())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.content_main_fl, AdminFragment())
                         .commit()
                 }
             }
@@ -58,12 +60,12 @@ class MainActivity : AppCompatActivity() {
     //Open Navigation drawer on click of hamburger icon
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //Prevent menu bar search icon from opening drawer
-        if(item.itemId != R.id.action_search && item.itemId != R.id.action_cart){
+        if (item.itemId != R.id.action_search && item.itemId != R.id.action_cart) {
             binding.drawerLayout.openDrawer(GravityCompat.START)
             return true
         }
 
-        if(item.itemId == R.id.action_cart) {
+        if (item.itemId == R.id.action_cart) {
             startActivity(Intent(this, CartActivity::class.java))
         }
 

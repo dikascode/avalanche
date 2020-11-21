@@ -7,7 +7,7 @@
 
     <font
         android:font="@font/open_sans_italic"
-        android:fontStyle="normal"
+        android:fontStyle="italic"
         android:fontWeight="400" />
 
 </font-family>

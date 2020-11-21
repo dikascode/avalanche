@@ -1,4 +1,4 @@
-package com.decagon.avalanche.cart
+package com.decagon.avalanche.views.cart
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

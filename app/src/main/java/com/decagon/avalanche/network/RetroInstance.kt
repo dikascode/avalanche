@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetroInstance {
 
     companion object{
-        private const val BASE_URL = "https://finepointmobile.com/api/ecommerce/v1/"
+        private const val BASE_URL = "https://finepointmobile.com/"
 
         fun getRetroInstance(): Retrofit {
             return Retrofit.Builder()

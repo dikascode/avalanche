@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ProductsListViewModel : ViewModel() {
+    //Setup live data to be observed in activity or fragment class
     val productsLiveData = MutableLiveData<List<Product>>()
     val productsSearchLiveData = MutableLiveData<List<Product>>()
 

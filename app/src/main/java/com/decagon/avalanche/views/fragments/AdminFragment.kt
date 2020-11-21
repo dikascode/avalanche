@@ -1,4 +1,4 @@
-package com.decagon.avalanche.ui.fragments
+package com.decagon.avalanche.views.fragments
 
 import android.os.Bundle
 import android.util.Log

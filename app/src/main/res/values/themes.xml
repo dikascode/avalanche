@@ -16,5 +16,6 @@
 <!--        Product details page-->
         <item name="productTitle">@color/black</item>
         <item name="productButton">@color/purple_700</item>
+
     </style>
 </resources>

@@ -1,44 +1,50 @@
-package com.decagon.avalanche.ui
+package com.decagon.avalanche.views
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.core.view.GravityCompat
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import com.decagon.avalanche.R
-import com.decagon.avalanche.cart.CartActivity
+import com.decagon.avalanche.views.cart.CartActivity
 import com.decagon.avalanche.databinding.ActivityMainBinding
-import com.decagon.avalanche.ui.fragments.AdminFragment
-import com.decagon.avalanche.ui.fragments.MainFragment
+import com.decagon.avalanche.views.fragments.AdminFragment
+import com.decagon.avalanche.views.fragments.MainFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         //View binding instance
         binding = ActivityMainBinding.inflate(layoutInflater)
         //get reference to root view
         val view = binding.root
         setContentView(view)
 
-        //Replace fragment layout with  Main fragment xml on launch of app
-        supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, MainFragment())
-            .commit()
+        //Setup action bar with nav controller
+//        val navHostFragment = supportFragmentManager
+//            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+//        navController = navHostFragment.navController
+//        NavigationUI.setupActionBarWithNavController(this, navController)
 
         //Select only one item per time in Navigation Drawer
         binding.navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.actionHome -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.content_main_fl, MainFragment())
-                        .commit()
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.mainFragment)
                 }
                 R.id.actionAdmin -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.content_main_fl, AdminFragment())
-                        .commit()
+                    findNavController(R.id.nav_host_fragment).navigate(R.id.adminFragment)
                 }
             }
             it.isChecked = true
@@ -57,6 +63,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
     //Open Navigation drawer on click of hamburger icon
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         //Prevent menu bar search icon from opening drawer
@@ -70,6 +77,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         return true
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        navController.navigateUp()
+        return super.onSupportNavigateUp()
     }
 
 

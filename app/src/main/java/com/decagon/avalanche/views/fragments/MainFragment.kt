@@ -1,4 +1,4 @@
-package com.decagon.avalanche.ui.fragments
+package com.decagon.avalanche.views.fragments
 
 
 import android.content.Intent
@@ -11,6 +11,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +22,7 @@ import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.room.AvalancheDatabase
 import com.decagon.avalanche.room.RoomBuilder
-import com.decagon.avalanche.ui.ProductDetails
+import com.decagon.avalanche.views.ProductDetails
 import com.decagon.avalanche.viewmodels.ProductsListViewModel
 
 
@@ -31,11 +32,9 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var db: AvalancheDatabase
-    lateinit var viewModel: ProductsListViewModel
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
+    //Declare viewModel
+    lateinit var viewModel: ProductsListViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,6 +60,10 @@ class MainFragment : Fragment() {
     private fun implementMainGridLayoutRecyclerView(viewModelLiveData: MutableLiveData<List<Product>>) {
         val recyclerView = binding.fragmentMainRv
 
+        binding.fragmentMainRv.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        binding.fragmentMainRv.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL))
+
+        //Observe live data from view model class
         viewModelLiveData.observe(viewLifecycleOwner, {
             recyclerView.apply {
                 layoutManager = GridLayoutManager(activity, 2)

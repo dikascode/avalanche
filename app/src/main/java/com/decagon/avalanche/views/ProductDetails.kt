@@ -1,17 +1,11 @@
-package com.decagon.avalanche.ui
+package com.decagon.avalanche.views
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.decagon.avalanche.databinding.ActivityProductDetailsBinding
-import com.decagon.avalanche.repository.ProductsRepository
 import com.decagon.avalanche.viewmodels.ProductDetailsViewModel
-import com.decagon.avalanche.viewmodels.ProductsListViewModel
 import com.squareup.picasso.Picasso
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
 
 class ProductDetails : AppCompatActivity() {
     private lateinit var binding: ActivityProductDetailsBinding

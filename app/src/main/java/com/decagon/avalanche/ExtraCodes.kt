@@ -1,18 +1,7 @@
 package com.decagon.avalanche
 
-import android.content.Intent
-import android.util.Log
-import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.room.RoomProductModel
-import com.decagon.avalanche.ui.ProductDetails
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 //Get all products from repository api call

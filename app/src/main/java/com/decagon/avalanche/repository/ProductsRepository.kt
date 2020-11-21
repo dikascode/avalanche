@@ -7,7 +7,7 @@ import io.reactivex.rxjava3.core.Single
 import java.net.URL
 
 class ProductsRepository {
-
+//Repository using RxJava
     fun getAllProducts(): @NonNull Single<List<Product>>? {
         return Single.create<List<Product>> {
             val products = fetchProducts()

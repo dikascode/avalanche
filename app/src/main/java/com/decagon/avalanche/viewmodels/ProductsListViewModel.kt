@@ -1,10 +1,13 @@
 package com.decagon.avalanche.viewmodels
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.decagon.avalanche.data.CartItem
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.repository.AvalancheRepositoryImpl
+import com.decagon.avalanche.repository.CartRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -26,5 +29,4 @@ class ProductsListViewModel : ViewModel() {
             productsSearchLiveData.postValue(AvalancheRepositoryImpl().searchForProducts(term))
         }
     }
-
 }

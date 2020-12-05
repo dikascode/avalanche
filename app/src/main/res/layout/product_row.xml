@@ -59,6 +59,7 @@
         tools:text="N100" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/add_product_to_cart_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"

@@ -1,4 +1,6 @@
 package com.decagon.avalanche.data
 
-class CartItem {
-}
+data class CartItem (
+    val product: Product,
+    val quantity: Int
+)

@@ -11,6 +11,7 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -68,20 +69,17 @@ class MainFragment : Fragment() {
             recyclerView.apply {
                 layoutManager = GridLayoutManager(activity, 2)
                 adapter =
-                    ProductsAdapter(it as ArrayList<Product>) { extraTitle, extraImageUrl, photoView ->
-
-                        //Go to product details when image is clicked
-                        val intent = Intent(activity, ProductDetails::class.java)
-                        intent.putExtra("title", extraTitle)
-                        intent.putExtra("photo_url", extraImageUrl)
+                    ProductsAdapter(it as ArrayList<Product>, requireActivity()) { extraTitle, extraImageUrl, photoView ->
 
                         //Shared elements transition animations
-                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            activity as AppCompatActivity,
-                            photoView,
-                            "photoToAnimate"
-                        )
-                        startActivity(intent, options.toBundle())
+//                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                            activity as AppCompatActivity,
+//                            photoView,
+//                            "photoToAnimate"
+//                        )
+
+                        val action = MainFragmentDirections.actionMainFragmentToProductDetailsFragment(extraTitle)
+                        findNavController().navigate(action)
                     }
             }
 

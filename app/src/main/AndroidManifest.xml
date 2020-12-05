@@ -16,10 +16,6 @@
             android:parentActivityName=".views.MainActivity"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".views.ProductDetails"
-            android:parentActivityName=".views.MainActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".views.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>

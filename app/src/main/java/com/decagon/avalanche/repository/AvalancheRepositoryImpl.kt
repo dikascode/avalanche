@@ -2,6 +2,7 @@ package com.decagon.avalanche.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.decagon.avalanche.data.CartItem
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.network.RetroInstance
 import com.decagon.avalanche.network.RetroService
@@ -15,6 +16,7 @@ class AvalancheRepositoryImpl() : AvalancheRepository {
 
     private val retroInstance: RetroService =
         RetroInstance.getRetroInstance().create(RetroService::class.java)
+
 
     override suspend fun getAllProducts(): List<Product> {
         products = retroInstance.getAllProducts().body()!!

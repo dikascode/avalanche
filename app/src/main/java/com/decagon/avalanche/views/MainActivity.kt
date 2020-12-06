@@ -1,33 +1,25 @@
 package com.decagon.avalanche.views
 
-import android.content.Context
-import android.content.Intent
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
 import com.decagon.avalanche.R
-import com.decagon.avalanche.views.cart.CartActivity
 import com.decagon.avalanche.databinding.ActivityMainBinding
 import com.decagon.avalanche.viewmodels.StoreViewModel
-import com.decagon.avalanche.views.fragments.AdminFragment
-import com.decagon.avalanche.views.fragments.MainFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var navController: NavController
     lateinit var storeViewModel: StoreViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //View binding instance
@@ -86,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (item.itemId == R.id.action_cart) {
-            startActivity(Intent(this, CartActivity::class.java))
+            findNavController(R.id.nav_host_fragment).navigate(R.id.cartFragment)
         }
 
         return true

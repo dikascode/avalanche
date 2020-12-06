@@ -34,7 +34,6 @@ class MainFragment : Fragment() {
 
     lateinit var db: AvalancheDatabase
 
-    //Declare viewModel
     lateinit var viewModel: ProductsListViewModel
 
     override fun onCreateView(
@@ -61,15 +60,28 @@ class MainFragment : Fragment() {
     private fun implementMainGridLayoutRecyclerView(viewModelLiveData: MutableLiveData<List<Product>>) {
         val recyclerView = binding.fragmentMainRv
 
-        binding.fragmentMainRv.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-        binding.fragmentMainRv.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.HORIZONTAL))
+        binding.fragmentMainRv.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                DividerItemDecoration.VERTICAL
+            )
+        )
+        binding.fragmentMainRv.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                DividerItemDecoration.HORIZONTAL
+            )
+        )
 
         //Observe live data from view model class
         viewModelLiveData.observe(viewLifecycleOwner, {
             recyclerView.apply {
                 layoutManager = GridLayoutManager(activity, 2)
                 adapter =
-                    ProductsAdapter(it as ArrayList<Product>, requireActivity()) { extraTitle, extraImageUrl, photoView ->
+                    ProductsAdapter(
+                        it as ArrayList<Product>,
+                        requireActivity()
+                    ) { extraTitle, extraImageUrl, photoView ->
 
                         //Shared elements transition animations
 //                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
@@ -78,7 +90,10 @@ class MainFragment : Fragment() {
 //                            "photoToAnimate"
 //                        )
 
-                        val action = MainFragmentDirections.actionMainFragmentToProductDetailsFragment(extraTitle)
+                        val action =
+                            MainFragmentDirections.actionMainFragmentToProductDetailsFragment(
+                                extraTitle
+                            )
                         findNavController().navigate(action)
                     }
             }

@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,10 +25,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cart_rv"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@+id/currency_icon"
+            app:layout_constraintBottom_toTopOf="@+id/total_title"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -41,6 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Total:"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@id/cart_btn"
             app:layout_constraintLeft_toLeftOf="@id/cart_btn" />
 
@@ -50,6 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="$"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@id/cart_btn"
             app:layout_constraintLeft_toRightOf="@id/total_title" />
 
@@ -57,8 +61,8 @@
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@id/cart_btn"
-            android:layout_marginTop="10dp"
             app:layout_constraintLeft_toRightOf="@id/currency_icon" />
 
         <com.google.android.material.button.MaterialButton

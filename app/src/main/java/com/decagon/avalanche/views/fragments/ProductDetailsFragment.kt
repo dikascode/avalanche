@@ -7,10 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentProductDetailsBinding
 import com.decagon.avalanche.viewmodels.ProductDetailsViewModel
 import com.decagon.avalanche.viewmodels.StoreViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 
 class ProductDetailsFragment : Fragment() {
@@ -31,9 +34,7 @@ class ProductDetailsFragment : Fragment() {
 
         productTitle = args.productTitle
 
-        if (productTitle != null) {
-            productDetailsViewModel.getProductByName(productTitle)
-        }
+        productDetailsViewModel.getProductByName(productTitle)
 
     }
 
@@ -54,7 +55,21 @@ class ProductDetailsFragment : Fragment() {
             binding.addToCartBtn.setOnClickListener { _ ->
                 val isAdded: Boolean = storeViewModel.addProductToCart(it)
 
-                Log.d("TAG", "addItemOnProductDetail: ${it.title} is $isAdded")
+                if (isAdded) {
+                    Snackbar.make(
+                        requireView(),
+                        "${it.title} added to cart.",
+                        Snackbar.LENGTH_LONG
+                    ).setAction("Checkout") {
+                        requireView().findNavController().navigate(R.id.cartFragment)
+                    }.show()
+                } else {
+                    Snackbar.make(
+                        requireView(),
+                        "Max quantity of 5 for item reached in cart",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
             }
         })
         return view

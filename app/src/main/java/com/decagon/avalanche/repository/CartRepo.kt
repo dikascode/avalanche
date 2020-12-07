@@ -26,20 +26,21 @@ class CartRepo {
         if (mutableCart.value == null) {
             initCart()
         }
-        val cartItemList: MutableList<CartItem> = ArrayList(mutableCart.value)
+        val cartItemList: MutableList<CartItem> = ArrayList(mutableCart.value!!)
         for (cartItem in cartItemList) {
-//            if (cartItem.product.getId().equals(product.getId())) {
-//                if (cartItem.quantity == 5) {
-//                    return false
-//                }
-//                val index = cartItemList.indexOf(cartItem)
-//                cartItem.setQuantity(cartItem.quantity + 1)
-//                cartItemList[index] = cartItem
-//                mutableCart.setValue(cartItemList)
-//                calculateCartTotal()
-//                return true
-//            }
+            if (cartItem.product.title == product.title) {
+                if (cartItem.quantity == 5) {
+                    return false
+                }
+                val index = cartItemList.indexOf(cartItem)
+                cartItem.quantity = cartItem.quantity + 1
+                cartItemList[index] = cartItem
+                mutableCart.value = cartItemList
+                calculateCartTotal()
+                return true
+            }
         }
+
         val cartItem = CartItem(product, 1)
         cartItemList.add(cartItem)
         mutableCart.value = cartItemList
@@ -51,7 +52,7 @@ class CartRepo {
         if (mutableCart.value == null) {
             return
         }
-        val cartItemList: MutableList<CartItem> = ArrayList(mutableCart.value)
+        val cartItemList: MutableList<CartItem> = ArrayList(mutableCart.value!!)
         cartItemList.remove(cartItem)
         mutableCart.value = cartItemList
         calculateCartTotal()
@@ -59,7 +60,7 @@ class CartRepo {
 
     fun changeQuantity(cartItem: CartItem, quantity: Int) {
         if (mutableCart.value == null) return
-        val cartItemList: MutableList<CartItem> = ArrayList(mutableCart.value)
+        val cartItemList: MutableList<CartItem> = ArrayList(mutableCart.value!!)
         val updatedItem = CartItem(cartItem.product, quantity)
         cartItemList[cartItemList.indexOf(cartItem)] = updatedItem
         mutableCart.value = cartItemList

@@ -8,16 +8,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.decagon.avalanche.R
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 
 class ProductsAdapter(
     private val products: ArrayList<Product>,
-    private val viewModelStoreOwner:ViewModelStoreOwner,
+    private val viewModelStoreOwner: ViewModelStoreOwner,
     private val onClickProduct: (title: String, photoUrl: String, photoView: View) -> Unit
 ) :
     RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
@@ -40,6 +42,22 @@ class ProductsAdapter(
         holder.addToCart.setOnClickListener {
             //Check if product has been added to cart
             val isAdded: Boolean = storeViewModel.addProductToCart(product)
+
+            if (isAdded) {
+                Snackbar.make(
+                    holder.itemView,
+                    "${product.title} added to cart.",
+                    Snackbar.LENGTH_LONG
+                ).setAction("Checkout") {
+                    holder.itemView.findNavController().navigate(R.id.cartFragment)
+                }.show()
+            } else {
+                Snackbar.make(
+                    holder.itemView,
+                    "Max quantity of 5 for item reached in cart",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
         }
     }
 

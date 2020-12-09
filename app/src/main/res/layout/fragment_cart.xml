@@ -43,9 +43,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="Total:"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/cart_btn"
-            app:layout_constraintLeft_toLeftOf="@id/cart_btn" />
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/cart_submit_btn"
+            app:layout_constraintLeft_toLeftOf="@id/cart_submit_btn" />
 
         <TextView
             android:id="@+id/currency_icon"
@@ -53,20 +54,22 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="$"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/cart_btn"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/cart_submit_btn"
             app:layout_constraintLeft_toRightOf="@id/total_title" />
 
         <TextView
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@id/cart_btn"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/cart_submit_btn"
             app:layout_constraintLeft_toRightOf="@id/currency_icon" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/cart_btn"
+            android:id="@+id/cart_submit_btn"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_margin="10dp"

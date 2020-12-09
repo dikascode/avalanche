@@ -17,7 +17,7 @@ class CartRepo {
         return mutableCart
     }
 
-    private fun initCart() {
+    fun initCart() {
         mutableCart.value = ArrayList()
         calculateCartTotal()
     }

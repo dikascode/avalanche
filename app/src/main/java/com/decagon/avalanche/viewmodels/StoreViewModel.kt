@@ -6,6 +6,7 @@ import com.decagon.avalanche.data.CartItem
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.repository.CartRepo
 
+
 class StoreViewModel: ViewModel() {
     private val cartRepo = CartRepo()
 
@@ -15,5 +16,21 @@ class StoreViewModel: ViewModel() {
 
     fun addProductToCart(product: Product): Boolean {
         return cartRepo.addItemToCart(product)
+    }
+
+    fun removeItemFromCart(cartItem: CartItem?) {
+        cartRepo.removeItemFromCart(cartItem!!)
+    }
+
+    fun changeQuantity(cartItem: CartItem?, quantity: Int) {
+        cartRepo.changeQuantity(cartItem!!, quantity)
+    }
+
+    fun getTotalPrice(): LiveData<Double?>? {
+        return cartRepo.getTotalPrice()
+    }
+
+    fun resetCart() {
+        cartRepo.initCart()
     }
 }

@@ -6,6 +6,7 @@
         android:icon="@drawable/shopping_cart"
         android:orderInCategory="100"
         android:title="Cart"
+        app:actionLayout="@layout/cart_action_item"
         app:showAsAction="ifRoom" />
 
 

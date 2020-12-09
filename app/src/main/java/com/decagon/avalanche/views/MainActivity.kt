@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -14,11 +17,14 @@ import androidx.navigation.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.ActivityMainBinding
 import com.decagon.avalanche.viewmodels.StoreViewModel
+import kotlinx.android.synthetic.main.cart_action_item.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var navController: NavController
     lateinit var storeViewModel: StoreViewModel
+
+    private  var cartQuantity = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +38,13 @@ class MainActivity : AppCompatActivity() {
 
         storeViewModel.getCart()?.observe(this, Observer {
             if (it != null) {
-                Log.d("TAG", "GetCartSize: ${it.size}")
+                var quantity = 0
+                for (cartItem in it) {
+                    quantity += cartItem.quantity
+                }
+
+                cartQuantity = quantity
+                invalidateOptionsMenu()
             }
         })
 
@@ -92,6 +104,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar, menu)
+        val menuItem = menu?.findItem(R.id.action_cart)
+        val actionView: View = menuItem!!.actionView
+        val cartBadgeTV: TextView = actionView.findViewById(R.id.cart_badge_text)
+
+        cartBadgeTV.text = cartQuantity.toString()
+
+        if(cartQuantity < 1){
+            cartBadgeTV.visibility = View.GONE
+        }
+
+        //Make cart clickable
+        actionView.setOnClickListener {
+            onOptionsItemSelected(menuItem)
+        }
         return true
     }
 

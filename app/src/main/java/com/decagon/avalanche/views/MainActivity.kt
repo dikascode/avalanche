@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
         storeViewModel = ViewModelProvider(this).get(StoreViewModel::class.java)
 
-        storeViewModel.getCart()?.observe(this, Observer {
+        storeViewModel.getCart()?.observe(this, {
             if (it != null) {
                 var quantity = 0
                 for (cartItem in it) {
@@ -44,6 +44,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 cartQuantity = quantity
+
+                //Redraw menu
                 invalidateOptionsMenu()
             }
         })
@@ -120,6 +122,24 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
+
+
+//    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+//        menu?.clear()
+//
+//        val menuItem = menu?.findItem(R.id.action_cart)
+//        val actionView: View = menuItem!!.actionView
+//        val cartBadgeTV: TextView = actionView.findViewById(R.id.cart_badge_text)
+//
+//        cartBadgeTV.text = cartQuantity.toString()
+//
+//        if(cartQuantity < 1){
+//            cartBadgeTV.visibility = View.GONE
+//        }
+//
+//        return super.onPrepareOptionsMenu(menu)
+//    }
+
 
 
 }

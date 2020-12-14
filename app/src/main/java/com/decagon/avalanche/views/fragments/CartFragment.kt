@@ -20,6 +20,8 @@ import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.flutterwave.raveandroid.RavePayActivity
 import com.flutterwave.raveandroid.RaveUiManager
 import com.flutterwave.raveandroid.rave_java_commons.RaveConstants
+import com.google.gson.Gson
+import org.json.JSONObject
 
 
 class CartFragment : Fragment(), CartListAdapter.CartInterface {
@@ -105,12 +107,29 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
             val message: String? = data.getStringExtra("response")
-            Log.d("TAG", "Transaction response: ${message}")
+            Log.d("TAG", "response: $message")
+
+            //Parse JSON from
+            val obj = JSONObject(message)
+
             when (resultCode) {
                 RavePayActivity.RESULT_SUCCESS -> {
+                    val transactionResult = obj.getJSONObject("data")
+
+                    val amount = transactionResult.get("amount")
+
                     Toast.makeText(requireContext(), "SUCCESS", Toast.LENGTH_LONG).show()
+                    Log.d("Transaction", "Transaction amount: $amount")
+                    Log.d("Transaction", "Transaction IP: ${transactionResult.get("IP")}")
+                    Log.d("Transaction", "Transaction status: ${transactionResult.get("status")}")
+                    Log.d("Transaction", "Transaction fraud status: ${transactionResult.get("fraud_status")}")
+                    Log.d("Transaction", "Transaction ref: ${transactionResult.get("txRef")}")
+
+
                     findNavController().navigate(R.id.mainFragment)
                 }
                 RavePayActivity.RESULT_ERROR -> {

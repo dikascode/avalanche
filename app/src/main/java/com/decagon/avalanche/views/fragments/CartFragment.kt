@@ -1,6 +1,5 @@
 package com.decagon.avalanche.views.fragments
 
-import android.R.attr
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -20,7 +19,6 @@ import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.flutterwave.raveandroid.RavePayActivity
 import com.flutterwave.raveandroid.RaveUiManager
 import com.flutterwave.raveandroid.rave_java_commons.RaveConstants
-import com.google.gson.Gson
 import org.json.JSONObject
 
 
@@ -114,33 +112,37 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             Log.d("TAG", "response: $message")
 
             //Parse JSON from
-            val obj = JSONObject(message)
+            val parsedObject = JSONObject(message)
+            val transactionResponse = parsedObject.getJSONObject("data")
 
             when (resultCode) {
                 RavePayActivity.RESULT_SUCCESS -> {
-                    val transactionResult = obj.getJSONObject("data")
-
-                    val amount = transactionResult.get("amount")
+                    val amount = transactionResponse.get("amount")
 
                     Toast.makeText(requireContext(), "SUCCESS", Toast.LENGTH_LONG).show()
-                    Log.d("Transaction", "Transaction amount: $amount")
-                    Log.d("Transaction", "Transaction IP: ${transactionResult.get("IP")}")
-                    Log.d("Transaction", "Transaction status: ${transactionResult.get("status")}")
-                    Log.d("Transaction", "Transaction fraud status: ${transactionResult.get("fraud_status")}")
-                    Log.d("Transaction", "Transaction ref: ${transactionResult.get("txRef")}")
-                    Log.d("Transaction", "Transaction customer name: ${transactionResult.get("customer.fullName")}")
-                    Log.d("Transaction", "Transaction customer email: ${transactionResult.get("customer.email")}")
-                    Log.d("Transaction", "Transaction customer phone: ${transactionResult.get("customer.phone")}")
-                    Log.d("Transaction", "Transaction payment type: ${transactionResult.get("paymentType")}")
+                    Log.d("Successful Transaction", "Transaction amount: $amount")
+                    Log.d("Successful Transaction", "Transaction IP: ${transactionResponse.get("IP")}")
+                    Log.d("Successful Transaction", "Transaction status: ${transactionResponse.get("status")}")
+                    Log.d("Successful Transaction", "Transaction fraud status: ${transactionResponse.get("fraud_status")}")
+                    Log.d("Successful Transaction", "Transaction ref: ${transactionResponse.get("txRef")}")
+                    Log.d("Successful Transaction", "Transaction customer name: ${transactionResponse.get("customer.fullName")}")
+                    Log.d("Successful Transaction", "Transaction customer email: ${transactionResponse.get("customer.email")}")
+                    Log.d("Successful Transaction", "Transaction customer phone: ${transactionResponse.get("customer.phone")}")
+                    Log.d("Successful Transaction", "Transaction payment type: ${transactionResponse.get("paymentType")}")
+                    Log.d("Successful Transaction", "Transaction msg: ${transactionResponse.get("vbvrespmessage")}")
 
 
                     findNavController().navigate(R.id.mainFragment)
                 }
                 RavePayActivity.RESULT_ERROR -> {
                     Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
+                    Log.d("Failed Transaction", "Transaction status: ${transactionResponse.get("status")}")
+                    Log.d("Failed Transaction", "Transaction msg: ${transactionResponse.get("vbvrespmessage")}")
                 }
                 RavePayActivity.RESULT_CANCELLED -> {
                     Toast.makeText(requireContext(), "CANCELLED", Toast.LENGTH_LONG).show()
+                    Log.d("Failed Transaction", "Transaction status: ${transactionResponse.get("status")}")
+                    Log.d("Failed Transaction", "Transaction msg: ${transactionResponse.get("vbvrespmessage")}")
                 }
             }
         } else {

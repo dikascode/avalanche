@@ -131,18 +131,21 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                     Log.d("Successful Transaction", "Transaction payment type: ${transactionResponse.get("paymentType")}")
                     Log.d("Successful Transaction", "Transaction msg: ${transactionResponse.get("vbvrespmessage")}")
 
-
                     findNavController().navigate(R.id.orderFragment)
                 }
                 RavePayActivity.RESULT_ERROR -> {
                     Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
                     Log.d("Failed Transaction", "Transaction status: ${transactionResponse.get("status")}")
                     Log.d("Failed Transaction", "Transaction msg: ${transactionResponse.get("vbvrespmessage")}")
+
+                    findNavController().navigate(R.id.mainFragment)
                 }
                 RavePayActivity.RESULT_CANCELLED -> {
                     Toast.makeText(requireContext(), "CANCELLED", Toast.LENGTH_LONG).show()
                     Log.d("Failed Transaction", "Transaction status: ${transactionResponse.get("status")}")
                     Log.d("Failed Transaction", "Transaction msg: ${transactionResponse.get("vbvrespmessage")}")
+
+                    findNavController().navigate(R.id.mainFragment)
                 }
             }
         } else {

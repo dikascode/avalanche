@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentOrderBinding
 
@@ -19,6 +20,10 @@ class OrderFragment : Fragment() {
         _binding = FragmentOrderBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
         val view = binding.root
+
+        binding.continueShoppingBtn.setOnClickListener {
+            findNavController().navigate(R.id.mainFragment)
+        }
 
         return view
     }

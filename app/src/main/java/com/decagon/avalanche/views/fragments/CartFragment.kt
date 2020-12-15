@@ -128,6 +128,10 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                     Log.d("Transaction", "Transaction status: ${transactionResult.get("status")}")
                     Log.d("Transaction", "Transaction fraud status: ${transactionResult.get("fraud_status")}")
                     Log.d("Transaction", "Transaction ref: ${transactionResult.get("txRef")}")
+                    Log.d("Transaction", "Transaction customer name: ${transactionResult.get("customer.fullName")}")
+                    Log.d("Transaction", "Transaction customer email: ${transactionResult.get("customer.email")}")
+                    Log.d("Transaction", "Transaction customer phone: ${transactionResult.get("customer.phone")}")
+                    Log.d("Transaction", "Transaction payment type: ${transactionResult.get("paymentType")}")
 
 
                     findNavController().navigate(R.id.mainFragment)

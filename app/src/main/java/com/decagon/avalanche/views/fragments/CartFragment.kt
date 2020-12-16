@@ -35,8 +35,10 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentCartBinding.inflate(inflater, container, false)
+        storeViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
 
         binding.cartSubmitBtn.setOnClickListener {
+
             makePayment()
         }
         return binding.root
@@ -52,8 +54,6 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                 DividerItemDecoration.VERTICAL
             )
         )
-
-        storeViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
 
         storeViewModel.getCart()?.observe(viewLifecycleOwner, {
             if (it != null) {
@@ -108,7 +108,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
 
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
-            val message: String? = data.getStringExtra("response")
+            val message: String = data.getStringExtra("response").toString()
             Log.d("TAG", "response: $message")
 
             //Parse JSON from

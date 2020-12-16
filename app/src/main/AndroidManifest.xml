@@ -3,6 +3,8 @@
     package="com.decagon.avalanche">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    
 
     <application
         android:allowBackup="true"
@@ -11,10 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Avalanche">
-        <activity
-            android:name="com.decagon.avalanche.views.cart.CartActivity"
-            android:parentActivityName=".views.MainActivity"
-            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".views.MainActivity"
             android:screenOrientation="portrait">

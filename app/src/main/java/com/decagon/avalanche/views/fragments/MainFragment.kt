@@ -1,21 +1,20 @@
 package com.decagon.avalanche.views.fragments
 
 
-import android.content.Intent
-import android.os.Bundle
 
+import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
 import com.decagon.avalanche.adapters.CategoriesAdapter
 import com.decagon.avalanche.adapters.ProductsAdapter
@@ -23,7 +22,7 @@ import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.room.AvalancheDatabase
 import com.decagon.avalanche.room.RoomBuilder
-import com.decagon.avalanche.views.ProductDetails
+
 import com.decagon.avalanche.viewmodels.ProductsListViewModel
 
 
@@ -44,17 +43,29 @@ class MainFragment : Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val view = binding.root
         setHasOptionsMenu(true)
+
+        val networkConnection = NetworkStatusChecker(requireContext())
         viewModel = ViewModelProvider(this).get(ProductsListViewModel::class.java)
-        viewModel.showProducts()
 
-        implementMainGridLayoutRecyclerView(viewModel.productsLiveData)
+        networkConnection.observe(viewLifecycleOwner, { isConnected ->
+            if (isConnected) {
+                viewModel.showProducts()
 
-        //Build room database
-        db = RoomBuilder.getDatabase(requireActivity().applicationContext)
+                implementMainGridLayoutRecyclerView(viewModel.productsLiveData)
 
-        //Categories recycler view
-        implementLinearRecyclerViewForCategories()
+                //Build room database
+                db = RoomBuilder.getDatabase(requireActivity().applicationContext)
+
+                //Categories recycler view
+                implementLinearRecyclerViewForCategories()
+
+            }else {
+                viewModel.productsLiveData.removeObservers(viewLifecycleOwner)
+            }
+        })
+
         return view
+
     }
 
     private fun implementMainGridLayoutRecyclerView(viewModelLiveData: MutableLiveData<List<Product>>) {
@@ -94,6 +105,7 @@ class MainFragment : Fragment() {
                             MainFragmentDirections.actionMainFragmentToProductDetailsFragment(
                                 extraTitle
                             )
+
                         findNavController().navigate(action)
                     }
             }

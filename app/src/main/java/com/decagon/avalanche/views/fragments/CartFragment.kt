@@ -38,7 +38,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         storeViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
 
         binding.cartSubmitBtn.setOnClickListener {
-
+            storeViewModel.resetCart()
             makePayment()
         }
         return binding.root

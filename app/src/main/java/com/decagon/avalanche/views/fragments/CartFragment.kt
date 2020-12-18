@@ -173,7 +173,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                             "Transaction msg: ${transactionResponse.get("vbvrespmessage")}"
                         )
 
-                        findNavController().navigate(R.id.mainFragment)
+                        findNavController().navigate(R.id.failedTransactionFragment)
                     }
                     RavePayActivity.RESULT_CANCELLED -> {
                         Toast.makeText(requireContext(), "CANCELLED", Toast.LENGTH_LONG).show()

@@ -35,4 +35,9 @@
         android:name="com.decagon.avalanche.views.fragments.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
+    <fragment
+        android:id="@+id/failedTransactionFragment"
+        android:name="com.decagon.avalanche.views.fragments.FailedTransactionFragment"
+        android:label="fragment_failed_transaction"
+        tools:layout="@layout/fragment_failed_transaction" />
 </navigation>

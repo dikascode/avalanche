@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/welcomeFragment">
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.decagon.avalanche.views.fragments.MainFragment"
@@ -40,4 +40,9 @@
         android:name="com.decagon.avalanche.views.fragments.FailedTransactionFragment"
         android:label="fragment_failed_transaction"
         tools:layout="@layout/fragment_failed_transaction" />
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.decagon.avalanche.views.fragments.WelcomeFragment"
+        android:label="fragment_welcome"
+        tools:layout="@layout/fragment_welcome" />
 </navigation>

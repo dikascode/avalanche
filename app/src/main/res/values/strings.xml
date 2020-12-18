@@ -5,6 +5,9 @@
     <string name="thanks_for_your_order">Thanks for your order</string>
     <string name="continue_shopping">Continue Shopping</string>
     <string name="failed_transaction_string">Oops, something went wrong</string>
+    <string name="slogan">All your fashion needs</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
 
 
     <string-array name="cart_quantity_string_array">

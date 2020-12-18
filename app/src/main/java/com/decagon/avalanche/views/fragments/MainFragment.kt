@@ -111,7 +111,7 @@ class MainFragment : Fragment() {
             }
 
             //Hide Progressbar on load of products
-            binding.fragmentMainProgressBar.visibility = View.GONE
+            binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
         })
     }
 

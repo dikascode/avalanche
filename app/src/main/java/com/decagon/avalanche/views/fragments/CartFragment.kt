@@ -35,9 +35,11 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentCartBinding.inflate(inflater, container, false)
+        storeViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
 
         binding.cartSubmitBtn.setOnClickListener {
             makePayment()
+            storeViewModel.resetCart()
         }
         return binding.root
     }
@@ -52,8 +54,6 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                 DividerItemDecoration.VERTICAL
             )
         )
-
-        storeViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
 
         storeViewModel.getCart()?.observe(viewLifecycleOwner, {
             if (it != null) {
@@ -108,47 +108,90 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
 
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
-            val message: String? = data.getStringExtra("response")
+            val message: String? = data.getStringExtra("response").toString()
             Log.d("TAG", "response: $message")
 
             //Parse JSON from
-            val parsedObject = JSONObject(message)
-            val transactionResponse = parsedObject.getJSONObject("data")
+            if (message != "null") {
+                val parsedObject = JSONObject(message)
+                val transactionResponse = parsedObject.getJSONObject("data")
 
-            when (resultCode) {
-                RavePayActivity.RESULT_SUCCESS -> {
-                    val amount = transactionResponse.get("amount")
 
-                    Toast.makeText(requireContext(), "SUCCESS", Toast.LENGTH_LONG).show()
-                    Log.d("Successful Transaction", "Transaction amount: $amount")
-                    Log.d("Successful Transaction", "Transaction IP: ${transactionResponse.get("IP")}")
-                    Log.d("Successful Transaction", "Transaction status: ${transactionResponse.get("status")}")
-                    Log.d("Successful Transaction", "Transaction fraud status: ${transactionResponse.get("fraud_status")}")
-                    Log.d("Successful Transaction", "Transaction ref: ${transactionResponse.get("txRef")}")
-                    Log.d("Successful Transaction", "Transaction customer name: ${transactionResponse.get("customer.fullName")}")
-                    Log.d("Successful Transaction", "Transaction customer email: ${transactionResponse.get("customer.email")}")
-                    Log.d("Successful Transaction", "Transaction customer phone: ${transactionResponse.get("customer.phone")}")
-                    Log.d("Successful Transaction", "Transaction payment type: ${transactionResponse.get("paymentType")}")
-                    Log.d("Successful Transaction", "Transaction msg: ${transactionResponse.get("vbvrespmessage")}")
+                when (resultCode) {
+                    RavePayActivity.RESULT_SUCCESS -> {
+                        val amount = transactionResponse.get("amount")
 
-                    findNavController().navigate(R.id.orderFragment)
-                }
-                RavePayActivity.RESULT_ERROR -> {
-                    Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
-                    Log.d("Failed Transaction", "Transaction status: ${transactionResponse.get("status")}")
-                    Log.d("Failed Transaction", "Transaction msg: ${transactionResponse.get("vbvrespmessage")}")
+                        Toast.makeText(requireContext(), "SUCCESS", Toast.LENGTH_LONG).show()
+                        Log.d("Successful Transaction", "Transaction amount: $amount")
+                        Log.d(
+                            "Successful Transaction",
+                            "Transaction IP: ${transactionResponse.get("IP")}"
+                        )
+                        Log.d(
+                            "Successful Transaction",
+                            "Transaction status: ${transactionResponse.get("status")}"
+                        )
+                        Log.d(
+                            "Successful Transaction",
+                            "Transaction fraud status: ${transactionResponse.get("fraud_status")}"
+                        )
+                        Log.d(
+                            "Successful Transaction",
+                            "Transaction ref: ${transactionResponse.get("txRef")}"
+                        )
+                        Log.d(
+                            "Successful Transaction",
+                            "Transaction customer name: ${transactionResponse.get("customer.fullName")}"
+                        )
+                        Log.d(
+                            "Successful Transaction",
+                            "Transaction customer email: ${transactionResponse.get("customer.email")}"
+                        )
+                        Log.d(
+                            "Successful Transaction",
+                            "Transaction customer phone: ${transactionResponse.get("customer.phone")}"
+                        )
+                        Log.d(
+                            "Successful Transaction",
+                            "Transaction payment type: ${transactionResponse.get("paymentType")}"
+                        )
+                        Log.d(
+                            "Successful Transaction",
+                            "Transaction msg: ${transactionResponse.get("vbvrespmessage")}"
+                        )
 
-                    findNavController().navigate(R.id.mainFragment)
-                }
-                RavePayActivity.RESULT_CANCELLED -> {
-                    Toast.makeText(requireContext(), "CANCELLED", Toast.LENGTH_LONG).show()
-                    Log.d("Failed Transaction", "Transaction status: ${transactionResponse.get("status")}")
-                    Log.d("Failed Transaction", "Transaction msg: ${transactionResponse.get("vbvrespmessage")}")
+                        findNavController().navigate(R.id.orderFragment)
+                    }
+                    RavePayActivity.RESULT_ERROR -> {
+                        Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
+                        Log.d(
+                            "Failed Transaction",
+                            "Transaction status: ${transactionResponse.get("status")}"
+                        )
+                        Log.d(
+                            "Failed Transaction",
+                            "Transaction msg: ${transactionResponse.get("vbvrespmessage")}"
+                        )
 
-                    findNavController().navigate(R.id.mainFragment)
+                        findNavController().navigate(R.id.mainFragment)
+                    }
+                    RavePayActivity.RESULT_CANCELLED -> {
+                        Toast.makeText(requireContext(), "CANCELLED", Toast.LENGTH_LONG).show()
+                        Log.d(
+                            "Failed Transaction",
+                            "Transaction status: ${transactionResponse.get("status")}"
+                        )
+                        Log.d(
+                            "Failed Transaction",
+                            "Transaction msg: ${transactionResponse.get("vbvrespmessage")}"
+                        )
+
+                        findNavController().navigate(R.id.mainFragment)
+                    }
                 }
             }
-        } else {
+
+        }else {
             //Redirect to failed page
         }
     }

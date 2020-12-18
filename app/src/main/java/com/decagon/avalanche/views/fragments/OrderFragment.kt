@@ -28,7 +28,6 @@ class OrderFragment : Fragment() {
         val storeViewModel = ViewModelProvider(this).get(StoreViewModel::class.java)
 
         binding.continueShoppingBtn.setOnClickListener {
-            storeViewModel.resetCart()
             findNavController().navigate(R.id.mainFragment)
         }
 

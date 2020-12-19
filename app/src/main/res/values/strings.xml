@@ -8,6 +8,11 @@
     <string name="slogan">All your fashion needs</string>
     <string name="login">Login</string>
     <string name="sign_up">Sign Up</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="enter_password">Enter Password</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="create_account">Create Account</string>
 
 
     <string-array name="cart_quantity_string_array">

@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentLoginBinding
+import com.decagon.avalanche.databinding.FragmentSignUpBinding
 
-class LoginFragment : Fragment() {
-    private var _binding: FragmentLoginBinding? = null
+class SignUpFragment : Fragment() {
+    private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -18,10 +19,10 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
 
-        binding.createAccountBtn.setOnClickListener {
-            findNavController().navigate(R.id.signUpFragment)
+        binding.loginBtn.setOnClickListener {
+            findNavController().navigate(R.id.loginFragment)
         }
         return binding.root
     }

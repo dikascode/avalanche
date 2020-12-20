@@ -7,9 +7,11 @@
     android:background="@color/primary_color"
     android:orientation="vertical"
     android:padding="20dp"
+    android:transitionName="transition_login"
     tools:context=".views.fragments.LoginFragment">
 
     <ImageView
+        android:id="@+id/back_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/arrow_back" />
@@ -18,12 +20,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:layout_marginBottom="50dp"
         android:text="@string/login"
         android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="50dp"/>
+        android:textStyle="bold" />
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -50,12 +52,12 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:hint="@string/enter_password"
         app:boxStrokeColor="@color/black"
         app:boxStrokeWidthFocused="2dp"
         app:endIconMode="password_toggle"
         app:endIconTint="@color/black"
-        android:layout_marginTop="10dp"
         app:hintTextColor="@color/black"
         app:startIconDrawable="@drawable/lock">
 
@@ -75,42 +77,42 @@
 
         <CheckBox
             android:id="@+id/checkbox"
+            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
-            android:text="@string/remember_me"
-            android:buttonTint="@color/black"
             android:layout_centerVertical="true"
-            android:textColor="@color/black"/>
+            android:buttonTint="@color/black"
+            android:text="@string/remember_me"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/forgot_pwd_btn"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:textColor="@color/white"
+            android:layout_alignParentRight="true"
             android:text="@string/forgot_password"
-            android:textStyle="bold"
-            android:layout_alignParentRight="true"/>
+            android:textColor="@color/white"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="login"
+        android:layout_marginTop="20dp"
         android:backgroundTint="@color/black"
-        app:cornerRadius="5dp"
-        android:layout_marginTop="20dp"/>
+        android:text="login"
+        app:cornerRadius="5dp" />
 
     <Button
         android:id="@+id/create_account_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:textColor="@color/black"
+        android:layout_gravity="center"
         android:text="@string/create_account"
-        android:textStyle="bold"
-        android:layout_gravity="center"/>
+        android:textColor="@color/black"
+        android:textStyle="bold" />
 
 </LinearLayout>

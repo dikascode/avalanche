@@ -6,8 +6,9 @@
     android:layout_height="match_parent"
     android:background="@color/primary_color"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="10dp"
     android:transitionName="transition_login"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
     tools:context=".views.fragments.LoginFragment">
 
     <ImageView
@@ -102,7 +103,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/black"
-        android:text="login"
+        android:text="@string/login"
+        android:textSize="26sp"
         app:cornerRadius="5dp" />
 
     <Button

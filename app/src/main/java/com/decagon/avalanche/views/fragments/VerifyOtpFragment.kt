@@ -5,13 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
-import com.decagon.avalanche.databinding.FragmentLoginBinding
-import com.decagon.avalanche.databinding.FragmentSignUpBinding
+import com.decagon.avalanche.databinding.FragmentVerifyOtpBinding
 
-class SignUpFragment : Fragment() {
-    private var _binding: FragmentSignUpBinding? = null
+
+class VerifyOtpFragment : Fragment() {
+    private var _binding:FragmentVerifyOtpBinding? =  null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -19,15 +18,7 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentSignUpBinding.inflate(inflater, container, false)
-
-        binding.loginBtn.setOnClickListener {
-            findNavController().navigate(R.id.loginFragment)
-        }
-
-        binding.backBtn.setOnClickListener {
-            findNavController().navigateUp()
-        }
+        _binding = FragmentVerifyOtpBinding.inflate(inflater, container, false)
         return binding.root
     }
 

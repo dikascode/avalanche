@@ -25,6 +25,7 @@
     <string name="reset_password_email">dika@gmail.com</string>
     <string name="next">Next</string>
     <string name="reset_password_number">+2348000001112</string>
+    <string name="success_update_msg">Your password has been updated</string>
 
 
     <string-array name="cart_quantity_string_array">

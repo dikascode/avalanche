@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentSignUpBinding
 import com.google.android.material.textfield.TextInputLayout
+import com.hbb20.CountryCodePicker
 
 class SignUpFragment : Fragment() {
     private var _binding: FragmentSignUpBinding? = null
@@ -19,6 +20,7 @@ class SignUpFragment : Fragment() {
     lateinit var email: TextInputLayout
     lateinit var password: TextInputLayout
     lateinit var phoneNumber: TextInputLayout
+    lateinit var countryCodePicker: CountryCodePicker
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,10 +35,11 @@ class SignUpFragment : Fragment() {
         email = binding.userEmailEt
         password = binding.userPasswordEt
         phoneNumber = binding.userNumberEt
+        countryCodePicker = binding.countryCodePicker
 
         binding.createAccountBtn.setOnClickListener {
             if( validateFirstName() && validateLastName() && validateEmail() && validatePhoneNumber() && validatePassword()) {
-                findNavController().navigate(R.id.mainFragment)
+                passDataToVerifyOTPScreen()
             }
         }
 
@@ -107,17 +110,14 @@ class SignUpFragment : Fragment() {
                 //"(?=.*[0-9])" +         //at least 1 digit
                 //"(?=.*[a-z])" +         //at least 1 lower case letter
                 //"(?=.*[A-Z])" +         //at least 1 upper case letter
-                "(?=.*[a-zA-Z])" +      //any letter
+               // "(?=.*[a-zA-Z])" +      //any letter
                 //"(?=.*[@#$%^&+=])" +    //at least 1 special character
-                "(?=S+$)" +           //no white spaces
-                ".{4,}" +               //at least 4 characters
-                "$";
+                //"(?=S+$)" +           //no white spaces
+                //".{4}" +               //at least 4 characters
+                //"$";
 
         return if(string.isEmpty()){
             password.error = "Field cannot be empty"
-            false
-        } else if(!string.matches(checkPassword.toRegex())) {
-            password.error = "Password should contain 4 characters!"
             false
         } else {
             password.error = null
@@ -138,6 +138,21 @@ class SignUpFragment : Fragment() {
             phoneNumber.isEnabled = false
             true
         }
+    }
+
+    private fun passDataToVerifyOTPScreen() {
+        val _fName = firstName.editText?.text.toString().trim()
+        val _lName = lastName.editText?.text.toString().trim()
+        val _email = email.editText?.text.toString().trim()
+        val _pwd = password.editText?.text.toString().trim()
+        val _enteredPhoneNumber = phoneNumber.editText?.text.toString().trim()
+        val _phoneNo = "+"+countryCodePicker.fullNumber+_enteredPhoneNumber
+
+        val action = SignUpFragmentDirections.actionSignUpFragmentToVerifyOtpFragment(_phoneNo, _fName, _lName, _pwd,_email)
+
+        findNavController().navigate(action)
+
+
     }
 
 }

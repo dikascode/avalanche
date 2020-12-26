@@ -54,5 +54,30 @@
         android:id="@+id/signUpFragment"
         android:name="com.decagon.avalanche.views.fragments.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" />
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFragment_to_verifyOtpFragment"
+            app:destination="@id/verifyOtpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verifyOtpFragment"
+        android:name="com.decagon.avalanche.views.fragments.VerifyOtpFragment"
+        android:label="fragment_verify_otp"
+        tools:layout="@layout/fragment_verify_otp" >
+        <argument
+            android:name="user_number"
+            app:argType="string" />
+        <argument
+            android:name="user_fName"
+            app:argType="string" />
+        <argument
+            android:name="user_lName"
+            app:argType="string" />
+        <argument
+            android:name="user_pwd"
+            app:argType="string" />
+        <argument
+            android:name="user_email"
+            app:argType="string" />
+    </fragment>
 </navigation>

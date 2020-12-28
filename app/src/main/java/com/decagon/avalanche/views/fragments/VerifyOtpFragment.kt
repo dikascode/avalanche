@@ -7,14 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.chaos.view.PinView
 import com.decagon.avalanche.R
+import com.decagon.avalanche.data.User
 import com.decagon.avalanche.databinding.FragmentVerifyOtpBinding
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
-import com.google.firebase.ktx.FirebaseCommonKtxRegistrar
+import com.google.firebase.database.FirebaseDatabase
 import java.util.concurrent.TimeUnit
 
 
@@ -27,8 +29,16 @@ class VerifyOtpFragment : Fragment() {
     private lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
     lateinit var storedVerificationId: String
     lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
+    lateinit var addNewUser: User
 
-    val args: VerifyOtpFragmentArgs by navArgs()
+    private val args: VerifyOtpFragmentArgs by navArgs()
+
+    //SafeArgs Data
+    private lateinit var phoneNumber: String
+    private lateinit var pwd: String
+    private lateinit var lName: String
+    private lateinit var fName: String
+    private lateinit var email: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,16 +49,16 @@ class VerifyOtpFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
 
-        //SafeArgs Data
-        val phoneNumber = args.userNumber
+        phoneNumber = args.userNumber
+        pwd = args.userPwd
+        lName = args.userLName
+        fName = args.userFName
+        email = args.userEmail
+
+        addNewUser = User(fName, lName, email, phoneNumber, pwd, false)
+
         Log.d("TAG", "onVerificationCompleted:$phoneNumber")
-
-        val email = args.userEmail
-
         Log.d("TAG", "onVerificationCompleted:$email")
-        val pwd = args.userPwd
-        val lName = args.userLName
-        val fName = args.userFName
 
         //hooks
         pinFromUser = binding.pinView
@@ -85,14 +95,14 @@ class VerifyOtpFragment : Fragment() {
 
                 if (e is FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
-                    // ...
+                    Toast.makeText(requireContext(), "Invalid request", Toast.LENGTH_LONG).show()
                 } else if (e is FirebaseTooManyRequestsException) {
                     // The SMS quota for the project has been exceeded
-                    // ...
+                    Toast.makeText(requireContext(), "Too many requests", Toast.LENGTH_LONG).show()
                 }
 
                 // Show a message and update the UI
-                // ...
+                findNavController().navigate(R.id.signUpFragment)
             }
 
             override fun onCodeSent(
@@ -104,8 +114,6 @@ class VerifyOtpFragment : Fragment() {
                 // Save verification ID and resending token so we can use them later
                 storedVerificationId = verificationId
                 resendToken = token
-
-                // ...
             }
         }
 
@@ -126,6 +134,9 @@ class VerifyOtpFragment : Fragment() {
                     val user = task.result?.user
                     Log.d("TAG", "signInWithCredential:success. $user")
 
+                    storeNewUserDataInFirebase()
+                    findNavController().navigate(R.id.mainFragment)
+
                 } else {
                     // Sign in failed, display a message and update the UI
                     Log.w("TAG", "signInWithCredential:failure", task.exception)
@@ -141,6 +152,12 @@ class VerifyOtpFragment : Fragment() {
                     }
                 }
             }
+    }
+
+    private fun storeNewUserDataInFirebase() {
+        val rootNode = FirebaseDatabase.getInstance()
+        val reference = rootNode.getReference("Users")
+        reference.child(phoneNumber).setValue(addNewUser)
     }
 
     private fun sendVerificationCode(phoneNumber: String) {

@@ -99,6 +99,14 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
+    <include
+        android:id="@+id/progress_bar_layout"
+        layout="@layout/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+   />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/login_btn"
         android:layout_width="match_parent"

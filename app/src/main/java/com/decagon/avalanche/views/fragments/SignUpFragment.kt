@@ -145,7 +145,13 @@ class SignUpFragment : Fragment() {
         val _lName = lastName.editText?.text.toString().trim()
         val _email = email.editText?.text.toString().trim()
         val _pwd = password.editText?.text.toString().trim()
-        val _enteredPhoneNumber = phoneNumber.editText?.text.toString().trim()
+        var _enteredPhoneNumber = phoneNumber.editText?.text.toString().trim()
+
+
+        if(_enteredPhoneNumber[0] == '0') {
+            _enteredPhoneNumber = _enteredPhoneNumber.substring(1)
+        }
+
         val _phoneNo = "+"+countryCodePicker.fullNumber+_enteredPhoneNumber
 
         val action = SignUpFragmentDirections.actionSignUpFragmentToVerifyOtpFragment(_phoneNo, _fName, _lName, _pwd,_email)

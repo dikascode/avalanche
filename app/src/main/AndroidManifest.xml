@@ -15,7 +15,9 @@
         android:theme="@style/Theme.Avalanche">
         <activity
             android:name=".views.MainActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

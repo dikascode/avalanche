@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/welcomeFragment">
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.decagon.avalanche.views.fragments.MainFragment"
@@ -40,4 +40,44 @@
         android:name="com.decagon.avalanche.views.fragments.FailedTransactionFragment"
         android:label="fragment_failed_transaction"
         tools:layout="@layout/fragment_failed_transaction" />
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.decagon.avalanche.views.fragments.WelcomeFragment"
+        android:label="fragment_welcome"
+        tools:layout="@layout/fragment_welcome" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.decagon.avalanche.views.fragments.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.decagon.avalanche.views.fragments.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFragment_to_verifyOtpFragment"
+            app:destination="@id/verifyOtpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verifyOtpFragment"
+        android:name="com.decagon.avalanche.views.fragments.VerifyOtpFragment"
+        android:label="fragment_verify_otp"
+        tools:layout="@layout/fragment_verify_otp" >
+        <argument
+            android:name="user_number"
+            app:argType="string" />
+        <argument
+            android:name="user_fName"
+            app:argType="string" />
+        <argument
+            android:name="user_lName"
+            app:argType="string" />
+        <argument
+            android:name="user_pwd"
+            app:argType="string" />
+        <argument
+            android:name="user_email"
+            app:argType="string" />
+    </fragment>
 </navigation>

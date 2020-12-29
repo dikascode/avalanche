@@ -71,6 +71,8 @@ class MainFragment : Fragment() {
     private fun implementMainGridLayoutRecyclerView(viewModelLiveData: MutableLiveData<List<Product>>) {
         val recyclerView = binding.fragmentMainRv
 
+        binding.progressBarLayout.fragmentMainProgressBar.visibility = View.VISIBLE
+
         binding.fragmentMainRv.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
@@ -86,6 +88,7 @@ class MainFragment : Fragment() {
 
         //Observe live data from view model class
         viewModelLiveData.observe(viewLifecycleOwner, {
+
             recyclerView.apply {
                 layoutManager = GridLayoutManager(activity, 2)
                 adapter =

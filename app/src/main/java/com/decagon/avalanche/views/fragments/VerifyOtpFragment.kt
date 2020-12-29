@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -16,7 +17,10 @@ import com.decagon.avalanche.databinding.FragmentVerifyOtpBinding
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.util.concurrent.TimeUnit
 
 
@@ -30,6 +34,7 @@ class VerifyOtpFragment : Fragment() {
     lateinit var storedVerificationId: String
     lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
     lateinit var addNewUser: User
+    lateinit var progressBar: ProgressBar
 
     private val args: VerifyOtpFragmentArgs by navArgs()
 
@@ -39,6 +44,9 @@ class VerifyOtpFragment : Fragment() {
     private lateinit var lName: String
     private lateinit var fName: String
     private lateinit var email: String
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +63,9 @@ class VerifyOtpFragment : Fragment() {
         fName = args.userFName
         email = args.userEmail
 
+        progressBar = binding.progressBarLayout.fragmentMainProgressBar
+        progressBar.visibility = View.VISIBLE
+
         addNewUser = User(fName, lName, email, phoneNumber, pwd, false)
 
         Log.d("TAG", "onVerificationCompleted:$phoneNumber")
@@ -62,8 +73,6 @@ class VerifyOtpFragment : Fragment() {
 
         //hooks
         pinFromUser = binding.pinView
-
-
 
         binding.verifyBtn.setOnClickListener {
             val code = pinFromUser.text.toString()
@@ -123,13 +132,14 @@ class VerifyOtpFragment : Fragment() {
     }
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-
         auth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Toast.makeText(requireContext(), "Verification completed.", Toast.LENGTH_LONG)
                         .show()
+
+                    progressBar.visibility = View.GONE
 
                     val user = task.result?.user
                     Log.d("TAG", "signInWithCredential:success. $user")
@@ -157,7 +167,8 @@ class VerifyOtpFragment : Fragment() {
     private fun storeNewUserDataInFirebase() {
         val rootNode = FirebaseDatabase.getInstance()
         val reference = rootNode.getReference("Users")
-        reference.child(email).setValue(addNewUser)
+        reference.child(phoneNumber).setValue(addNewUser)
+
     }
 
     private fun sendVerificationCode(phoneNumber: String) {

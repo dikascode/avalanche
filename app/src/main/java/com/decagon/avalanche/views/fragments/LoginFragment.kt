@@ -15,15 +15,16 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
+import com.hbb20.CountryCodePicker
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var email: TextInputLayout
+    lateinit var phone: TextInputLayout
     lateinit var password: TextInputLayout
     lateinit var progressBar: ProgressBar
+    lateinit var countryCodePicker: CountryCodePicker
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,9 +34,10 @@ class LoginFragment : Fragment() {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         //hooks
-        email = binding.userEmailEt
+        phone = binding.userPhoneEt
         password = binding.userPasswordEt
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
+        countryCodePicker = binding.countryCodePicker
 
 
 
@@ -60,31 +62,41 @@ class LoginFragment : Fragment() {
 
         progressBar.visibility = View.VISIBLE
 
-        val _email = email.editText?.text.toString().trim()
+        var _phone = phone.editText?.text.toString().trim()
         val _password = password.editText?.text.toString().trim()
 
+        if (_phone[0] == '0') {
+            _phone = _phone.substring(1)
+        }
+
+        val _enteredNumber = "+" + countryCodePicker.fullNumber + _phone
+
         //DB query
-        val checkUser = FirebaseDatabase.getInstance().getReference("Users").orderByChild("email")
-            .equalTo(_email)
+        val checkUser =
+            FirebaseDatabase.getInstance().getReference("Users").orderByChild("phoneNumber")
+                .equalTo(_enteredNumber)
 
         checkUser.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    email.error = null
-                    email.isErrorEnabled = false
+                    phone.error = null
+                    phone.isErrorEnabled = false
 
                     val systemPassword =
-                        snapshot.child(_email).child("password").getValue(String::class.java)
+                        snapshot.child(_enteredNumber).child("password")
+                            .getValue(String::class.java)
 
                     if (systemPassword != null) {
                         if (systemPassword == _password) {
                             password.error = null
                             password.isErrorEnabled = false
 
-//                            val _fname = snapshot.child(_email).child("firstName").getValue(String::class.java)
-//                            val _lname = snapshot.child(_email).child("lastName").getValue(String::class.java)
-                            val  email = snapshot.child(_email).child("email").getValue(String::class.java)
-//                            val _phone = snapshot.child(_email).child("phoneNumber").getValue(String::class.java)
+//                            val fname = snapshot.child(_enteredNumber).child("firstName").getValue(String::class.java)
+//                            val lname = snapshot.child(_enteredNumber).child("lastName").getValue(String::class.java)
+                            val email =
+                                snapshot.child(_enteredNumber).child("email")
+                                    .getValue(String::class.java)
+//                            val phone = snapshot.child(_enteredNumber).child("phoneNumber").getValue(String::class.java)
 
                             Toast.makeText(requireContext(), "$email", Toast.LENGTH_LONG)
                                 .show()
@@ -116,13 +128,13 @@ class LoginFragment : Fragment() {
     }
 
     private fun validateInputFields(): Boolean {
-        val _email = email.editText?.text.toString().trim()
+        val _phone = phone.editText?.text.toString().trim()
         val _password = password.editText?.text.toString().trim()
 
         return when {
-            _email.isEmpty() -> {
-                email.error = "Email cannot be empty"
-                email.requestFocus()
+            _phone.isEmpty() -> {
+                phone.error = "Email cannot be empty"
+                phone.requestFocus()
 
                 password.error = null
                 password.isErrorEnabled = false
@@ -132,16 +144,16 @@ class LoginFragment : Fragment() {
                 password.error = "Password cannot be empty"
                 password.requestFocus()
 
-                email.error = null
-                email.isErrorEnabled = false
+                phone.error = null
+                phone.isErrorEnabled = false
                 false
             }
             else -> {
                 password.error = null
                 password.isErrorEnabled = false
 
-                email.error = null
-                email.isErrorEnabled = false
+                phone.error = null
+                phone.isErrorEnabled = false
                 true
             }
         }

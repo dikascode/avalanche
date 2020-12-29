@@ -5,10 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentSignUpBinding
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.hbb20.CountryCodePicker
 
 class SignUpFragment : Fragment() {
@@ -21,6 +27,7 @@ class SignUpFragment : Fragment() {
     lateinit var password: TextInputLayout
     lateinit var phoneNumber: TextInputLayout
     lateinit var countryCodePicker: CountryCodePicker
+    lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,8 +44,10 @@ class SignUpFragment : Fragment() {
         phoneNumber = binding.userNumberEt
         countryCodePicker = binding.countryCodePicker
 
+        progressBar = binding.progressBarLayout.fragmentMainProgressBar
+
         binding.createAccountBtn.setOnClickListener {
-            if( validateFirstName() && validateLastName() && validateEmail() && validatePhoneNumber() && validatePassword()) {
+            if (validateFirstName() && validateLastName() && validateEmail() && validatePhoneNumber() && validatePassword()) {
                 passDataToVerifyOTPScreen()
             }
         }
@@ -63,10 +72,10 @@ class SignUpFragment : Fragment() {
     private fun validateFirstName(): Boolean {
         val string = firstName.editText?.text.toString().trim()
 
-        return if(string.isEmpty()){
+        return if (string.isEmpty()) {
             firstName.error = "Field cannot be empty"
             false
-        }else {
+        } else {
             firstName.error = null
             firstName.isEnabled = false
             true
@@ -76,10 +85,10 @@ class SignUpFragment : Fragment() {
     private fun validateLastName(): Boolean {
         val string = lastName.editText?.text.toString().trim()
 
-        return if(string.isEmpty()){
+        return if (string.isEmpty()) {
             lastName.error = "Field cannot be empty"
             false
-        }else {
+        } else {
             lastName.error = null
             lastName.isEnabled = false
             true
@@ -90,10 +99,10 @@ class SignUpFragment : Fragment() {
         val string = email.editText?.text.toString().trim()
         val checkEmail = "[a-zA-Z0-9._-]+@[a-z]+.+[a-z]+"
 
-        return if(string.isEmpty()){
+        return if (string.isEmpty()) {
             email.error = "Field cannot be empty"
             false
-        } else if(!string.matches(checkEmail.toRegex())) {
+        } else if (!string.matches(checkEmail.toRegex())) {
             email.error = "Invalid Email!"
             false
         } else {
@@ -110,30 +119,30 @@ class SignUpFragment : Fragment() {
                 //"(?=.*[0-9])" +         //at least 1 digit
                 //"(?=.*[a-z])" +         //at least 1 lower case letter
                 //"(?=.*[A-Z])" +         //at least 1 upper case letter
-               // "(?=.*[a-zA-Z])" +      //any letter
+                // "(?=.*[a-zA-Z])" +      //any letter
                 //"(?=.*[@#$%^&+=])" +    //at least 1 special character
                 //"(?=S+$)" +           //no white spaces
                 //".{4}" +               //at least 4 characters
                 //"$";
 
-        return if(string.isEmpty()){
-            password.error = "Field cannot be empty"
-            false
-        } else {
-            password.error = null
-            password.isEnabled = false
-            true
-        }
+                return if (string.isEmpty()) {
+                    password.error = "Field cannot be empty"
+                    false
+                } else {
+                    password.error = null
+                    password.isEnabled = false
+                    true
+                }
     }
 
 
     private fun validatePhoneNumber(): Boolean {
         val string = phoneNumber.editText?.text.toString().trim()
 
-        return if(string.isEmpty()) {
+        return if (string.isEmpty()) {
             phoneNumber.error = "Field cannot be empty"
             false
-        }else {
+        } else {
             phoneNumber.error = null
             phoneNumber.isEnabled = false
             true
@@ -147,16 +156,53 @@ class SignUpFragment : Fragment() {
         val _pwd = password.editText?.text.toString().trim()
         var _enteredPhoneNumber = phoneNumber.editText?.text.toString().trim()
 
+        progressBar.visibility = View.VISIBLE
 
-        if(_enteredPhoneNumber[0] == '0') {
+
+        if (_enteredPhoneNumber[0] == '0') {
             _enteredPhoneNumber = _enteredPhoneNumber.substring(1)
         }
 
-        val _phoneNo = "+"+countryCodePicker.fullNumber+_enteredPhoneNumber
+        val _phoneNo = "+" + countryCodePicker.fullNumber + _enteredPhoneNumber
 
-        val action = SignUpFragmentDirections.actionSignUpFragmentToVerifyOtpFragment(_phoneNo, _fName, _lName, _pwd,_email)
 
-        findNavController().navigate(action)
+        //Verify if user exists
+        val rootNode = FirebaseDatabase.getInstance()
+        val reference = rootNode.getReference("Users")
+
+        val checkUser =
+            reference.orderByChild("phoneNumber")
+                .equalTo(_phoneNo)
+
+        checkUser.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    Toast.makeText(requireContext(), "This user already exists!", Toast.LENGTH_LONG)
+                        .show()
+
+                    progressBar.visibility = View.GONE
+                } else {
+                    progressBar.visibility = View.GONE
+
+                    val action = SignUpFragmentDirections.actionSignUpFragmentToVerifyOtpFragment(
+                        _phoneNo,
+                        _fName,
+                        _lName,
+                        _pwd,
+                        _email
+                    )
+
+                    findNavController().navigate(action)
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                progressBar.visibility = View.GONE
+                Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
+            }
+
+        })
 
 
     }

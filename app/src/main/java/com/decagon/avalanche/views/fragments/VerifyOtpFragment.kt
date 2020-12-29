@@ -44,6 +44,7 @@ class VerifyOtpFragment : Fragment() {
     private lateinit var lName: String
     private lateinit var fName: String
     private lateinit var email: String
+    private lateinit var intention: String
 
 
 
@@ -62,14 +63,14 @@ class VerifyOtpFragment : Fragment() {
         lName = args.userLName
         fName = args.userFName
         email = args.userEmail
+        intention = args.intention
 
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
         progressBar.visibility = View.VISIBLE
 
         addNewUser = User(fName, lName, email, phoneNumber, pwd, false)
 
-        Log.d("TAG", "onVerificationCompleted:$phoneNumber")
-        Log.d("TAG", "onVerificationCompleted:$email")
+        Log.d("TAG", "onVerificationCompleted:$intention")
 
         //hooks
         pinFromUser = binding.pinView
@@ -144,8 +145,13 @@ class VerifyOtpFragment : Fragment() {
                     val user = task.result?.user
                     Log.d("TAG", "signInWithCredential:success. $user")
 
-                    storeNewUserDataInFirebase()
-                    findNavController().navigate(R.id.mainFragment)
+                    if(intention == "updateData") {
+                        updateOldUserData()
+                    } else {
+                        storeNewUserDataInFirebase()
+                        findNavController().navigate(R.id.mainFragment)
+                    }
+
 
                 } else {
                     // Sign in failed, display a message and update the UI
@@ -164,6 +170,11 @@ class VerifyOtpFragment : Fragment() {
             }
     }
 
+    private fun updateOldUserData() {
+        val action = VerifyOtpFragmentDirections.actionVerifyOtpFragmentToSetNewPasswordFragment(phoneNumber)
+        findNavController().navigate(action)
+    }
+
     private fun storeNewUserDataInFirebase() {
         val rootNode = FirebaseDatabase.getInstance()
         val reference = rootNode.getReference("Users")
@@ -179,6 +190,8 @@ class VerifyOtpFragment : Fragment() {
             .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
             .build()
         PhoneAuthProvider.verifyPhoneNumber(options)
+
+        progressBar.visibility = View.GONE
     }
 
     private fun verifyVerificationCode(code: String) {

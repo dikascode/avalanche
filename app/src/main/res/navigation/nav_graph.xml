@@ -79,5 +79,41 @@
         <argument
             android:name="user_email"
             app:argType="string" />
+        <argument
+            android:name="intention"
+            app:argType="string"
+            android:defaultValue="saveData" />
+        <action
+            android:id="@+id/action_verifyOtpFragment_to_setNewPasswordFragment"
+            app:destination="@id/setNewPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.decagon.avalanche.views.fragments.ForgotPasswordFragment"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" >
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_verifyOtpFragment"
+            app:destination="@id/verifyOtpFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotPasswordSelectionFragment"
+        android:name="com.decagon.avalanche.views.fragments.ForgotPasswordSelectionFragment"
+        android:label="fragment_forgot_password_selection"
+        tools:layout="@layout/fragment_forgot_password_selection" />
+    <fragment
+        android:id="@+id/forgotPwdSuccessMessageFragment"
+        android:name="com.decagon.avalanche.views.fragments.ForgotPwdSuccessMessageFragment"
+        android:label="fragment_forgot_pwd_sucesss_message"
+        tools:layout="@layout/fragment_forgot_pwd_sucesss_message" />
+    <fragment
+        android:id="@+id/setNewPasswordFragment"
+        android:name="com.decagon.avalanche.views.fragments.SetNewPasswordFragment"
+        android:label="fragment_set_new_password"
+        tools:layout="@layout/fragment_set_new_password" >
+        <argument
+            android:name="phoneNumber"
+            app:argType="string" />
     </fragment>
 </navigation>

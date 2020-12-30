@@ -39,8 +39,6 @@ class LoginFragment : Fragment() {
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
         countryCodePicker = binding.countryCodePicker
 
-
-
         binding.loginBtn.setOnClickListener {
             letUserLoggedIn()
         }
@@ -51,6 +49,10 @@ class LoginFragment : Fragment() {
 
         binding.backBtn.setOnClickListener {
             findNavController().navigateUp()
+        }
+
+        binding.forgotPwdBtn.setOnClickListener {
+            findNavController().navigate(R.id.forgotPasswordFragment)
         }
         return binding.root
     }

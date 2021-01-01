@@ -1,12 +1,14 @@
 package com.decagon.avalanche.views.fragments
 
 import android.os.Bundle
+import android.os.UserManager
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentLoginBinding
@@ -16,6 +18,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.hbb20.CountryCodePicker
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
@@ -26,12 +30,16 @@ class LoginFragment : Fragment() {
     lateinit var progressBar: ProgressBar
     lateinit var countryCodePicker: CountryCodePicker
 
+    lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
+
+        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireContext())
 
         //hooks
         phone = binding.userPhoneEt
@@ -93,15 +101,22 @@ class LoginFragment : Fragment() {
                             password.error = null
                             password.isErrorEnabled = false
 
-//                            val fname = snapshot.child(_enteredNumber).child("firstName").getValue(String::class.java)
+                            val fname = snapshot.child(_enteredNumber).child("firstName").getValue(String::class.java)
 //                            val lname = snapshot.child(_enteredNumber).child("lastName").getValue(String::class.java)
                             val email =
                                 snapshot.child(_enteredNumber).child("email")
                                     .getValue(String::class.java)
-//                            val phone = snapshot.child(_enteredNumber).child("phoneNumber").getValue(String::class.java)
+                            val phone = snapshot.child(_enteredNumber).child("phoneNumber").getValue(String::class.java)
 
-                            Toast.makeText(requireContext(), "$email", Toast.LENGTH_LONG)
-                                .show()
+                            //Save user data to DataStore
+                            GlobalScope.launch {
+                                userManager.storeUser(fname!!, email!!, phone!!)
+                            }
+
+                            userManager.userPhoneFlow.asLiveData().observe(requireActivity(), {
+                                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG)
+                                    .show()
+                            })
 
                             findNavController().navigate(R.id.mainFragment)
                         } else {

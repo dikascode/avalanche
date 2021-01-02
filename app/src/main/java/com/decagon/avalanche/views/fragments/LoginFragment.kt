@@ -1,11 +1,11 @@
 package com.decagon.avalanche.views.fragments
 
 import android.os.Bundle
-import android.os.UserManager
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.lifecycle.asLiveData
@@ -29,6 +29,7 @@ class LoginFragment : Fragment() {
     lateinit var password: TextInputLayout
     lateinit var progressBar: ProgressBar
     lateinit var countryCodePicker: CountryCodePicker
+    lateinit var rememberMe: CheckBox
 
     lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
 
@@ -46,6 +47,14 @@ class LoginFragment : Fragment() {
         password = binding.userPasswordEt
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
         countryCodePicker = binding.countryCodePicker
+        rememberMe = binding.rememberMe
+
+
+        /**
+         * Set phone and password into login edit fields if rememberMe already saved
+         */
+        checkAndImplementRememberMe()
+
 
         binding.loginBtn.setOnClickListener {
             letUserLoggedIn()
@@ -65,6 +74,27 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    private fun checkAndImplementRememberMe() {
+        userManager.rmUserPhoneFlow.asLiveData().observe(requireActivity(), { phoneNumber ->
+            if (phoneNumber != "") {
+                phone.editText?.setText(phoneNumber)
+                rememberMe.isChecked = true
+            }
+        })
+
+        userManager.rmUserPasswordFlow.asLiveData().observe(requireActivity(), { pwd ->
+            if (pwd != "") {
+                password.editText?.setText(pwd)
+            }
+        })
+
+        userManager.rmCountryCodeFlow.asLiveData().observe(requireActivity(), { code ->
+            if (code != "") {
+                countryCodePicker.setCountryForPhoneCode(code.toInt())
+            }
+        })
+    }
+
     private fun letUserLoggedIn() {
         if (!validateInputFields()) {
             return
@@ -81,11 +111,19 @@ class LoginFragment : Fragment() {
 
         val _enteredNumber = "+" + countryCodePicker.fullNumber + _phone
 
+        if(rememberMe.isChecked){
+            //Save user login data to DataStore
+            GlobalScope.launch {
+                userManager.createRememberMeSession(_phone, _password, countryCodePicker.fullNumber)
+            }
+        }
+
         //DB query
         val checkUser =
             FirebaseDatabase.getInstance().getReference("Users").orderByChild("phoneNumber")
                 .equalTo(_enteredNumber)
 
+        //Check if user exists
         checkUser.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
@@ -108,15 +146,10 @@ class LoginFragment : Fragment() {
                                     .getValue(String::class.java)
                             val phone = snapshot.child(_enteredNumber).child("phoneNumber").getValue(String::class.java)
 
-                            //Save user data to DataStore
+                            //Save user login data to DataStore
                             GlobalScope.launch {
                                 userManager.storeUser(fname!!, email!!, phone!!)
                             }
-
-                            userManager.userPhoneFlow.asLiveData().observe(requireActivity(), {
-                                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG)
-                                    .show()
-                            })
 
                             findNavController().navigate(R.id.mainFragment)
                         } else {

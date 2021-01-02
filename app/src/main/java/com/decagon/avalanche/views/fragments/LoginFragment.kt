@@ -5,8 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentLoginBinding
@@ -16,6 +18,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.hbb20.CountryCodePicker
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
@@ -25,6 +29,9 @@ class LoginFragment : Fragment() {
     lateinit var password: TextInputLayout
     lateinit var progressBar: ProgressBar
     lateinit var countryCodePicker: CountryCodePicker
+    lateinit var rememberMe: CheckBox
+
+    lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,11 +40,21 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
+        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireContext())
+
         //hooks
         phone = binding.userPhoneEt
         password = binding.userPasswordEt
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
         countryCodePicker = binding.countryCodePicker
+        rememberMe = binding.rememberMe
+
+
+        /**
+         * Set phone and password into login edit fields if rememberMe already saved
+         */
+        checkAndImplementRememberMe()
+
 
         binding.loginBtn.setOnClickListener {
             letUserLoggedIn()
@@ -57,6 +74,27 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    private fun checkAndImplementRememberMe() {
+        userManager.rmUserPhoneFlow.asLiveData().observe(requireActivity(), { phoneNumber ->
+            if (phoneNumber != "") {
+                phone.editText?.setText(phoneNumber)
+                rememberMe.isChecked = true
+            }
+        })
+
+        userManager.rmUserPasswordFlow.asLiveData().observe(requireActivity(), { pwd ->
+            if (pwd != "") {
+                password.editText?.setText(pwd)
+            }
+        })
+
+        userManager.rmCountryCodeFlow.asLiveData().observe(requireActivity(), { code ->
+            if (code != "") {
+                countryCodePicker.setCountryForPhoneCode(code.toInt())
+            }
+        })
+    }
+
     private fun letUserLoggedIn() {
         if (!validateInputFields()) {
             return
@@ -73,11 +111,19 @@ class LoginFragment : Fragment() {
 
         val _enteredNumber = "+" + countryCodePicker.fullNumber + _phone
 
+        if(rememberMe.isChecked){
+            //Save user login data to DataStore
+            GlobalScope.launch {
+                userManager.createRememberMeSession(_phone, _password, countryCodePicker.fullNumber)
+            }
+        }
+
         //DB query
         val checkUser =
             FirebaseDatabase.getInstance().getReference("Users").orderByChild("phoneNumber")
                 .equalTo(_enteredNumber)
 
+        //Check if user exists
         checkUser.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
@@ -93,15 +139,17 @@ class LoginFragment : Fragment() {
                             password.error = null
                             password.isErrorEnabled = false
 
-//                            val fname = snapshot.child(_enteredNumber).child("firstName").getValue(String::class.java)
+                            val fname = snapshot.child(_enteredNumber).child("firstName").getValue(String::class.java)
 //                            val lname = snapshot.child(_enteredNumber).child("lastName").getValue(String::class.java)
                             val email =
                                 snapshot.child(_enteredNumber).child("email")
                                     .getValue(String::class.java)
-//                            val phone = snapshot.child(_enteredNumber).child("phoneNumber").getValue(String::class.java)
+                            val phone = snapshot.child(_enteredNumber).child("phoneNumber").getValue(String::class.java)
 
-                            Toast.makeText(requireContext(), "$email", Toast.LENGTH_LONG)
-                                .show()
+                            //Save user login data to DataStore
+                            GlobalScope.launch {
+                                userManager.storeUser(fname!!, email!!, phone!!)
+                            }
 
                             findNavController().navigate(R.id.mainFragment)
                         } else {

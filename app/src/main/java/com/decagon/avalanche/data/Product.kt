@@ -2,17 +2,24 @@ package com.decagon.avalanche.data
 
 import com.google.gson.annotations.SerializedName
 
-data class Product(
-    @SerializedName("name")
-    val title: String,
+class Product {
 
-    @SerializedName("photo_url")
-    val photoUrl: String,
+    var title: String = "Short"
+    var photoUrl: String = "https://finepointmobile.com/api/ecommerce/redHat.jpg"
+    var price: Double = 192.95
+    var desc: String =
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+    var isOnSale: Boolean = true
 
-    val price: Double,
+    constructor() {
 
-    @SerializedName("description")
-    val desc: String,
+    }
 
-    val isOnSale: Boolean
-)
+    constructor(title: String, photoUrl: String, price: Double, desc: String, isOnSale: Boolean ) {
+        this.title = title
+        this.photoUrl = photoUrl
+        this.price = price
+        this.desc = desc
+        this.isOnSale = isOnSale
+    }
+}

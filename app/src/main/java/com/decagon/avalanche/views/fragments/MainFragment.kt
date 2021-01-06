@@ -3,6 +3,7 @@ package com.decagon.avalanche.views.fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -88,33 +89,29 @@ class MainFragment : Fragment() {
 
         //Observe live data from view model class
         viewModelLiveData.observe(viewLifecycleOwner, {
+            Log.d("TAG", "Products: ${it.size}")
 
-            recyclerView.apply {
-                layoutManager = GridLayoutManager(activity, 2)
-                adapter =
-                    ProductsAdapter(
-                        it as ArrayList<Product>,
-                        requireActivity()
-                    ) { extraTitle, extraImageUrl, photoView ->
+            if(it.isNotEmpty()) {
+                //Hide Progressbar on load of products
+                binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
 
-                        //Shared elements transition animations
-//                        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-//                            activity as AppCompatActivity,
-//                            photoView,
-//                            "photoToAnimate"
-//                        )
+                recyclerView.apply {
+                    layoutManager = GridLayoutManager(activity, 2)
+                    adapter =
+                        ProductsAdapter(
+                            it as ArrayList<Product>,
+                            requireActivity()
+                        ) { extraTitle, extraImageUrl, photoView ->
+                            val action =
+                                MainFragmentDirections.actionMainFragmentToProductDetailsFragment(
+                                    extraTitle
+                                )
 
-                        val action =
-                            MainFragmentDirections.actionMainFragmentToProductDetailsFragment(
-                                extraTitle
-                            )
-
-                        findNavController().navigate(action)
-                    }
+                            findNavController().navigate(action)
+                        }
+                }
             }
 
-            //Hide Progressbar on load of products
-            binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
         })
     }
 

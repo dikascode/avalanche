@@ -1,75 +1,86 @@
 package com.decagon.avalanche.views.fragments
 
 
-
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
 import com.decagon.avalanche.adapters.CategoriesAdapter
 import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.room.AvalancheDatabase
-import com.decagon.avalanche.room.RoomBuilder
-
-import com.decagon.avalanche.viewmodels.ProductsListViewModel
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 
 class MainFragment : Fragment() {
-
+    var productsList = ArrayList<Product>()
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
     lateinit var db: AvalancheDatabase
-
-    lateinit var viewModel: ProductsListViewModel
+    lateinit var adapter: ProductsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         val view = binding.root
         setHasOptionsMenu(true)
 
-        val networkConnection = NetworkStatusChecker(requireContext())
-        viewModel = ViewModelProvider(this).get(ProductsListViewModel::class.java)
+        var reference = FirebaseDatabase.getInstance().reference.child("Products")
 
-        networkConnection.observe(viewLifecycleOwner, { isConnected ->
-            if (isConnected) {
-                viewModel.showProducts()
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (dataSnapshot in snapshot.children) {
+                        val product: Product? = dataSnapshot.getValue(Product::class.java)
 
-                implementMainGridLayoutRecyclerView(viewModel.productsLiveData)
+                        //Log.d("TAG", "Products: ${product?.title}")
+                        if (product != null) {
+                            productsList.add(product)
+                        }
+                        //Log.d("TAG", "size: ${productsList.size}")
+                    }
 
-                //Build room database
-                db = RoomBuilder.getDatabase(requireActivity().applicationContext)
+                    implementMainGridLayoutRecyclerView(productsList)
 
-                //Categories recycler view
-                implementLinearRecyclerViewForCategories()
-
-            }else {
-                viewModel.productsLiveData.removeObservers(viewLifecycleOwner)
+                    //Hide Progressbar on load of products
+                    if (productsList.size > 0) {
+                        binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
+                    }
+                }
             }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("TAG", "onCancelled: $error")
+            }
+
         })
+
+
+        //Build room database
+        //db = RoomBuilder.getDatabase(requireActivity().applicationContext)
 
         return view
 
     }
 
-    private fun implementMainGridLayoutRecyclerView(viewModelLiveData: MutableLiveData<List<Product>>) {
+
+    private fun implementMainGridLayoutRecyclerView(productsList: ArrayList<Product>) {
         val recyclerView = binding.fragmentMainRv
 
         binding.progressBarLayout.fragmentMainProgressBar.visibility = View.VISIBLE
@@ -87,32 +98,25 @@ class MainFragment : Fragment() {
             )
         )
 
-        //Observe live data from view model class
-        viewModelLiveData.observe(viewLifecycleOwner, {
-            Log.d("TAG", "Products: ${it.size}")
+        adapter =
+            ProductsAdapter(
+                productsList,
+                requireActivity()
+            ) { extraTitle, extraImageUrl, photoView ->
+                val action =
+                    MainFragmentDirections.actionMainFragmentToProductDetailsFragment(
+                        extraTitle
+                    )
 
-            if(it.isNotEmpty()) {
-                //Hide Progressbar on load of products
-                binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
-
-                recyclerView.apply {
-                    layoutManager = GridLayoutManager(activity, 2)
-                    adapter =
-                        ProductsAdapter(
-                            it as ArrayList<Product>,
-                            requireActivity()
-                        ) { extraTitle, extraImageUrl, photoView ->
-                            val action =
-                                MainFragmentDirections.actionMainFragmentToProductDetailsFragment(
-                                    extraTitle
-                                )
-
-                            findNavController().navigate(action)
-                        }
-                }
+                findNavController().navigate(action)
             }
+        adapter.notifyDataSetChanged()
 
-        })
+        recyclerView.layoutManager = GridLayoutManager(activity, 2)
+
+        recyclerView.adapter = adapter
+
+
     }
 
     private fun implementLinearRecyclerViewForCategories() {
@@ -139,11 +143,23 @@ class MainFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText != null) {
-                    val searchString = "$newText"
+
+                    val filteredProducts = productsList.filter {
+                        it.title.contains(newText, true)
+                    }
+
+                    //Log.d("TAG", "filter: ${filteredProducts.size}")
 
                     //Get search product from repository api method for search
-                    viewModel.searchProducts(searchString)
-                    implementMainGridLayoutRecyclerView(viewModel.productsSearchLiveData)
+                    //firebaseProducts.getFilteredProducts(searchString)
+                    implementMainGridLayoutRecyclerView(filteredProducts as ArrayList<Product>)
+                    if (filteredProducts.isNotEmpty()) {
+                        binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
+                    } else {
+                        Toast.makeText(requireContext(),
+                            "This product is not available yet. Search for another product",
+                            Toast.LENGTH_LONG).show()
+                    }
 
                 }
 

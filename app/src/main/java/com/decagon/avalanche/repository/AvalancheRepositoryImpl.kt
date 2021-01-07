@@ -23,7 +23,7 @@ class AvalancheRepositoryImpl() : AvalancheRepository {
    private var reference = FirebaseDatabase.getInstance().reference.child("Products")
 
 
-    override suspend fun getAllProducts(): List<Product> {
+    override fun getAllProducts(): List<Product> {
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()) {
@@ -37,9 +37,6 @@ class AvalancheRepositoryImpl() : AvalancheRepository {
 
                     }
                 }
-
-
-
             }
 
             override fun onCancelled(error: DatabaseError) {

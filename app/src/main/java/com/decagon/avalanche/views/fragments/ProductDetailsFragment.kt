@@ -26,6 +26,7 @@ class ProductDetailsFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var firebaseProducts: FirebaseProducts
+
     //lateinit var productDetails: Product
     private var reference = FirebaseDatabase.getInstance().getReference("Products")
 
@@ -44,7 +45,7 @@ class ProductDetailsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         _binding = FragmentProductDetailsBinding.inflate(inflater, container, false)
         val view = binding.root
@@ -57,10 +58,10 @@ class ProductDetailsFragment : Fragment() {
 
         val checkProduct = reference.orderByChild("title").equalTo(productTitle)
 
-        checkProduct.addListenerForSingleValueEvent(object : ValueEventListener {
+        checkProduct.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    val product = snapshot.getValue(Product::class.java)
+                    val product = snapshot.child(productTitle).getValue(Product::class.java)
                     if (product != null) {
                         bindProductDataToLayout(product)
                     }

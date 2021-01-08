@@ -176,8 +176,7 @@ class VerifyOtpFragment : Fragment() {
     }
 
     private fun storeNewUserDataInFirebase() {
-        val rootNode = FirebaseDatabase.getInstance()
-        val reference = rootNode.getReference("Users")
+        val reference = FirebaseDatabase.getInstance().getReference("Users")
         reference.child(phoneNumber).setValue(addNewUser)
 
     }

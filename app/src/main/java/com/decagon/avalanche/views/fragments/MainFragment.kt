@@ -17,6 +17,7 @@ import com.decagon.avalanche.adapters.CategoriesAdapter
 import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
+import com.decagon.avalanche.firebase.FirebaseReference
 import com.decagon.avalanche.room.AvalancheDatabase
 import com.google.firebase.database.*
 
@@ -30,7 +31,7 @@ class MainFragment : Fragment() {
     lateinit var db: AvalancheDatabase
     lateinit var adapter: ProductsAdapter
 
-    var reference = FirebaseDatabase.getInstance().reference.child("Products")
+    private val reference = FirebaseReference.reference
 
     override fun onCreateView(
         inflater: LayoutInflater,

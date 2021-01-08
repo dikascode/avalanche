@@ -13,6 +13,7 @@ import com.decagon.avalanche.R
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.databinding.FragmentProductDetailsBinding
 import com.decagon.avalanche.firebase.FirebaseProducts
+import com.decagon.avalanche.firebase.FirebaseReference
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
@@ -26,9 +27,7 @@ class ProductDetailsFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var firebaseProducts: FirebaseProducts
-
-    //lateinit var productDetails: Product
-    private var reference = FirebaseDatabase.getInstance().getReference("Products")
+    private val reference = FirebaseReference.reference
 
 
     private lateinit var storeViewModel: StoreViewModel

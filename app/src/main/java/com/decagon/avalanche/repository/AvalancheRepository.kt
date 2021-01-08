@@ -6,7 +6,7 @@ import com.decagon.avalanche.data.CartItem
 import com.decagon.avalanche.data.Product
 
 interface AvalancheRepository {
-    suspend fun getAllProducts(): List<Product>
+  fun getAllProducts(): List<Product>
 
     suspend fun searchForProducts(term: String): List<Product>
 

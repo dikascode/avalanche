@@ -20,6 +20,7 @@ class AdminFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val PICK_IMAGE_CODE = 0
+    private val image = binding.productImageIv
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +70,6 @@ class AdminFragment : Fragment() {
         val title = binding.productNameEt.text
         val price = binding.productPriceEt.text
         val desc = binding.productDescEt.text
-        val image = binding.productImageIv
 
         Log.d("TAG", "saveProductToRoom: $title, $price")
 
@@ -134,9 +134,9 @@ class AdminFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == PICK_IMAGE_CODE) {
-            if(resultCode == Activity.RESULT_OK) {
-                binding.productImageIv.setImageURI(data?.data)
+        if (requestCode == PICK_IMAGE_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                image.setImageURI(data?.data)
             }
         }
     }

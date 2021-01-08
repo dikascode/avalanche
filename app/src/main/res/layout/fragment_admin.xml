@@ -94,13 +94,18 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/admin_fragment_submitBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
         android:backgroundTint="@color/black"
         android:text="Submit"
+        android:textSize="26sp"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/linearLayout" />
 
 

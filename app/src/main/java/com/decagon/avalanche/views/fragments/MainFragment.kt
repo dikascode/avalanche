@@ -32,11 +32,6 @@ class MainFragment : Fragment() {
 
     var reference = FirebaseDatabase.getInstance().reference.child("Products")
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        implementFirebase(reference)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,8 +41,7 @@ class MainFragment : Fragment() {
         val view = binding.root
         setHasOptionsMenu(true)
 
-
-
+        implementFirebase(reference)
         //Build room database
         //db = RoomBuilder.getDatabase(requireActivity().applicationContext)
 
@@ -63,7 +57,7 @@ class MainFragment : Fragment() {
                     for (dataSnapshot in snapshot.children) {
                         product = dataSnapshot.getValue(Product::class.java)!!
                         //Log.d("TAG", "Products: ${product?.title}")
-                        if(!productsList.contains(product)) {
+                        if (!productsList.contains(product)) {
                             productsList.add(product)
                             Log.d("TAG", "size: ${productsList.size}")
                         }
@@ -158,8 +152,7 @@ class MainFragment : Fragment() {
 
                     //Log.d("TAG", "filter: ${filteredProducts.size}")
 
-                    //Get search product from repository api method for search
-                    //firebaseProducts.getFilteredProducts(searchString)
+                    //Get search product from firebase
                     implementMainGridLayoutRecyclerView(filteredProducts as ArrayList<Product>)
                     if (filteredProducts.isNotEmpty()) {
                         binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE

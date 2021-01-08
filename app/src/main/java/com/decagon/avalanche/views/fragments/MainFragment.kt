@@ -18,19 +18,24 @@ import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.room.AvalancheDatabase
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 
 class MainFragment : Fragment() {
     var productsList = ArrayList<Product>()
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+    lateinit var product: Product
 
     lateinit var db: AvalancheDatabase
     lateinit var adapter: ProductsAdapter
+
+    var reference = FirebaseDatabase.getInstance().reference.child("Products")
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        implementFirebase(reference)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,19 +46,27 @@ class MainFragment : Fragment() {
         val view = binding.root
         setHasOptionsMenu(true)
 
-        var reference = FirebaseDatabase.getInstance().reference.child("Products")
 
+
+        //Build room database
+        //db = RoomBuilder.getDatabase(requireActivity().applicationContext)
+
+        return view
+
+    }
+
+    private fun implementFirebase(reference: DatabaseReference) {
         reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                productsList.clear()
                 if (snapshot.exists()) {
                     for (dataSnapshot in snapshot.children) {
-                        val product: Product? = dataSnapshot.getValue(Product::class.java)
-
+                        product = dataSnapshot.getValue(Product::class.java)!!
                         //Log.d("TAG", "Products: ${product?.title}")
-                        if (product != null) {
+                        if(!productsList.contains(product)) {
                             productsList.add(product)
+                            Log.d("TAG", "size: ${productsList.size}")
                         }
-                        //Log.d("TAG", "size: ${productsList.size}")
                     }
 
                     implementMainGridLayoutRecyclerView(productsList)
@@ -70,13 +83,6 @@ class MainFragment : Fragment() {
             }
 
         })
-
-
-        //Build room database
-        //db = RoomBuilder.getDatabase(requireActivity().applicationContext)
-
-        return view
-
     }
 
 
@@ -107,6 +113,8 @@ class MainFragment : Fragment() {
                     MainFragmentDirections.actionMainFragmentToProductDetailsFragment(
                         extraTitle
                     )
+
+                Log.d("TAG", "param: $extraTitle")
 
                 findNavController().navigate(action)
             }
@@ -156,9 +164,9 @@ class MainFragment : Fragment() {
                     if (filteredProducts.isNotEmpty()) {
                         binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
                     } else {
-                        Toast.makeText(requireContext(),
-                            "This product is not available yet. Search for another product",
-                            Toast.LENGTH_LONG).show()
+//                        Toast.makeText(requireContext(),
+//                            "This product is not available yet. Search for another product",
+//                            Toast.LENGTH_LONG).show()
                     }
 
                 }

@@ -31,6 +31,7 @@
     <string name="identity_verified_msg">Your identity has been verified. Please set your new password</string>
     <string name="new_password">New Password</string>
     <string name="please_enter_your_email">Please enter your email</string>
+    <string name="select_product_image">Select Image</string>
 
 
     <string-array name="cart_quantity_string_array">

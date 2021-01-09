@@ -69,8 +69,8 @@ class MainActivity : AppCompatActivity() {
                             findNavController(R.id.nav_host_fragment).navigate(R.id.mainFragment)
                         }
                         R.id.actionAdmin -> {
-//                            findNavController(R.id.nav_host_fragment).navigate(R.id.adminFragment)
-                            finish()
+                            findNavController(R.id.nav_host_fragment).navigate(R.id.adminFragment)
+//                            finish()
                         }
                     }
                     it.isChecked = true

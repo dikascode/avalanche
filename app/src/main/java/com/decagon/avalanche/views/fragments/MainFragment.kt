@@ -4,7 +4,6 @@ package com.decagon.avalanche.views.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -17,6 +16,7 @@ import com.decagon.avalanche.adapters.CategoriesAdapter
 import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
+import com.decagon.avalanche.firebase.FirebaseReference
 import com.decagon.avalanche.room.AvalancheDatabase
 import com.google.firebase.database.*
 
@@ -30,7 +30,7 @@ class MainFragment : Fragment() {
     lateinit var db: AvalancheDatabase
     lateinit var adapter: ProductsAdapter
 
-    var reference = FirebaseDatabase.getInstance().reference.child("Products")
+    private val reference = FirebaseReference.productReference
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,13 +87,13 @@ class MainFragment : Fragment() {
 
         binding.fragmentMainRv.addItemDecoration(
             DividerItemDecoration(
-                requireContext(),
+                requireActivity(),
                 DividerItemDecoration.VERTICAL
             )
         )
         binding.fragmentMainRv.addItemDecoration(
             DividerItemDecoration(
-                requireContext(),
+                requireActivity(),
                 DividerItemDecoration.HORIZONTAL
             )
         )
@@ -157,7 +157,7 @@ class MainFragment : Fragment() {
                     if (filteredProducts.isNotEmpty()) {
                         binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
                     } else {
-//                        Toast.makeText(requireContext(),
+//                        Toast.makeText(requireActivity(),
 //                            "This product is not available yet. Search for another product",
 //                            Toast.LENGTH_LONG).show()
                     }

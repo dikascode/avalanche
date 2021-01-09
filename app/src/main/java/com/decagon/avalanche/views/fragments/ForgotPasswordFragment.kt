@@ -96,14 +96,14 @@ class ForgotPasswordFragment : Fragment() {
 
                 } else {
                     progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "No such user exists!", Toast.LENGTH_LONG)
+                    Toast.makeText(requireActivity(), "No such user exists!", Toast.LENGTH_LONG)
                         .show()
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireActivity(), error.message, Toast.LENGTH_LONG).show()
             }
 
         })

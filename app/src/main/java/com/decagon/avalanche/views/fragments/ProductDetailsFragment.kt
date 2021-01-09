@@ -13,11 +13,11 @@ import com.decagon.avalanche.R
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.databinding.FragmentProductDetailsBinding
 import com.decagon.avalanche.firebase.FirebaseProducts
+import com.decagon.avalanche.firebase.FirebaseReference
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 
@@ -26,10 +26,8 @@ class ProductDetailsFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var firebaseProducts: FirebaseProducts
-
-    //lateinit var productDetails: Product
-    private var reference = FirebaseDatabase.getInstance().getReference("Products")
-
+    lateinit var mListener: ValueEventListener
+    private val reference = FirebaseReference.productReference
 
     private lateinit var storeViewModel: StoreViewModel
 
@@ -58,7 +56,7 @@ class ProductDetailsFragment : Fragment() {
 
         val checkProduct = reference.orderByChild("title").equalTo(productTitle)
 
-        checkProduct.addValueEventListener(object : ValueEventListener {
+       mListener = checkProduct.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     val product = snapshot.child(productTitle).getValue(Product::class.java)
@@ -79,7 +77,6 @@ class ProductDetailsFragment : Fragment() {
 
 
         //productDetails = firebaseProducts.getSingleProduct(productTitle)
-
         return view
     }
 
@@ -114,5 +111,7 @@ class ProductDetailsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        reference.removeEventListener(mListener)
     }
 }

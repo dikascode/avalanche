@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentSignUpBinding
+import com.decagon.avalanche.firebase.FirebaseReference
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,7 +32,7 @@ class SignUpFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
@@ -167,8 +168,7 @@ class SignUpFragment : Fragment() {
 
 
         //Verify if user exists
-        val rootNode = FirebaseDatabase.getInstance()
-        val reference = rootNode.getReference("Users")
+        val reference = FirebaseReference.userReference
 
         val checkUser =
             reference.orderByChild("phoneNumber")
@@ -177,7 +177,7 @@ class SignUpFragment : Fragment() {
         checkUser.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    Toast.makeText(requireContext(), "This user already exists!", Toast.LENGTH_LONG)
+                    Toast.makeText(requireActivity(), "This user already exists!", Toast.LENGTH_LONG)
                         .show()
 
                     progressBar.visibility = View.GONE
@@ -199,7 +199,7 @@ class SignUpFragment : Fragment() {
 
             override fun onCancelled(error: DatabaseError) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireActivity(), error.message, Toast.LENGTH_LONG).show()
             }
 
         })

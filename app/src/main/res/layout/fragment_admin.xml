@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
         android:text="Admin Page"
+        android:textColor="@color/black"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.066"
@@ -44,16 +45,79 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/product_name_et" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/admin_fragment_submitBtn"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/product_desc_et"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="Product Description"
+        android:inputType="text"
+        android:maxLines="10"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_price_et" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_desc_et">
+
+        <Button
+            android:id="@+id/selectProductImageBtn"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:text="@string/select_product_image"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/productImageIv"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:padding="10dp"
+            android:scaleType="centerCrop" />
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/progress_bar_layout"
+        layout="@layout/progress_bar"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/admin_fragment_submitBtn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
         android:backgroundTint="@color/black"
         android:text="Submit"
-        app:layout_constraintTop_toBottomOf="@id/product_price_et"
+        android:textSize="26sp"
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress_bar_layout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

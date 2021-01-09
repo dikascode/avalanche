@@ -80,7 +80,7 @@ class VerifyOtpFragment : Fragment() {
             if (code.isNotEmpty()) {
                 verifyVerificationCode(code)
             } else {
-                Toast.makeText(requireContext(), "Code not received", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireActivity(), "Code not received", Toast.LENGTH_LONG).show()
             }
 
         }
@@ -105,10 +105,10 @@ class VerifyOtpFragment : Fragment() {
 
                 if (e is FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
-                    Toast.makeText(requireContext(), "Invalid request", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireActivity(), "Invalid request", Toast.LENGTH_LONG).show()
                 } else if (e is FirebaseTooManyRequestsException) {
                     // The SMS quota for the project has been exceeded
-                    Toast.makeText(requireContext(), "Too many requests", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireActivity(), "Too many requests", Toast.LENGTH_LONG).show()
                 }
 
                 // Show a message and update the UI
@@ -137,7 +137,7 @@ class VerifyOtpFragment : Fragment() {
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Toast.makeText(requireContext(), "Verification completed.", Toast.LENGTH_LONG)
+                    Toast.makeText(requireActivity(), "Verification completed.", Toast.LENGTH_LONG)
                         .show()
 
                     progressBar.visibility = View.GONE
@@ -159,7 +159,7 @@ class VerifyOtpFragment : Fragment() {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         // The verification code entered was invalid
                         Toast.makeText(
-                            requireContext(),
+                            requireActivity(),
                             "Verification code is invalid. Try again!",
                             Toast.LENGTH_LONG
                         ).show()
@@ -176,8 +176,7 @@ class VerifyOtpFragment : Fragment() {
     }
 
     private fun storeNewUserDataInFirebase() {
-        val rootNode = FirebaseDatabase.getInstance()
-        val reference = rootNode.getReference("Users")
+        val reference = FirebaseDatabase.getInstance().getReference("Users")
         reference.child(phoneNumber).setValue(addNewUser)
 
     }

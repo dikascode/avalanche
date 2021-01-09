@@ -177,7 +177,7 @@ class SignUpFragment : Fragment() {
         checkUser.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    Toast.makeText(requireContext(), "This user already exists!", Toast.LENGTH_LONG)
+                    Toast.makeText(requireActivity(), "This user already exists!", Toast.LENGTH_LONG)
                         .show()
 
                     progressBar.visibility = View.GONE
@@ -199,7 +199,7 @@ class SignUpFragment : Fragment() {
 
             override fun onCancelled(error: DatabaseError) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireActivity(), error.message, Toast.LENGTH_LONG).show()
             }
 
         })

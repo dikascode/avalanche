@@ -68,7 +68,7 @@ class SetNewPasswordFragment : Fragment() {
 
         fireBaseReference.child(phoneNumber).child("password").setValue(_newPassword)
 
-        Toast.makeText(requireContext(), "Password Updated Successfully", Toast.LENGTH_LONG).show()
+        Toast.makeText(requireActivity(), "Password Updated Successfully", Toast.LENGTH_LONG).show()
 
         findNavController().navigate(R.id.forgotPwdSuccessMessageFragment)
     }

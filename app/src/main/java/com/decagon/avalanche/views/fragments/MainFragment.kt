@@ -87,13 +87,13 @@ class MainFragment : Fragment() {
 
         binding.fragmentMainRv.addItemDecoration(
             DividerItemDecoration(
-                requireContext(),
+                requireActivity(),
                 DividerItemDecoration.VERTICAL
             )
         )
         binding.fragmentMainRv.addItemDecoration(
             DividerItemDecoration(
-                requireContext(),
+                requireActivity(),
                 DividerItemDecoration.HORIZONTAL
             )
         )
@@ -157,7 +157,7 @@ class MainFragment : Fragment() {
                     if (filteredProducts.isNotEmpty()) {
                         binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
                     } else {
-//                        Toast.makeText(requireContext(),
+//                        Toast.makeText(requireActivity(),
 //                            "This product is not available yet. Search for another product",
 //                            Toast.LENGTH_LONG).show()
                     }

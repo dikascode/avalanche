@@ -43,7 +43,7 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
-        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireContext())
+        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireActivity())
 
         //hooks
         phone = binding.userPhoneEt
@@ -160,7 +160,7 @@ class LoginFragment : Fragment() {
                         } else {
                             progressBar.visibility = View.GONE
                             Toast.makeText(
-                                requireContext(),
+                                requireActivity(),
                                 "Password does not match!",
                                 Toast.LENGTH_LONG
                             ).show()
@@ -168,14 +168,14 @@ class LoginFragment : Fragment() {
                     }
                 } else {
                     progressBar.visibility = View.GONE
-                    Toast.makeText(requireContext(), "No such user exists!", Toast.LENGTH_LONG)
+                    Toast.makeText(requireActivity(), "No such user exists!", Toast.LENGTH_LONG)
                         .show()
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireActivity(), error.message, Toast.LENGTH_LONG).show()
             }
 
         })

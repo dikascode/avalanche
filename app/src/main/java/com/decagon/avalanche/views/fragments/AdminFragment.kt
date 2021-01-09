@@ -83,7 +83,7 @@ class AdminFragment : Fragment() {
                 title.isEmpty() -> {
                     requireActivity().runOnUiThread(Runnable {
                         binding.productNameEt.error = "Please input a title"
-                        Toast.makeText(requireContext(),
+                        Toast.makeText(requireActivity(),
                             "Please fill title field",
                             Toast.LENGTH_LONG).show()
                     })
@@ -92,7 +92,7 @@ class AdminFragment : Fragment() {
                 price.isEmpty() -> {
                     requireActivity().runOnUiThread(Runnable {
                         binding.productPriceEt.error = "Price field cannot be empty"
-                        Toast.makeText(requireContext(),
+                        Toast.makeText(requireActivity(),
                             "Please fill price field",
                             Toast.LENGTH_LONG).show()
                     })
@@ -107,7 +107,7 @@ class AdminFragment : Fragment() {
 
                 image == null -> {
                     requireActivity().runOnUiThread {
-                        Toast.makeText(requireContext(),
+                        Toast.makeText(requireActivity(),
                             "Please choose an Image",
                             Toast.LENGTH_LONG).show()
                     }
@@ -125,7 +125,7 @@ class AdminFragment : Fragment() {
                         // Write was successful!
                         progressBar.visibility = View.GONE
 
-                        Toast.makeText(requireContext(),
+                        Toast.makeText(requireActivity(),
                             "Product saved to database successfully",
                             Toast.LENGTH_LONG).show()
 
@@ -140,7 +140,7 @@ class AdminFragment : Fragment() {
                     }
                         .addOnFailureListener {
                             // Write failed
-                            Toast.makeText(requireContext(),
+                            Toast.makeText(requireActivity(),
                                 "Product not added successfully. Please check input fields and try again",
                                 Toast.LENGTH_LONG).show()
                             progressBar.visibility = View.GONE

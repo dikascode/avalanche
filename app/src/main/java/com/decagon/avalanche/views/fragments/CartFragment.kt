@@ -50,7 +50,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         binding.cartRv.adapter = cartListAdapter
         binding.cartRv.addItemDecoration(
             DividerItemDecoration(
-                requireContext(),
+                requireActivity(),
                 DividerItemDecoration.VERTICAL
             )
         )
@@ -121,7 +121,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                     RavePayActivity.RESULT_SUCCESS -> {
                         val amount = transactionResponse.get("amount")
 
-                        Toast.makeText(requireContext(), "SUCCESS", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireActivity(), "SUCCESS", Toast.LENGTH_LONG).show()
                         Log.d("Successful Transaction", "Transaction amount: $amount")
                         Log.d(
                             "Successful Transaction",
@@ -163,7 +163,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                         findNavController().navigate(R.id.orderFragment)
                     }
                     RavePayActivity.RESULT_ERROR -> {
-                        Toast.makeText(requireContext(), "ERROR", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireActivity(), "ERROR", Toast.LENGTH_LONG).show()
                         Log.d(
                             "Failed Transaction",
                             "Transaction status: ${transactionResponse.get("status")}"
@@ -176,7 +176,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                         findNavController().navigate(R.id.failedTransactionFragment)
                     }
                     RavePayActivity.RESULT_CANCELLED -> {
-                        Toast.makeText(requireContext(), "CANCELLED", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireActivity(), "CANCELLED", Toast.LENGTH_LONG).show()
                         Log.d(
                             "Failed Transaction",
                             "Transaction status: ${transactionResponse.get("status")}"

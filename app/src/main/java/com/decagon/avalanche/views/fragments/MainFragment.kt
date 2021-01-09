@@ -4,7 +4,6 @@ package com.decagon.avalanche.views.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -31,7 +30,7 @@ class MainFragment : Fragment() {
     lateinit var db: AvalancheDatabase
     lateinit var adapter: ProductsAdapter
 
-    private val reference = FirebaseReference.reference
+    private val reference = FirebaseReference.productReference
 
     override fun onCreateView(
         inflater: LayoutInflater,

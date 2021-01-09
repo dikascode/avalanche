@@ -2,12 +2,12 @@ package com.decagon.avalanche.views.fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.decagon.avalanche.data.Product
@@ -19,8 +19,15 @@ class AdminFragment : Fragment() {
     private var _binding: FragmentAdminBinding? = null
     private val binding get() = _binding!!
 
+    lateinit var progressBar: ProgressBar
+
     private val PICK_IMAGE_CODE = 0
+
+    //Obtain data from inputs
     private val image = binding.productImageIv
+    private val title = binding.productNameEt.text
+    private val price = binding.productPriceEt.text
+    private val desc = binding.productDescEt.text
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +37,8 @@ class AdminFragment : Fragment() {
         _binding = FragmentAdminBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        progressBar = binding.progressBarLayout.fragmentMainProgressBar
+
         //Build room database
         // val db = RoomBuilder.getDatabase(requireActivity().applicationContext)
 
@@ -38,6 +47,7 @@ class AdminFragment : Fragment() {
         }
 
         binding.adminFragmentSubmitBtn.setOnClickListener {
+            progressBar.visibility = View.VISIBLE
             //run room database logic in background thread
             val thread = Thread {
                 try {
@@ -66,11 +76,6 @@ class AdminFragment : Fragment() {
     }
 
     private fun saveProductToFirebase() {
-        //Obtain data from inputs
-        val title = binding.productNameEt.text
-        val price = binding.productPriceEt.text
-        val desc = binding.productDescEt.text
-
         Log.d("TAG", "saveProductToRoom: $title, $price")
 
         if (title != null && price != null && desc != null) {
@@ -114,10 +119,32 @@ class AdminFragment : Fragment() {
                         price.toString().toDouble(),
                         desc.toString(),
                         true)
-                    val reference = FirebaseReference.reference
+                    val reference = FirebaseReference.productReference
 
-                    reference.child(title.toString()).setValue(newProduct)
+                    reference.child(title.toString()).setValue(newProduct).addOnSuccessListener {
+                        // Write was successful!
+                        progressBar.visibility = View.GONE
 
+                        Toast.makeText(requireContext(),
+                            "Product saved to database successfully",
+                            Toast.LENGTH_LONG).show()
+
+                        /**
+                         * Clear input fields
+                         */
+
+                        title.clear()
+                        price.clear()
+                        desc.clear()
+
+                    }
+                        .addOnFailureListener {
+                            // Write failed
+                            Toast.makeText(requireContext(),
+                                "Product not added successfully. Please check input fields and try again",
+                                Toast.LENGTH_LONG).show()
+                            progressBar.visibility = View.GONE
+                        }
 
 //                    val product = RoomProductModel(null, title.toString(), price.toString().toDouble(), "")
 //                    ProductModel(db.productDao()).addProduct(product)
@@ -146,4 +173,5 @@ class AdminFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

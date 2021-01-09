@@ -12,6 +12,7 @@ import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentLoginBinding
+import com.decagon.avalanche.firebase.FirebaseReference
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -33,9 +34,11 @@ class LoginFragment : Fragment() {
 
     lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
 
+    val reference = FirebaseReference.userReference
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
@@ -111,7 +114,7 @@ class LoginFragment : Fragment() {
 
         val _enteredNumber = "+" + countryCodePicker.fullNumber + _phone
 
-        if(rememberMe.isChecked){
+        if (rememberMe.isChecked) {
             //Save user login data to DataStore
             GlobalScope.launch {
                 userManager.createRememberMeSession(_phone, _password, countryCodePicker.fullNumber)
@@ -120,7 +123,7 @@ class LoginFragment : Fragment() {
 
         //DB query
         val checkUser =
-            FirebaseDatabase.getInstance().getReference("Users").orderByChild("phoneNumber")
+            reference.orderByChild("phoneNumber")
                 .equalTo(_enteredNumber)
 
         //Check if user exists
@@ -139,12 +142,14 @@ class LoginFragment : Fragment() {
                             password.error = null
                             password.isErrorEnabled = false
 
-                            val fname = snapshot.child(_enteredNumber).child("firstName").getValue(String::class.java)
+                            val fname = snapshot.child(_enteredNumber).child("firstName")
+                                .getValue(String::class.java)
 //                            val lname = snapshot.child(_enteredNumber).child("lastName").getValue(String::class.java)
                             val email =
                                 snapshot.child(_enteredNumber).child("email")
                                     .getValue(String::class.java)
-                            val phone = snapshot.child(_enteredNumber).child("phoneNumber").getValue(String::class.java)
+                            val phone = snapshot.child(_enteredNumber).child("phoneNumber")
+                                .getValue(String::class.java)
 
                             //Save user login data to DataStore
                             GlobalScope.launch {
@@ -174,7 +179,6 @@ class LoginFragment : Fragment() {
             }
 
         })
-
     }
 
     private fun validateInputFields(): Boolean {

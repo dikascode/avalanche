@@ -5,7 +5,8 @@ import com.google.firebase.database.FirebaseDatabase
 class FirebaseReference {
 
     companion object {
-        val reference = FirebaseDatabase.getInstance().getReference("Products")
+        val productReference = FirebaseDatabase.getInstance().getReference("Products")
+        val userReference = FirebaseDatabase.getInstance().getReference("Users")
 
     }
 }

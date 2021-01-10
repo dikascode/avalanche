@@ -2,6 +2,7 @@ package com.decagon.avalanche.views.fragments
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -31,7 +32,6 @@ class AdminFragment : Fragment() {
     lateinit var desc: Editable
 
     private val PICK_IMAGE_CODE = 0
-    lateinit var imageDataString: String
 
     var config: HashMap<String, String> = HashMap()
 
@@ -60,24 +60,23 @@ class AdminFragment : Fragment() {
 
         binding.selectProductImageBtn.setOnClickListener {
             selectImageIntent()
-            uploadToCloudinary(imageDataString)
         }
 
-        binding.adminFragmentSubmitBtn.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-            //run room database logic in background thread
-            val thread = Thread {
-                try {
-                    //Save image to cloudinary
-//                    uploadToCloudinary(imageDataString)
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-
-            thread.start()
-        }
+//        binding.adminFragmentSubmitBtn.setOnClickListener {
+//
+//            //run room database logic in background thread
+//            val thread = Thread {
+//                try {
+//                    //Save image to cloudinary
+////                    uploadToCloudinary(imageDataString)
+//
+//                } catch (e: Exception) {
+//                    e.printStackTrace()
+//                }
+//            }
+//
+//            thread.start()
+//        }
 
         return view
     }
@@ -166,13 +165,19 @@ class AdminFragment : Fragment() {
 
     }
 
-    private fun uploadToCloudinary(filepath: String) {
+    private fun uploadToCloudinary(filepath: Uri?) {
         MediaManager.get().upload(filepath).unsigned("avalanche").callback(object : UploadCallback {
             override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
                 Toast.makeText(requireActivity(), "Task successful", Toast.LENGTH_SHORT).show()
 
+                Log.d("TAG", "onSuccess: $filepath")
+
                 //Save product into firebase
-                //saveProductToFirebase()
+                binding.adminFragmentSubmitBtn.setOnClickListener {
+                    progressBar.visibility = View.VISIBLE
+                    saveProductToFirebase()
+                }
+
             }
 
             override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
@@ -187,6 +192,7 @@ class AdminFragment : Fragment() {
 
                 Toast.makeText(requireActivity(), "Task Not successful" + error, Toast.LENGTH_SHORT)
                     .show()
+                Log.d("TAG", "onError: $error")
             }
 
             override fun onStart(requestId: String?) {
@@ -202,7 +208,12 @@ class AdminFragment : Fragment() {
         if (requestCode == PICK_IMAGE_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 image.setImageURI(data?.data)
-                imageDataString = data?.data.toString()
+
+                Log.d("TAG", "image: ${data?.data.toString()}")
+                Toast.makeText(requireActivity(), data?.data.toString(), Toast.LENGTH_LONG).show()
+
+                //Save image to cloudinary
+                uploadToCloudinary(data?.data)
             }
         }
     }

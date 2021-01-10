@@ -35,6 +35,15 @@ class AdminFragment : Fragment() {
 
     var config: HashMap<String, String> = HashMap()
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        //initialize MediaManager
+        config["cloud_name"] = "di2lpinnp"
+        config["api_key"] = "396379412919671"
+        config["api_secret"] = "LPNhun_GmRbaVOGVYRosAkacJds"
+        MediaManager.init(requireActivity(), config)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,13 +57,6 @@ class AdminFragment : Fragment() {
         title = binding.productNameEt.text!!
         price = binding.productPriceEt.text!!
         desc = binding.productDescEt.text!!
-
-
-        //initialize MediaManager
-        config["cloud_name"] = "di2lpinnp"
-        config["api_key"] = "396379412919671"
-        config["api_secret"] = "LPNhun_GmRbaVOGVYRosAkacJds"
-        MediaManager.init(requireActivity(), config)
 
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
 
@@ -74,28 +76,20 @@ class AdminFragment : Fragment() {
         startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE_CODE)
     }
 
-    private fun saveProductToFirebase() {
+    private fun saveProductToFirebase(url: String) {
         if (title != null && price != null && desc != null) {
             when {
                 title.isEmpty() -> {
-                    requireActivity().runOnUiThread(Runnable {
-                        binding.productNameEt.error = "Please input a title"
-                        makeToast("Please fill title field")
-                    })
-
+                    binding.productNameEt.error = "Please input a title"
+                    makeToast("Please fill title field")
                 }
                 price.isEmpty() -> {
-                    requireActivity().runOnUiThread(Runnable {
-                        binding.productPriceEt.error = "Price field cannot be empty"
-                        makeToast("Please fill price field")
-                    })
-
+                    binding.productPriceEt.error = "Price field cannot be empty"
+                    makeToast("Please fill price field")
                 }
 
                 desc.isEmpty() -> {
-                    requireActivity().runOnUiThread {
-                        binding.productDescEt.error = "Description field cannot be empty"
-                    }
+                    binding.productDescEt.error = "Description field cannot be empty"
                 }
 
                 image == null -> {
@@ -107,7 +101,7 @@ class AdminFragment : Fragment() {
                 else -> {
                     //save data to firebase
                     val newProduct = Product(title.toString(),
-                        "https://finepointmobile.com/api/ecommerce/redHat.jpg",
+                        url,
                         price.toString().toDouble(),
                         desc.toString(),
                         true)
@@ -142,10 +136,25 @@ class AdminFragment : Fragment() {
         MediaManager.get().upload(filepath).unsigned("avalanche").callback(object : UploadCallback {
             override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
                 makeToast("Image upload successfully")
+
+                var url = ""
+
+                /**
+                 * get upload url from callback resultData
+                 */
+
+                MediaManager.get().url().generate(resultData?.entries?.forEach {
+                    if (it.key == "secure_url") {
+                        Log.d("TAG", "URL: ${it.key}, ${it.value}")
+                        url = it.value as String
+                    }
+                }.toString())
+
+
                 //Save product into firebase
                 binding.adminFragmentSubmitBtn.setOnClickListener {
                     progressBar.visibility = View.VISIBLE
-                    saveProductToFirebase()
+                    saveProductToFirebase(url)
                 }
 
             }

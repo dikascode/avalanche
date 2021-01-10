@@ -70,7 +70,7 @@ class VerifyOtpFragment : Fragment() {
 
         addNewUser = User(fName, lName, email, phoneNumber, pwd, false)
 
-        Log.d("TAG", "onVerificationCompleted:$intention")
+        //Log.d("TAG", "onVerificationCompleted:$intention")
 
         //hooks
         pinFromUser = binding.pinView
@@ -143,7 +143,7 @@ class VerifyOtpFragment : Fragment() {
                     progressBar.visibility = View.GONE
 
                     val user = task.result?.user
-                    Log.d("TAG", "signInWithCredential:success. $user")
+                    //Log.d("TAG", "signInWithCredential:success. $user")
 
                     if(intention == "updateData") {
                         updateOldUserData()

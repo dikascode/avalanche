@@ -19,7 +19,7 @@ class FirebaseProducts() {
                     for (dataSnapshot in snapshot.children) {
                         val product: Product? = dataSnapshot.getValue(Product::class.java)
 
-                        Log.d("TAG", "Productzzz: ${product?.title}")
+                        //Log.d("TAG", "Productzzz: ${product?.title}")
                         if (product != null) {
                             productsList.add(product)
                         }

@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.firebase.FirebaseReference
@@ -22,12 +25,15 @@ class AdminFragment : Fragment() {
     lateinit var progressBar: ProgressBar
 
     private val PICK_IMAGE_CODE = 0
+    lateinit var imageDataString: String
 
     //Obtain data from inputs
     private val image = binding.productImageIv
     private val title = binding.productNameEt.text
     private val price = binding.productPriceEt.text
     private val desc = binding.productDescEt.text
+
+    var config: HashMap<String, String> = HashMap()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,10 +43,13 @@ class AdminFragment : Fragment() {
         _binding = FragmentAdminBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        progressBar = binding.progressBarLayout.fragmentMainProgressBar
+        //initialize MediaManager
+        config["cloud_name"] = "di2lpinnp"
+        config["api_key"] = "396379412919671"
+        config["api_secret"] = "LPNhun_GmRbaVOGVYRosAkacJds"
+        MediaManager.init(requireActivity(), config)
 
-        //Build room database
-        // val db = RoomBuilder.getDatabase(requireActivity().applicationContext)
+        progressBar = binding.progressBarLayout.fragmentMainProgressBar
 
         binding.selectProductImageBtn.setOnClickListener {
             selectImageIntent()
@@ -51,8 +60,8 @@ class AdminFragment : Fragment() {
             //run room database logic in background thread
             val thread = Thread {
                 try {
-                    //Save product into room
-                    saveProductToFirebase()
+                    //Save image to cloudinary
+                    uploadToCloudinary(imageDataString)
 
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -61,7 +70,6 @@ class AdminFragment : Fragment() {
 
             thread.start()
         }
-
 
         return view
     }
@@ -124,7 +132,6 @@ class AdminFragment : Fragment() {
                     reference.child(title.toString()).setValue(newProduct).addOnSuccessListener {
                         // Write was successful!
                         progressBar.visibility = View.GONE
-
                         Toast.makeText(requireActivity(),
                             "Product saved to database successfully",
                             Toast.LENGTH_LONG).show()
@@ -145,17 +152,40 @@ class AdminFragment : Fragment() {
                                 Toast.LENGTH_LONG).show()
                             progressBar.visibility = View.GONE
                         }
-
-//                    val product = RoomProductModel(null, title.toString(), price.toString().toDouble(), "")
-//                    ProductModel(db.productDao()).addProduct(product)
-//                    db.close()
-
-//                    requireActivity().supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, MainFragment())
-//                        .commit()
                 }
             }
         }
 
+    }
+
+    private fun uploadToCloudinary(filepath: String) {
+        MediaManager.get().upload(filepath).unsigned("avalanche").callback(object : UploadCallback {
+            override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
+                Toast.makeText(requireActivity(), "Task successful", Toast.LENGTH_SHORT).show()
+
+                //Save product into firebase
+                saveProductToFirebase()
+            }
+
+            override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+
+            }
+
+            override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+
+            }
+
+            override fun onError(requestId: String?, error: ErrorInfo?) {
+
+                Toast.makeText(requireActivity(), "Task Not successful" + error, Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            override fun onStart(requestId: String?) {
+
+                Toast.makeText(requireActivity(), "Start", Toast.LENGTH_SHORT).show()
+            }
+        }).dispatch()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -164,6 +194,7 @@ class AdminFragment : Fragment() {
         if (requestCode == PICK_IMAGE_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 image.setImageURI(data?.data)
+                imageDataString = data?.data.toString()
             }
         }
     }

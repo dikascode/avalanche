@@ -3,10 +3,12 @@ package com.decagon.avalanche.views.fragments
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -17,21 +19,19 @@ import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.firebase.FirebaseReference
 
-class AdminFragment : Fragment() {
 
+class AdminFragment : Fragment() {
     private var _binding: FragmentAdminBinding? = null
     private val binding get() = _binding!!
 
     lateinit var progressBar: ProgressBar
+    lateinit var image: ImageView
+    lateinit var title: Editable
+    lateinit var price: Editable
+    lateinit var desc: Editable
 
     private val PICK_IMAGE_CODE = 0
     lateinit var imageDataString: String
-
-    //Obtain data from inputs
-    private val image = binding.productImageIv
-    private val title = binding.productNameEt.text
-    private val price = binding.productPriceEt.text
-    private val desc = binding.productDescEt.text
 
     var config: HashMap<String, String> = HashMap()
 
@@ -43,6 +43,13 @@ class AdminFragment : Fragment() {
         _binding = FragmentAdminBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        //Obtain data from inputs
+        image = binding.productImageIv
+        title = binding.productNameEt.text!!
+        price = binding.productPriceEt.text!!
+        desc = binding.productDescEt.text!!
+
+
         //initialize MediaManager
         config["cloud_name"] = "di2lpinnp"
         config["api_key"] = "396379412919671"
@@ -53,6 +60,7 @@ class AdminFragment : Fragment() {
 
         binding.selectProductImageBtn.setOnClickListener {
             selectImageIntent()
+            uploadToCloudinary(imageDataString)
         }
 
         binding.adminFragmentSubmitBtn.setOnClickListener {
@@ -61,7 +69,7 @@ class AdminFragment : Fragment() {
             val thread = Thread {
                 try {
                     //Save image to cloudinary
-                    uploadToCloudinary(imageDataString)
+//                    uploadToCloudinary(imageDataString)
 
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -164,7 +172,7 @@ class AdminFragment : Fragment() {
                 Toast.makeText(requireActivity(), "Task successful", Toast.LENGTH_SHORT).show()
 
                 //Save product into firebase
-                saveProductToFirebase()
+                //saveProductToFirebase()
             }
 
             override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {

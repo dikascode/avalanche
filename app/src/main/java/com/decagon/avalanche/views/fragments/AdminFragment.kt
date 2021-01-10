@@ -80,18 +80,14 @@ class AdminFragment : Fragment() {
                 title.isEmpty() -> {
                     requireActivity().runOnUiThread(Runnable {
                         binding.productNameEt.error = "Please input a title"
-                        Toast.makeText(requireActivity(),
-                            "Please fill title field",
-                            Toast.LENGTH_LONG).show()
+                        makeToast("Please fill title field")
                     })
 
                 }
                 price.isEmpty() -> {
                     requireActivity().runOnUiThread(Runnable {
                         binding.productPriceEt.error = "Price field cannot be empty"
-                        Toast.makeText(requireActivity(),
-                            "Please fill price field",
-                            Toast.LENGTH_LONG).show()
+                        makeToast("Please fill price field")
                     })
 
                 }
@@ -104,9 +100,8 @@ class AdminFragment : Fragment() {
 
                 image == null -> {
                     requireActivity().runOnUiThread {
-                        Toast.makeText(requireActivity(),
-                            "Please choose an Image",
-                            Toast.LENGTH_LONG).show()
+                        makeToast(
+                            "Please choose an Image")
                     }
                 }
                 else -> {
@@ -121,9 +116,7 @@ class AdminFragment : Fragment() {
                     reference.child(title.toString()).setValue(newProduct).addOnSuccessListener {
                         // Write was successful!
                         progressBar.visibility = View.GONE
-                        Toast.makeText(requireActivity(),
-                            "Product saved to database successfully",
-                            Toast.LENGTH_LONG).show()
+                        makeToast("Product saved to database successfully")
 
                         /**
                          * Clear input fields
@@ -136,9 +129,7 @@ class AdminFragment : Fragment() {
                     }
                         .addOnFailureListener {
                             // Write failed
-                            Toast.makeText(requireActivity(),
-                                "Product not added successfully. Please check input fields and try again",
-                                Toast.LENGTH_LONG).show()
+                            makeToast("Product not added successfully. Please check input fields and try again")
                             progressBar.visibility = View.GONE
                         }
                 }
@@ -150,7 +141,7 @@ class AdminFragment : Fragment() {
     private fun uploadToCloudinary(filepath: Uri?) {
         MediaManager.get().upload(filepath).unsigned("avalanche").callback(object : UploadCallback {
             override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
-                Toast.makeText(requireActivity(), "Task successful", Toast.LENGTH_SHORT).show()
+                makeToast("Image upload successfully")
                 //Save product into firebase
                 binding.adminFragmentSubmitBtn.setOnClickListener {
                     progressBar.visibility = View.VISIBLE
@@ -168,15 +159,11 @@ class AdminFragment : Fragment() {
             }
 
             override fun onError(requestId: String?, error: ErrorInfo?) {
-
-                Toast.makeText(requireActivity(), "Task Not successful" + error, Toast.LENGTH_SHORT)
-                    .show()
                 Log.d("TAG", "onError: $error")
             }
 
             override fun onStart(requestId: String?) {
-
-                Toast.makeText(requireActivity(), "Start", Toast.LENGTH_SHORT).show()
+                Log.d("TAG", "onStart: $requestId")
             }
         }).dispatch()
     }
@@ -189,7 +176,6 @@ class AdminFragment : Fragment() {
                 image.setImageURI(data?.data)
 
                 Log.d("TAG", "image: ${data?.data.toString()}")
-                Toast.makeText(requireActivity(), data?.data.toString(), Toast.LENGTH_LONG).show()
 
                 //Save image to cloudinary
                 uploadToCloudinary(data?.data)
@@ -201,6 +187,12 @@ class AdminFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun makeToast(str: String) {
+        Toast.makeText(requireActivity(),
+            str,
+            Toast.LENGTH_LONG).show()
     }
 
 }

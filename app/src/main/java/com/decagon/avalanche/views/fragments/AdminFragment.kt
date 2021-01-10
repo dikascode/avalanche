@@ -62,22 +62,6 @@ class AdminFragment : Fragment() {
             selectImageIntent()
         }
 
-//        binding.adminFragmentSubmitBtn.setOnClickListener {
-//
-//            //run room database logic in background thread
-//            val thread = Thread {
-//                try {
-//                    //Save image to cloudinary
-////                    uploadToCloudinary(imageDataString)
-//
-//                } catch (e: Exception) {
-//                    e.printStackTrace()
-//                }
-//            }
-//
-//            thread.start()
-//        }
-
         return view
     }
 
@@ -91,8 +75,6 @@ class AdminFragment : Fragment() {
     }
 
     private fun saveProductToFirebase() {
-        Log.d("TAG", "saveProductToRoom: $title, $price")
-
         if (title != null && price != null && desc != null) {
             when {
                 title.isEmpty() -> {
@@ -169,9 +151,6 @@ class AdminFragment : Fragment() {
         MediaManager.get().upload(filepath).unsigned("avalanche").callback(object : UploadCallback {
             override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
                 Toast.makeText(requireActivity(), "Task successful", Toast.LENGTH_SHORT).show()
-
-                Log.d("TAG", "onSuccess: $filepath")
-
                 //Save product into firebase
                 binding.adminFragmentSubmitBtn.setOnClickListener {
                     progressBar.visibility = View.VISIBLE

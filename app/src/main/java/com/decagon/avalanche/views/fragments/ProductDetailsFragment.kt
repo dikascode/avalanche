@@ -52,7 +52,7 @@ class ProductDetailsFragment : Fragment() {
 
         productTitle = args.productTitle
 
-        Log.d("TAG", "filter: $productTitle")
+//        Log.d("TAG", "filter: $productTitle")
 
         val checkProduct = reference.orderByChild("title").equalTo(productTitle)
 
@@ -63,7 +63,7 @@ class ProductDetailsFragment : Fragment() {
                     if (product != null) {
                         bindProductDataToLayout(product)
                     }
-                    Log.d("TAG", "ProductDetail: ${product?.title}")
+//                    Log.d("TAG", "ProductDetail: ${product?.title}")
                 }
 
 

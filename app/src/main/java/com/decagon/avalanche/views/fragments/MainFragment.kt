@@ -59,7 +59,7 @@ class MainFragment : Fragment() {
                         //Log.d("TAG", "Products: ${product?.title}")
                         if (!productsList.contains(product)) {
                             productsList.add(product)
-                            Log.d("TAG", "size: ${productsList.size}")
+//                            Log.d("TAG", "size: ${productsList.size}")
                         }
                     }
 
@@ -107,9 +107,7 @@ class MainFragment : Fragment() {
                     MainFragmentDirections.actionMainFragmentToProductDetailsFragment(
                         extraTitle
                     )
-
-                Log.d("TAG", "param: $extraTitle")
-
+//                Log.d("TAG", "param: $extraTitle")
                 findNavController().navigate(action)
             }
         adapter.notifyDataSetChanged()

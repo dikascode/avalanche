@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.decagon.avalanche.CloudinaryManager
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.firebase.FirebaseReference
@@ -33,16 +34,6 @@ class AdminFragment : Fragment() {
 
     private val PICK_IMAGE_CODE = 0
 
-    var config: HashMap<String, String> = HashMap()
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        //initialize MediaManager
-        config["cloud_name"] = "di2lpinnp"
-        config["api_key"] = "396379412919671"
-        config["api_secret"] = "LPNhun_GmRbaVOGVYRosAkacJds"
-        MediaManager.init(requireActivity(), config)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,6 +42,8 @@ class AdminFragment : Fragment() {
     ): View? {
         _binding = FragmentAdminBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        CloudinaryManager()
 
         //Obtain data from inputs
         image = binding.productImageIv
@@ -93,10 +86,8 @@ class AdminFragment : Fragment() {
                 }
 
                 image == null -> {
-                    requireActivity().runOnUiThread {
                         makeToast(
                             "Please choose an Image")
-                    }
                 }
                 else -> {
                     //save data to firebase
@@ -142,7 +133,6 @@ class AdminFragment : Fragment() {
                 /**
                  * get upload url from callback resultData
                  */
-
                 MediaManager.get().url().generate(resultData?.entries?.forEach {
                     if (it.key == "secure_url") {
                         Log.d("TAG", "URL: ${it.key}, ${it.value}")

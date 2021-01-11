@@ -33,6 +33,7 @@ class AdminFragment : Fragment() {
     lateinit var desc: Editable
 
     private val PICK_IMAGE_CODE = 0
+    lateinit var url:String
 
 
     override fun onCreateView(
@@ -43,6 +44,8 @@ class AdminFragment : Fragment() {
         _binding = FragmentAdminBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        url = ""
+
         CloudinaryManager()
 
         //Obtain data from inputs
@@ -52,6 +55,12 @@ class AdminFragment : Fragment() {
         desc = binding.productDescEt.text!!
 
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
+
+        binding.adminFragmentSubmitBtn.setOnClickListener {
+            if(url.isBlank() || url == "") {
+                makeToast("Please select an Image to proceed")
+            }
+        }
 
         binding.selectProductImageBtn.setOnClickListener {
             selectImageIntent()
@@ -83,11 +92,6 @@ class AdminFragment : Fragment() {
 
                 desc.isEmpty() -> {
                     binding.productDescEt.error = "Description field cannot be empty"
-                }
-
-                image == null -> {
-                        makeToast(
-                            "Please choose an Image")
                 }
                 else -> {
                     //save data to firebase
@@ -127,8 +131,6 @@ class AdminFragment : Fragment() {
         MediaManager.get().upload(filepath).unsigned("avalanche").callback(object : UploadCallback {
             override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
                 makeToast("Image upload successfully")
-
-                var url = ""
 
                 /**
                  * get upload url from callback resultData

@@ -33,7 +33,7 @@ class AdminFragment : Fragment() {
     lateinit var desc: Editable
 
     private val PICK_IMAGE_CODE = 0
-    lateinit var url:String
+    lateinit var url: String
 
 
     override fun onCreateView(
@@ -58,7 +58,7 @@ class AdminFragment : Fragment() {
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
 
         binding.adminFragmentSubmitBtn.setOnClickListener {
-            if(url.isBlank() || url == "") {
+            if (url.isBlank() || url == "") {
                 makeToast("Please select an Image to proceed")
             }
         }

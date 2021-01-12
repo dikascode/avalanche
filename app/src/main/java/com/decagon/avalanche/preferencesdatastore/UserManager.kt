@@ -20,13 +20,15 @@ class UserManager(context: Context) {
         val USER_PHONE_KEY = preferencesKey<String>("USER_PHONE")
         val USER_PASSWORD = preferencesKey<String>("USER_PASSWORD")
         val USER_cCODE = preferencesKey<String>("USER_cCODE")
+        val ADMIN_STATUS = preferencesKey<Boolean>("ADMIN_STATUS")
     }
 
-    suspend fun storeUser(name: String, email: String, phone: String) {
+    suspend fun storeUser(name: String, email: String, phone: String, adminStatus: Boolean) {
         dataStore.edit {
             it[USER_NAME_KEY] = name
             it[USER_EMAIL_KEY] = email
             it[USER_PHONE_KEY] = phone
+            it[ADMIN_STATUS] = adminStatus
         }
 
     }
@@ -47,8 +49,8 @@ class UserManager(context: Context) {
             throw exception
         }
     }.map {
-            it[USER_NAME_KEY] ?: ""
-        }
+        it[USER_NAME_KEY] ?: ""
+    }
 
     val userEmailFlow: Flow<String> = dataStore.data.catch { exception ->
         if (exception is java.io.IOException) {

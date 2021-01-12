@@ -16,7 +16,6 @@ import com.decagon.avalanche.firebase.FirebaseReference
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.hbb20.CountryCodePicker
 import kotlinx.coroutines.GlobalScope
@@ -151,9 +150,12 @@ class LoginFragment : Fragment() {
                             val phone = snapshot.child(_enteredNumber).child("phoneNumber")
                                 .getValue(String::class.java)
 
+                            val adminStatus = snapshot.child(_enteredNumber).child("admin")
+                                .getValue(Boolean::class.java)
+
                             //Save user login data to DataStore
                             GlobalScope.launch {
-                                userManager.storeUser(fname!!, email!!, phone!!)
+                                userManager.storeUser(fname!!, email!!, phone!!, adminStatus!!)
                             }
 
                             findNavController().navigate(R.id.mainFragment)

@@ -51,11 +51,9 @@ class VerifyOtpFragment : Fragment() {
     private lateinit var intention: String
 
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentVerifyOtpBinding.inflate(inflater, container, false)
@@ -124,7 +122,7 @@ class VerifyOtpFragment : Fragment() {
 
             override fun onCodeSent(
                 verificationId: String,
-                token: PhoneAuthProvider.ForceResendingToken
+                token: PhoneAuthProvider.ForceResendingToken,
             ) {
                 Log.d("TAG", "onCodeSent:$verificationId")
 
@@ -149,7 +147,7 @@ class VerifyOtpFragment : Fragment() {
 
                     progressBar.visibility = View.GONE
 
-                    if(intention == "updateData") {
+                    if (intention == "updateData") {
                         updateOldUserData()
                     } else {
                         storeNewUserDataInFirebase()
@@ -175,7 +173,8 @@ class VerifyOtpFragment : Fragment() {
     }
 
     private fun updateOldUserData() {
-        val action = VerifyOtpFragmentDirections.actionVerifyOtpFragmentToSetNewPasswordFragment(phoneNumber)
+        val action =
+            VerifyOtpFragmentDirections.actionVerifyOtpFragmentToSetNewPasswordFragment(phoneNumber)
         findNavController().navigate(action)
     }
 

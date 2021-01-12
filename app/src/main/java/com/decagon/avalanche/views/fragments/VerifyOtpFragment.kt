@@ -21,6 +21,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 
@@ -35,6 +37,8 @@ class VerifyOtpFragment : Fragment() {
     lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
     lateinit var addNewUser: User
     lateinit var progressBar: ProgressBar
+
+    lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
 
     private val args: VerifyOtpFragmentArgs by navArgs()
 
@@ -55,6 +59,9 @@ class VerifyOtpFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentVerifyOtpBinding.inflate(inflater, container, false)
+
+        //User Store Manager
+        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireActivity())
 
         auth = FirebaseAuth.getInstance()
 
@@ -142,9 +149,6 @@ class VerifyOtpFragment : Fragment() {
 
                     progressBar.visibility = View.GONE
 
-                    val user = task.result?.user
-                    //Log.d("TAG", "signInWithCredential:success. $user")
-
                     if(intention == "updateData") {
                         updateOldUserData()
                     } else {
@@ -178,6 +182,11 @@ class VerifyOtpFragment : Fragment() {
     private fun storeNewUserDataInFirebase() {
         val reference = FirebaseDatabase.getInstance().getReference("Users")
         reference.child(phoneNumber).setValue(addNewUser)
+
+        //Save user sign up data to DataStore
+        GlobalScope.launch {
+            userManager.storeUser(fName!!, email!!, phoneNumber!!, false)
+        }
 
     }
 

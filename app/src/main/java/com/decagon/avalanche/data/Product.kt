@@ -1,7 +1,5 @@
 package com.decagon.avalanche.data
 
-import com.google.gson.annotations.SerializedName
-
 class Product {
 
     var title: String = "Short"

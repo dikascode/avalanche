@@ -21,6 +21,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 
@@ -36,6 +38,8 @@ class VerifyOtpFragment : Fragment() {
     lateinit var addNewUser: User
     lateinit var progressBar: ProgressBar
 
+    lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
+
     private val args: VerifyOtpFragmentArgs by navArgs()
 
     //SafeArgs Data
@@ -47,14 +51,15 @@ class VerifyOtpFragment : Fragment() {
     private lateinit var intention: String
 
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentVerifyOtpBinding.inflate(inflater, container, false)
+
+        //User Store Manager
+        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireActivity())
 
         auth = FirebaseAuth.getInstance()
 
@@ -70,7 +75,7 @@ class VerifyOtpFragment : Fragment() {
 
         addNewUser = User(fName, lName, email, phoneNumber, pwd, false)
 
-        Log.d("TAG", "onVerificationCompleted:$intention")
+        //Log.d("TAG", "onVerificationCompleted:$intention")
 
         //hooks
         pinFromUser = binding.pinView
@@ -117,7 +122,7 @@ class VerifyOtpFragment : Fragment() {
 
             override fun onCodeSent(
                 verificationId: String,
-                token: PhoneAuthProvider.ForceResendingToken
+                token: PhoneAuthProvider.ForceResendingToken,
             ) {
                 Log.d("TAG", "onCodeSent:$verificationId")
 
@@ -142,10 +147,7 @@ class VerifyOtpFragment : Fragment() {
 
                     progressBar.visibility = View.GONE
 
-                    val user = task.result?.user
-                    Log.d("TAG", "signInWithCredential:success. $user")
-
-                    if(intention == "updateData") {
+                    if (intention == "updateData") {
                         updateOldUserData()
                     } else {
                         storeNewUserDataInFirebase()
@@ -171,13 +173,19 @@ class VerifyOtpFragment : Fragment() {
     }
 
     private fun updateOldUserData() {
-        val action = VerifyOtpFragmentDirections.actionVerifyOtpFragmentToSetNewPasswordFragment(phoneNumber)
+        val action =
+            VerifyOtpFragmentDirections.actionVerifyOtpFragmentToSetNewPasswordFragment(phoneNumber)
         findNavController().navigate(action)
     }
 
     private fun storeNewUserDataInFirebase() {
         val reference = FirebaseDatabase.getInstance().getReference("Users")
         reference.child(phoneNumber).setValue(addNewUser)
+
+        //Save user sign up data to DataStore
+        GlobalScope.launch {
+            userManager.storeUser(fName, email, phoneNumber, false)
+        }
 
     }
 

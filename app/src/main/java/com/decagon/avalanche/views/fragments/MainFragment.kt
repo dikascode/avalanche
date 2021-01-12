@@ -17,7 +17,6 @@ import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.firebase.FirebaseReference
-import com.decagon.avalanche.room.AvalancheDatabase
 import com.google.firebase.database.*
 
 
@@ -26,8 +25,6 @@ class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     lateinit var product: Product
-
-    lateinit var db: AvalancheDatabase
     lateinit var adapter: ProductsAdapter
 
     private val reference = FirebaseReference.productReference
@@ -41,10 +38,9 @@ class MainFragment : Fragment() {
         val view = binding.root
         setHasOptionsMenu(true)
 
-        implementFirebase(reference)
-        //Build room database
-        //db = RoomBuilder.getDatabase(requireActivity().applicationContext)
+        binding.progressBarLayout.fragmentMainProgressBar.visibility = View.VISIBLE
 
+        implementFirebase(reference)
         return view
 
     }
@@ -59,7 +55,7 @@ class MainFragment : Fragment() {
                         //Log.d("TAG", "Products: ${product?.title}")
                         if (!productsList.contains(product)) {
                             productsList.add(product)
-                            Log.d("TAG", "size: ${productsList.size}")
+//                            Log.d("TAG", "size: ${productsList.size}")
                         }
                     }
 
@@ -82,9 +78,6 @@ class MainFragment : Fragment() {
 
     private fun implementMainGridLayoutRecyclerView(productsList: ArrayList<Product>) {
         val recyclerView = binding.fragmentMainRv
-
-        binding.progressBarLayout.fragmentMainProgressBar.visibility = View.VISIBLE
-
         binding.fragmentMainRv.addItemDecoration(
             DividerItemDecoration(
                 requireActivity(),
@@ -107,9 +100,7 @@ class MainFragment : Fragment() {
                     MainFragmentDirections.actionMainFragmentToProductDetailsFragment(
                         extraTitle
                     )
-
-                Log.d("TAG", "param: $extraTitle")
-
+//                Log.d("TAG", "param: $extraTitle")
                 findNavController().navigate(action)
             }
         adapter.notifyDataSetChanged()

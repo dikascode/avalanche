@@ -2,32 +2,39 @@ package com.decagon.avalanche.views.fragments
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
+import com.decagon.avalanche.Cloudinary.CloudinaryManager
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.firebase.FirebaseReference
 
-class AdminFragment : Fragment() {
 
+class AdminFragment : Fragment() {
     private var _binding: FragmentAdminBinding? = null
     private val binding get() = _binding!!
 
     lateinit var progressBar: ProgressBar
+    lateinit var image: ImageView
+    lateinit var title: Editable
+    lateinit var price: Editable
+    lateinit var desc: Editable
 
     private val PICK_IMAGE_CODE = 0
+    lateinit var url: String
 
-    //Obtain data from inputs
-    private val image = binding.productImageIv
-    private val title = binding.productNameEt.text
-    private val price = binding.productPriceEt.text
-    private val desc = binding.productDescEt.text
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,31 +44,28 @@ class AdminFragment : Fragment() {
         _binding = FragmentAdminBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        url = ""
+
+        //MediaManager
+        CloudinaryManager()
+
+        //Obtain data from inputs
+        image = binding.productImageIv
+        title = binding.productNameEt.text!!
+        price = binding.productPriceEt.text!!
+        desc = binding.productDescEt.text!!
+
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
 
-        //Build room database
-        // val db = RoomBuilder.getDatabase(requireActivity().applicationContext)
+        binding.adminFragmentSubmitBtn.setOnClickListener {
+            if (url.isBlank() || url == "") {
+                makeToast("Please select an Image to proceed")
+            }
+        }
 
         binding.selectProductImageBtn.setOnClickListener {
             selectImageIntent()
         }
-
-        binding.adminFragmentSubmitBtn.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-            //run room database logic in background thread
-            val thread = Thread {
-                try {
-                    //Save product into room
-                    saveProductToFirebase()
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-
-            thread.start()
-        }
-
 
         return view
     }
@@ -75,47 +79,25 @@ class AdminFragment : Fragment() {
         startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE_CODE)
     }
 
-    private fun saveProductToFirebase() {
-        Log.d("TAG", "saveProductToRoom: $title, $price")
-
+    private fun saveProductToFirebase(url: String) {
         if (title != null && price != null && desc != null) {
             when {
                 title.isEmpty() -> {
-                    requireActivity().runOnUiThread(Runnable {
-                        binding.productNameEt.error = "Please input a title"
-                        Toast.makeText(requireActivity(),
-                            "Please fill title field",
-                            Toast.LENGTH_LONG).show()
-                    })
-
+                    binding.productNameEt.error = "Please input a title"
+                    makeToast("Please fill title field")
                 }
                 price.isEmpty() -> {
-                    requireActivity().runOnUiThread(Runnable {
-                        binding.productPriceEt.error = "Price field cannot be empty"
-                        Toast.makeText(requireActivity(),
-                            "Please fill price field",
-                            Toast.LENGTH_LONG).show()
-                    })
-
+                    binding.productPriceEt.error = "Price field cannot be empty"
+                    makeToast("Please fill price field")
                 }
 
                 desc.isEmpty() -> {
-                    requireActivity().runOnUiThread {
-                        binding.productDescEt.error = "Description field cannot be empty"
-                    }
-                }
-
-                image == null -> {
-                    requireActivity().runOnUiThread {
-                        Toast.makeText(requireActivity(),
-                            "Please choose an Image",
-                            Toast.LENGTH_LONG).show()
-                    }
+                    binding.productDescEt.error = "Description field cannot be empty"
                 }
                 else -> {
                     //save data to firebase
                     val newProduct = Product(title.toString(),
-                        "https://finepointmobile.com/api/ecommerce/redHat.jpg",
+                        url,
                         price.toString().toDouble(),
                         desc.toString(),
                         true)
@@ -124,10 +106,7 @@ class AdminFragment : Fragment() {
                     reference.child(title.toString()).setValue(newProduct).addOnSuccessListener {
                         // Write was successful!
                         progressBar.visibility = View.GONE
-
-                        Toast.makeText(requireActivity(),
-                            "Product saved to database successfully",
-                            Toast.LENGTH_LONG).show()
+                        makeToast("Product saved to database successfully")
 
                         /**
                          * Clear input fields
@@ -140,22 +119,55 @@ class AdminFragment : Fragment() {
                     }
                         .addOnFailureListener {
                             // Write failed
-                            Toast.makeText(requireActivity(),
-                                "Product not added successfully. Please check input fields and try again",
-                                Toast.LENGTH_LONG).show()
+                            makeToast("Product not added successfully. Please check input fields and try again")
                             progressBar.visibility = View.GONE
                         }
-
-//                    val product = RoomProductModel(null, title.toString(), price.toString().toDouble(), "")
-//                    ProductModel(db.productDao()).addProduct(product)
-//                    db.close()
-
-//                    requireActivity().supportFragmentManager.beginTransaction().replace(R.id.content_main_fl, MainFragment())
-//                        .commit()
                 }
             }
         }
 
+    }
+
+    private fun uploadToCloudinary(filepath: Uri?) {
+        MediaManager.get().upload(filepath).unsigned("avalanche").callback(object : UploadCallback {
+            override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
+                makeToast("Image upload successfully")
+
+                /**
+                 * get upload url from callback resultData
+                 */
+                MediaManager.get().url().generate(resultData?.entries?.forEach {
+                    if (it.key == "secure_url") {
+                        Log.d("TAG", "URL: ${it.key}, ${it.value}")
+                        url = it.value as String
+                    }
+                }.toString())
+
+
+                //Save product into firebase
+                binding.adminFragmentSubmitBtn.setOnClickListener {
+                    progressBar.visibility = View.VISIBLE
+                    saveProductToFirebase(url)
+                }
+
+            }
+
+            override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+
+            }
+
+            override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+
+            }
+
+            override fun onError(requestId: String?, error: ErrorInfo?) {
+                Log.d("TAG", "onError: $error")
+            }
+
+            override fun onStart(requestId: String?) {
+                Log.d("TAG", "onStart: $requestId")
+            }
+        }).dispatch()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -164,6 +176,11 @@ class AdminFragment : Fragment() {
         if (requestCode == PICK_IMAGE_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 image.setImageURI(data?.data)
+
+                Log.d("TAG", "image: ${data?.data.toString()}")
+
+                //Save image to cloudinary
+                uploadToCloudinary(data?.data)
             }
         }
     }
@@ -172,6 +189,12 @@ class AdminFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun makeToast(str: String) {
+        Toast.makeText(requireActivity(),
+            str,
+            Toast.LENGTH_LONG).show()
     }
 
 }

@@ -185,7 +185,7 @@ class VerifyOtpFragment : Fragment() {
 
         //Save user sign up data to DataStore
         GlobalScope.launch {
-            userManager.storeUser(fName!!, email!!, phoneNumber!!, false)
+            userManager.storeUser(fName, email, phoneNumber, false)
         }
 
     }

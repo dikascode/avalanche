@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
-import com.decagon.avalanche.Cloudinary.CloudinaryManager
+import com.decagon.avalanche.cloudinary.CloudinaryManager
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.firebase.FirebaseReference

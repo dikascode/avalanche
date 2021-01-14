@@ -72,6 +72,16 @@ class UserManager(context: Context) {
         it[USER_PHONE_KEY] ?: ""
     }
 
+    val userAdminFlow: Flow<Boolean> = dataStore.data.catch { exception ->
+        if (exception is IOException) {
+            emit(emptyPreferences())
+        } else {
+            throw exception
+        }
+    }.map {
+        it[ADMIN_STATUS] ?: false
+    }
+
 
     /**
      * Remember me sessions

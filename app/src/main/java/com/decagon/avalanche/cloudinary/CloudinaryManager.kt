@@ -1,4 +1,4 @@
-package com.decagon.avalanche.Cloudinary
+package com.decagon.avalanche.cloudinary
 
 import android.app.Application
 import com.cloudinary.android.MediaManager

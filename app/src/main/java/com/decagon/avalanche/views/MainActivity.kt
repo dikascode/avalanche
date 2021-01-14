@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.decagon.avalanche.NetworkStatusChecker
@@ -22,12 +24,16 @@ import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.rommansabbir.networkx.NetworkX
 import com.rommansabbir.networkx.NetworkXObservingStrategy
 import com.rommansabbir.networkx.isInternetConnectedLiveData
+import kotlin.properties.Delegates
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var navController: NavController
     lateinit var storeViewModel: StoreViewModel
+    lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
+
+    var isAdmin = false
 
     private var cartQuantity = 0
 
@@ -36,14 +42,34 @@ class MainActivity : AppCompatActivity() {
 
         //View binding instance
         binding = ActivityMainBinding.inflate(layoutInflater)
+
         //get reference to root view
         val view = binding.root
         setContentView(view)
+
+        /**
+         * Hide admin drawer menu option
+         */
+        binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = false
+
+        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(this)
 
         val networkConnection = NetworkStatusChecker(this)
 
         storeViewModel = ViewModelProvider(this).get(StoreViewModel::class.java)
 
+        userManager.userAdminFlow.asLiveData().observe(this, { admin ->
+            isAdmin = admin
+            if (isAdmin)
+                binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = true
+        })
+
+        checkNetworkStatus(networkConnection)
+
+
+    }
+
+    private fun checkNetworkStatus(networkConnection: NetworkStatusChecker) {
         networkConnection.observe(this, Observer { isConnected ->
             if (isConnected) {
                 binding.noInternetView.noInternetIv.visibility = View.INVISIBLE
@@ -69,8 +95,11 @@ class MainActivity : AppCompatActivity() {
                             findNavController(R.id.nav_host_fragment).navigate(R.id.mainFragment)
                         }
                         R.id.actionAdmin -> {
-                            findNavController(R.id.nav_host_fragment).navigate(R.id.adminFragment)
-//                            finish()
+                            if (isAdmin) {
+                                findNavController(R.id.nav_host_fragment).navigate(R.id.adminFragment)
+                                //                            finish()
+                            }
+
                         }
                     }
                     it.isChecked = true
@@ -98,8 +127,6 @@ class MainActivity : AppCompatActivity() {
 
             }
         })
-
-
     }
 
 
@@ -142,23 +169,5 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
-
-
-//    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-//        menu?.clear()
-//
-//        val menuItem = menu?.findItem(R.id.action_cart)
-//        val actionView: View = menuItem!!.actionView
-//        val cartBadgeTV: TextView = actionView.findViewById(R.id.cart_badge_text)
-//
-//        cartBadgeTV.text = cartQuantity.toString()
-//
-//        if(cartQuantity < 1){
-//            cartBadgeTV.visibility = View.GONE
-//        }
-//
-//        return super.onPrepareOptionsMenu(menu)
-//    }
-
 
 }

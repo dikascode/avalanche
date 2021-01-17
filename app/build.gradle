@@ -116,4 +116,9 @@ dependencies {
 
     //Cloudinary
     implementation "com.cloudinary:cloudinary-android:1.30.0"
+
+    //Java mail
+    implementation files('libs/activation.jar')
+    implementation files('libs/additionnal.jar')
+    implementation files('libs/mail.jar')
 }

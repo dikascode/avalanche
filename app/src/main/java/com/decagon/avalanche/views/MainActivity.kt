@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
+import com.decagon.avalanche.api.JavaMailApi
 import com.decagon.avalanche.databinding.ActivityMainBinding
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.rommansabbir.networkx.NetworkX
@@ -47,6 +48,9 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+
+        sendMail()
+
         /**
          * Hide admin drawer menu option
          */
@@ -67,6 +71,15 @@ class MainActivity : AppCompatActivity() {
         checkNetworkStatus(networkConnection)
 
 
+    }
+
+    private fun sendMail() {
+        val javaMailApi = JavaMailApi(this,
+            "emmanuelututu27@gmail.com",
+            "Test Mail",
+            "This is is a test mail from Avalanche android project")
+
+        javaMailApi.execute()
     }
 
     private fun checkNetworkStatus(networkConnection: NetworkStatusChecker) {

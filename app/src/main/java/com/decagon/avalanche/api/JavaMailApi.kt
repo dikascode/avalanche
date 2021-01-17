@@ -11,34 +11,19 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 
-class JavaMailApi: AsyncTask<Void, Void, Void>() {
+class JavaMailApi(val mContext: Context?, val mEmail: String?, val mSubject: String?, val mMessage: String?): AsyncTask<Void, Void, Void>() {
 
-    //Variables
-    private var mContext: Context? = null
     private var mSession: Session? = null
-
-    private var mEmail: String? = null
-    private var mSubject: String? = null
-    private var mMessage: String? = null
-
     private var mProgressDialog: ProgressDialog? = null
 
-    //Constructor
-    fun JavaMailAPI(mContext: Context?, mEmail: String?, mSubject: String?, mMessage: String?) {
-        this.mContext = mContext
-        this.mEmail = mEmail
-        this.mSubject = mSubject
-        this.mMessage = mMessage
-    }
-
-    protected override fun onPreExecute() {
+    override fun onPreExecute() {
         super.onPreExecute()
         //Show progress dialog while sending email
         mProgressDialog =
             ProgressDialog.show(mContext, "Sending message", "Please wait...", false, false)
     }
 
-    protected override fun onPostExecute(aVoid: Void?) {
+    override fun onPostExecute(aVoid: Void?) {
         super.onPostExecute(aVoid)
         //Dismiss progress dialog when message successfully send
         mProgressDialog!!.dismiss()
@@ -47,7 +32,7 @@ class JavaMailApi: AsyncTask<Void, Void, Void>() {
         Toast.makeText(mContext, "Message Sent", Toast.LENGTH_SHORT).show()
     }
 
-    protected override fun doInBackground(vararg params: Void?): Void? {
+    override fun doInBackground(vararg params: Void?): Void? {
         //Creating properties
         val props = Properties()
 

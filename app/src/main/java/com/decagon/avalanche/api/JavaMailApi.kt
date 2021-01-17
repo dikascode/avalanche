@@ -3,6 +3,7 @@ package com.decagon.avalanche.api
 import android.app.ProgressDialog
 import android.content.Context
 import android.os.AsyncTask
+import android.util.Log
 import android.widget.Toast
 import com.decagon.avalanche.utils.Utils
 import java.util.*
@@ -11,7 +12,12 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 
-class JavaMailApi(val mContext: Context?, val mEmail: String?, val mSubject: String?, val mMessage: String?): AsyncTask<Void, Void, Void>() {
+class JavaMailApi(
+    val mContext: Context?,
+    val mEmail: String?,
+    val mSubject: String?,
+    val mMessage: String?,
+) : AsyncTask<Void, Void, Void>() {
 
     private var mSession: Session? = null
     private var mProgressDialog: ProgressDialog? = null
@@ -88,6 +94,7 @@ class JavaMailApi(val mContext: Context?, val mEmail: String?, val mSubject: Str
 //            mm.setContent(multipart);
         } catch (e: MessagingException) {
             e.printStackTrace()
+            Log.i("TAG", "doInBackground: ${e.message}")
         }
         return null
     }

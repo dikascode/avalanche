@@ -143,7 +143,8 @@ class LoginFragment : Fragment() {
 
                             val fname = snapshot.child(_enteredNumber).child("firstName")
                                 .getValue(String::class.java)
-                            val lname = snapshot.child(_enteredNumber).child("lastName").getValue(String::class.java)
+                            val lname = snapshot.child(_enteredNumber).child("lastName")
+                                .getValue(String::class.java)
                             val email =
                                 snapshot.child(_enteredNumber).child("email")
                                     .getValue(String::class.java)
@@ -155,7 +156,11 @@ class LoginFragment : Fragment() {
 
                             //Save user login data to DataStore
                             GlobalScope.launch {
-                                userManager.storeUser(fname!!, lname!!, email!!, phone!!, adminStatus!!)
+                                userManager.storeUser(fname!!,
+                                    lname!!,
+                                    email!!,
+                                    phone!!,
+                                    adminStatus!!)
                             }
 
                             findNavController().navigate(R.id.mainFragment)

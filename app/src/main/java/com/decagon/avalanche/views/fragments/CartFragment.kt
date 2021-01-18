@@ -31,11 +31,12 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
     private lateinit var cartListAdapter: CartListAdapter
     lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
 
+    //Store userdata from datastore
     var userData = arrayListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentCartBinding.inflate(inflater, container, false)
@@ -43,19 +44,19 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
         userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireActivity())
         userManager.userEmailFlow.asLiveData().observe(requireActivity(), { email ->
-                userData.add(email)
+            userData.add(email)
         })
 
-        userManager.userPhoneFlow.asLiveData().observe(requireActivity(), {
-            userData.add(it)
+        userManager.userPhoneFlow.asLiveData().observe(requireActivity(), { phone ->
+            userData.add(phone)
         })
 
-        userManager.userFNameFlow.asLiveData().observe(requireActivity(), {
-            userData.add(it)
+        userManager.userFNameFlow.asLiveData().observe(requireActivity(), { fname ->
+            userData.add(fname)
         })
 
-        userManager.userLNameFlow.asLiveData().observe(requireActivity(), {
-            userData.add(it)
+        userManager.userLNameFlow.asLiveData().observe(requireActivity(), { lname ->
+            userData.add(lname)
         })
 
         Log.i("TAG", "onCreateView: $userData")
@@ -108,15 +109,15 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         val totalPrice = binding.price.text.toString()
         RaveUiManager(this)
             .setAmount(totalPrice.toDouble())
-            .setEmail("lexypoet@gmail.com")
-            .setfName("Dika")
-            .setlName("Kyle")
+            .setEmail(userData[0])
+            .setfName(userData[2])
+            .setlName(userData[3])
             .setNarration("Purchase of cloths from Avalanche")
             .setCurrency("NGN")
             .setPublicKey("FLWPUBK_TEST-6921d097ab745d1e299bccf98fbc7ac1-X")
             .setEncryptionKey("FLWSECK_TESTb5408b7e58ee")
             .setTxRef(System.currentTimeMillis().toString() + "Ref")
-            .setPhoneNumber("08135081549", true)
+            .setPhoneNumber(userData[1], true)
             .acceptAccountPayments(true)
             .acceptCardPayments(true)
             .onStagingEnv(true)
@@ -214,7 +215,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                 }
             }
 
-        }else {
+        } else {
             //Redirect to failed page
         }
     }

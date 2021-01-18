@@ -15,7 +15,8 @@ class UserManager(context: Context) {
     private val rmDataStore = context.createDataStore("rm_prefs")
 
     companion object {
-        val USER_NAME_KEY = preferencesKey<String>("USER_FIRST_NAME")
+        val USER_FNAME_KEY = preferencesKey<String>("USER_FIRST_NAME")
+        val USER_LNAME_KEY = preferencesKey<String>("USER_LAST_NAME")
         val USER_EMAIL_KEY = preferencesKey<String>("USER_EMAIL")
         val USER_PHONE_KEY = preferencesKey<String>("USER_PHONE")
         val USER_PASSWORD = preferencesKey<String>("USER_PASSWORD")
@@ -23,9 +24,10 @@ class UserManager(context: Context) {
         val ADMIN_STATUS = preferencesKey<Boolean>("ADMIN_STATUS")
     }
 
-    suspend fun storeUser(name: String, email: String, phone: String, adminStatus: Boolean) {
+    suspend fun storeUser(fname: String, lname:String, email: String, phone: String, adminStatus: Boolean) {
         dataStore.edit {
-            it[USER_NAME_KEY] = name
+            it[USER_FNAME_KEY] = fname
+            it[USER_LNAME_KEY] = lname
             it[USER_EMAIL_KEY] = email
             it[USER_PHONE_KEY] = phone
             it[ADMIN_STATUS] = adminStatus
@@ -42,14 +44,24 @@ class UserManager(context: Context) {
         }
     }
 
-    val userNameFlow: Flow<String> = dataStore.data.catch { exception ->
+    val userFNameFlow: Flow<String> = dataStore.data.catch { exception ->
         if (exception is IOException) {
             emit(emptyPreferences())
         } else {
             throw exception
         }
     }.map {
-        it[USER_NAME_KEY] ?: ""
+        it[USER_FNAME_KEY] ?: ""
+    }
+
+    val userLNameFlow: Flow<String> = dataStore.data.catch { exception ->
+        if (exception is IOException) {
+            emit(emptyPreferences())
+        } else {
+            throw exception
+        }
+    }.map {
+        it[USER_LNAME_KEY] ?: ""
     }
 
     val userEmailFlow: Flow<String> = dataStore.data.catch { exception ->

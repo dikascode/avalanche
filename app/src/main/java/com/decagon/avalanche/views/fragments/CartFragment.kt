@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.decagon.avalanche.R
@@ -28,6 +29,9 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
     private lateinit var storeViewModel: StoreViewModel
     private lateinit var cartListAdapter: CartListAdapter
+    lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
+
+    var userData = arrayListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +40,25 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         // Inflate the layout for this fragment
         _binding = FragmentCartBinding.inflate(inflater, container, false)
         storeViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
+
+        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireActivity())
+        userManager.userEmailFlow.asLiveData().observe(requireActivity(), { email ->
+                userData.add(email)
+        })
+
+        userManager.userPhoneFlow.asLiveData().observe(requireActivity(), {
+            userData.add(it)
+        })
+
+        userManager.userFNameFlow.asLiveData().observe(requireActivity(), {
+            userData.add(it)
+        })
+
+        userManager.userLNameFlow.asLiveData().observe(requireActivity(), {
+            userData.add(it)
+        })
+
+        Log.i("TAG", "onCreateView: $userData")
 
         binding.cartSubmitBtn.setOnClickListener {
             makePayment()

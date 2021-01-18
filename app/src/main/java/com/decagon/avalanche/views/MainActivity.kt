@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
 
-        sendMail()
+        //sendMail()
 
         /**
          * Hide admin drawer menu option

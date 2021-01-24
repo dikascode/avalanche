@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.decagon.avalanche.R
 import com.decagon.avalanche.adapters.CartListAdapter
 import com.decagon.avalanche.data.CartItem
+import com.decagon.avalanche.data.Transaction
 import com.decagon.avalanche.databinding.FragmentCartBinding
+import com.decagon.avalanche.firebase.FirebaseReference
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.flutterwave.raveandroid.RavePayActivity
 import com.flutterwave.raveandroid.RaveUiManager
@@ -155,6 +157,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                 when (resultCode) {
                     RavePayActivity.RESULT_SUCCESS -> {
                         val amount = transactionResponse.get("amount")
+                        val tranxRef = transactionResponse.get("txRef")
 
                         Toast.makeText(requireActivity(), "SUCCESS", Toast.LENGTH_LONG).show()
                         Log.d("Successful Transaction", "Transaction amount: $amount")
@@ -195,6 +198,30 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                             "Transaction msg: ${transactionResponse.get("vbvrespmessage")}"
                         )
 
+                        val reference = FirebaseReference.transactionRef
+                        val newTransaction = Transaction(tranxRef.toString(),
+                            transactionResponse.get("IP").toString(),
+                            transactionResponse.get("status").toString(),
+                            transactionResponse.get("fraud_status").toString(),
+                            transactionResponse.get("customer.fullName").toString(),
+                            transactionResponse.get("customer.phone").toString(),
+                            transactionResponse.get("customer.email").toString(),
+                            transactionResponse.get("paymentType").toString(),
+                            productTitles
+                        )
+
+                        reference.child(tranxRef.toString()).setValue(newTransaction)
+                            .addOnSuccessListener {
+                                // Write was successful!
+                                makeToast("Transaction saved to database successfully")
+
+                            }
+                            .addOnFailureListener { error ->
+                                // Write failed
+                                Log.i("TAG", "transactionFailed: ${error.message}")
+                                makeToast("Transaction not added successfully.")
+                            }
+
                         findNavController().navigate(R.id.orderFragment)
                     }
                     RavePayActivity.RESULT_ERROR -> {
@@ -229,5 +256,12 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         } else {
             //Redirect to failed page
         }
+    }
+
+
+    private fun makeToast(str: String) {
+        Toast.makeText(requireActivity(),
+            str,
+            Toast.LENGTH_LONG).show()
     }
 }

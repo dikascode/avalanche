@@ -31,6 +31,8 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
     private lateinit var cartListAdapter: CartListAdapter
     lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
 
+    var productTitleList = arrayListOf<String>()
+
     //Store userdata from datastore
     var userData = arrayListOf<String>()
 
@@ -59,12 +61,23 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             userData.add(lname)
         })
 
-        Log.i("TAG", "onCreateView: $userData")
+//        Log.i("TAG", "onCreateView: $userData")
 
-        binding.cartSubmitBtn.setOnClickListener {
-            makePayment()
-            storeViewModel.resetCart()
-        }
+        storeViewModel.getCart()?.observe(viewLifecycleOwner, {
+            if (it != null) {
+                cartListAdapter.submitList(it)
+                binding.cartSubmitBtn.isEnabled = it.isNotEmpty()
+
+                for (item in it) {
+                    productTitleList.add(item.product.title)
+                }
+            }
+        })
+
+        storeViewModel.getTotalPrice()?.observe(viewLifecycleOwner, {
+            binding.price.text = it.toString()
+        })
+
         return binding.root
     }
 
@@ -79,26 +92,23 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             )
         )
 
-        storeViewModel.getCart()?.observe(viewLifecycleOwner, {
-            if (it != null) {
-                cartListAdapter.submitList(it)
-                binding.cartSubmitBtn.isEnabled = it.isNotEmpty()
-            }
-        })
-
-        storeViewModel.getTotalPrice()?.observe(viewLifecycleOwner, {
-            binding.price.text = it.toString()
-        })
+        binding.cartSubmitBtn.setOnClickListener {
+            makePayment()
+            storeViewModel.resetCart()
+            productTitleList.clear()
+        }
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        productTitleList.clear()
         _binding = null
     }
 
     override fun deleteItem(cartItem: CartItem?) {
         storeViewModel.removeItemFromCart(cartItem)
+        productTitleList.remove(cartItem!!.product.title)
     }
 
     override fun changeQuantity(cartItem: CartItem?, quantity: Int) {
@@ -130,6 +140,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        var productTitles = productTitleList.joinToString()
 
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
             val message: String? = data.getStringExtra("response").toString()

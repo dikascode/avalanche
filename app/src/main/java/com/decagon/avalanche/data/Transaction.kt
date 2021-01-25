@@ -2,6 +2,7 @@ package com.decagon.avalanche.data
 
 data class Transaction (
     val ref: String,
+    val amount:String,
     val ip: String,
     val status: String,
     val fraud_status: String,

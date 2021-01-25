@@ -63,7 +63,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             userData.add(lname)
         })
 
-//        Log.i("TAG", "onCreateView: $userData")
+        Log.i("TAG", "onCreateView: $userData")
 
         storeViewModel.getCart()?.observe(viewLifecycleOwner, {
             if (it != null) {
@@ -143,6 +143,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         super.onActivityResult(requestCode, resultCode, data)
 
         var productTitles = productTitleList.joinToString()
+        Log.i("TAG", "product titles: $productTitles")
 
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
             val message: String? = data.getStringExtra("response").toString()
@@ -200,6 +201,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
                         val reference = FirebaseReference.transactionRef
                         val newTransaction = Transaction(tranxRef.toString(),
+                            amount.toString(),
                             transactionResponse.get("IP").toString(),
                             transactionResponse.get("status").toString(),
                             transactionResponse.get("fraud_status").toString(),
@@ -256,6 +258,13 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         } else {
             //Redirect to failed page
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        var productTitles = productTitleList.joinToString()
+        Log.i("TAG", "product titles: $productTitles")
     }
 
 

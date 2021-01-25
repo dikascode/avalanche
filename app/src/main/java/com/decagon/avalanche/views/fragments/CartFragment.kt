@@ -35,6 +35,8 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
     var productTitleList = arrayListOf<String>()
 
+    var title = ""
+
     //Store userdata from datastore
     var userData = arrayListOf<String>()
 
@@ -62,8 +64,6 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         userManager.userLNameFlow.asLiveData().observe(requireActivity(), { lname ->
             userData.add(lname)
         })
-
-        Log.i("TAG", "onCreateView: $userData")
 
         storeViewModel.getCart()?.observe(viewLifecycleOwner, {
             if (it != null) {
@@ -97,14 +97,12 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         binding.cartSubmitBtn.setOnClickListener {
             makePayment()
             storeViewModel.resetCart()
-            productTitleList.clear()
         }
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        productTitleList.clear()
         _binding = null
     }
 
@@ -121,15 +119,13 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         val totalPrice = binding.price.text.toString()
         RaveUiManager(this)
             .setAmount(totalPrice.toDouble())
-            .setEmail(userData[0])
-            .setfName(userData[2])
-            .setlName(userData[3])
+            .setfName(userData[0])
+            .setlName(userData[1] + " " + userData[3] + " " + userData[2])
             .setNarration("Purchase of cloths from Avalanche")
             .setCurrency("NGN")
             .setPublicKey("FLWPUBK_TEST-6921d097ab745d1e299bccf98fbc7ac1-X")
             .setEncryptionKey("FLWSECK_TESTb5408b7e58ee")
             .setTxRef(System.currentTimeMillis().toString() + "Ref")
-            .setPhoneNumber(userData[1], true)
             .acceptAccountPayments(true)
             .acceptCardPayments(true)
             .onStagingEnv(true)
@@ -143,7 +139,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         super.onActivityResult(requestCode, resultCode, data)
 
         var productTitles = productTitleList.joinToString()
-        Log.i("TAG", "product titles: $productTitles")
+        Log.i("TAG", "activity result titles: $productTitles")
 
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
             val message: String? = data.getStringExtra("response").toString()
@@ -199,6 +195,8 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                             "Transaction msg: ${transactionResponse.get("vbvrespmessage")}"
                         )
 
+                        findNavController().navigate(R.id.orderFragment)
+
                         val reference = FirebaseReference.transactionRef
                         val newTransaction = Transaction(tranxRef.toString(),
                             amount.toString(),
@@ -209,22 +207,27 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                             transactionResponse.get("customer.phone").toString(),
                             transactionResponse.get("customer.email").toString(),
                             transactionResponse.get("paymentType").toString(),
-                            productTitles
+                            productTitles,
+                            transactionResponse.get("customer.updatedAt").toString()
                         )
 
                         reference.child(tranxRef.toString()).setValue(newTransaction)
                             .addOnSuccessListener {
                                 // Write was successful!
-                                makeToast("Transaction saved to database successfully")
+                                makeToast("Transaction saved successfully")
+                                findNavController().navigate(R.id.orderFragment)
+                                productTitleList.clear()
 
                             }
                             .addOnFailureListener { error ->
                                 // Write failed
                                 Log.i("TAG", "transactionFailed: ${error.message}")
-                                makeToast("Transaction not added successfully.")
+                                makeToast("Transaction not saved successfully.")
+
+                                findNavController().navigate(R.id.failedTransactionFragment)
+                                productTitleList.clear()
                             }
 
-                        findNavController().navigate(R.id.orderFragment)
                     }
                     RavePayActivity.RESULT_ERROR -> {
                         Toast.makeText(requireActivity(), "ERROR", Toast.LENGTH_LONG).show()
@@ -259,14 +262,6 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             //Redirect to failed page
         }
     }
-
-    override fun onPause() {
-        super.onPause()
-
-        var productTitles = productTitleList.joinToString()
-        Log.i("TAG", "product titles: $productTitles")
-    }
-
 
     private fun makeToast(str: String) {
         Toast.makeText(requireActivity(),

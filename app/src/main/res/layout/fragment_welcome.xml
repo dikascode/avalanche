@@ -37,7 +37,7 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:text="@string/login"
-            android:textSize="26sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:transitionName="transition_login" />
 
@@ -48,7 +48,7 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:text="@string/sign_up"
-            android:textSize="26sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
     </LinearLayout>
 

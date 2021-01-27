@@ -14,8 +14,8 @@ import retrofit2.http.POST
 
 interface RetroService {
 //   " data/products.json"
-    @GET("api/ecommerce/v1/allProducts")
-    suspend fun getAllProducts(): Response<List<Product>>
+//    @GET("api/ecommerce/v1/allProducts")
+//    suspend fun getAllProducts(): Response<List<Product>>
 
     @Headers("Authorization: key=${SERVER_KEY}", "Content-Type:${CONTENT_TYPE}")
     @POST("fcm/send")

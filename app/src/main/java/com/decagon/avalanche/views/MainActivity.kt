@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -20,9 +21,19 @@ import androidx.navigation.findNavController
 import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
 import com.decagon.avalanche.api.JavaMailApi
+import com.decagon.avalanche.data.Product
+import com.decagon.avalanche.data.PushNotification
+import com.decagon.avalanche.data.PushNotificationData
 import com.decagon.avalanche.databinding.ActivityMainBinding
+import com.decagon.avalanche.network.RetroInstance
 import com.decagon.avalanche.viewmodels.StoreViewModel
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 
+const val TOPIC = "/newProducts/Product"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -47,6 +58,11 @@ class MainActivity : AppCompatActivity() {
 
         //sendMail()
 
+        PushNotification(PushNotificationData(
+            "New product", "Mini Skirt", "2000"), TOPIC).also {
+            sendNotification(it)
+        }
+
         /**
          * Hide admin drawer menu option
          */
@@ -68,6 +84,23 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+    private fun sendNotification(notification: PushNotification) =
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = RetroInstance.api.postNotification(notification)
+
+                if (response.isSuccessful) {
+                    Log.d("TAG", "sendNotificationSuccess: ${
+                        Gson().toJson(response)
+                    }")
+                } else {
+                    Log.e("TAG", response.errorBody().toString())
+                }
+            } catch (e: Exception) {
+                Log.e("TAG", "sendNotification: $e")
+            }
+        }
 
     private fun sendMail() {
         val javaMailApi = JavaMailApi(this,

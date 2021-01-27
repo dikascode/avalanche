@@ -8,5 +8,5 @@ import retrofit2.http.GET
 interface RetroService {
 //   " data/products.json"
     @GET("api/ecommerce/v1/allProducts")
-    suspend fun getAllProducts(): Response<List<Product>>
+    suspend fun getAllProducts(): Response<List<Product>>z
 }

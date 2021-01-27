@@ -1,3 +1,4 @@
 /build
 google-services.json
-/src/main/java/com.decagon.avalanche/utils/Utils
+/src/main/java/com.decagon.avalanche/utils/Utils.kt
+/src/main/java/com.decagon.avalanche/constants/Constants.kt

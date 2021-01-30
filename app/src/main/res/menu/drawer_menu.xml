@@ -25,6 +25,20 @@
             android:icon="@drawable/admin_icon"
             android:title="Admin" />
 
+        <item
+            android:id="@+id/actionContact"
+            android:orderInCategory="100"
+            app:showAsAction="never"
+            android:icon="@drawable/whatsapp_icon"
+            android:title="Avalanche" />
+
+        <item
+            android:id="@+id/actionLogOut"
+            android:orderInCategory="100"
+            app:showAsAction="never"
+            android:icon="@drawable/_exit_to_app"
+            android:title="Log Out" />
+
     </group>
 
 </menu>

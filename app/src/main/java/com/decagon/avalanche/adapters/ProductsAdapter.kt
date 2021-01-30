@@ -11,11 +11,13 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.decagon.avalanche.R
+import com.decagon.avalanche.constants.Constants.Companion.formatter
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
+import java.text.DecimalFormat
 
 class ProductsAdapter(
     private val products: ArrayList<Product>,
@@ -30,7 +32,9 @@ class ProductsAdapter(
         val product = products[position]
         Picasso.get().load(product.photoUrl).into(holder.image)
         holder.title.text = product.title
-        holder.price.text = product.price.toString()
+
+        val price = formatter?.format(product.price)
+        holder.price.text = price.toString()
 
         if (product.isOnSale) holder.isOnSaleIcon.visibility = View.VISIBLE
 
@@ -48,9 +52,10 @@ class ProductsAdapter(
                     holder.itemView,
                     "${product.title} added to cart.",
                     Snackbar.LENGTH_LONG
-                ).setAction("Checkout") {
-                    holder.itemView.findNavController().navigate(R.id.cartFragment)
-                }.show()
+                )
+//                    .setAction("Checkout") {
+//                    holder.itemView.findNavController().navigate(R.id.cartFragment)
+//                }.show()
             } else {
                 Snackbar.make(
                     holder.itemView,

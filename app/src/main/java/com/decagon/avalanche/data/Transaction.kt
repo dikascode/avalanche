@@ -10,6 +10,7 @@ data class Transaction (
     val clientNumber: String,
     val email: String,
     val paymentType: String,
-    val productsPurchased: String
+    val productsPurchased: String,
+    val timeStamp: String
 
 )

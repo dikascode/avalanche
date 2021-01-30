@@ -17,8 +17,8 @@ import java.net.URL
 class AvalancheRepositoryImpl() : AvalancheRepository {
     var productsList = ArrayList<Product>()
 
-    private val retroInstance: RetroService =
-        RetroInstance.getRetroInstance().create(RetroService::class.java)
+//    private val retroInstance: RetroService =
+//        RetroInstance.getRetroInstance().create(RetroService::class.java)
 
    private var reference = FirebaseDatabase.getInstance().reference.child("Products")
 

@@ -21,11 +21,11 @@ import com.google.firebase.database.*
 
 
 class MainFragment : Fragment() {
-    var productsList = ArrayList<Product>()
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     lateinit var product: Product
     lateinit var adapter: ProductsAdapter
+    var productsList = ArrayList<Product>()
 
     private val reference = FirebaseReference.productReference
 
@@ -35,14 +35,16 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
-        val view = binding.root
         setHasOptionsMenu(true)
+        return binding.root
 
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.progressBarLayout.fragmentMainProgressBar.visibility = View.VISIBLE
-
         implementFirebase(reference)
-        return view
-
     }
 
     private fun implementFirebase(reference: DatabaseReference) {
@@ -78,13 +80,14 @@ class MainFragment : Fragment() {
 
     private fun implementMainGridLayoutRecyclerView(productsList: ArrayList<Product>) {
         val recyclerView = binding.fragmentMainRv
-        binding.fragmentMainRv.addItemDecoration(
+
+       recyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireActivity(),
                 DividerItemDecoration.VERTICAL
             )
         )
-        binding.fragmentMainRv.addItemDecoration(
+        recyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireActivity(),
                 DividerItemDecoration.HORIZONTAL
@@ -103,12 +106,11 @@ class MainFragment : Fragment() {
 //                Log.d("TAG", "param: $extraTitle")
                 findNavController().navigate(action)
             }
-        adapter.notifyDataSetChanged()
 
+        adapter.notifyDataSetChanged()
         recyclerView.layoutManager = GridLayoutManager(activity, 2)
 
         recyclerView.adapter = adapter
-
 
     }
 
@@ -123,44 +125,46 @@ class MainFragment : Fragment() {
         }
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        requireActivity().menuInflater.inflate(R.menu.menu, menu)
-        val item: MenuItem = menu!!.findItem(R.id.action_search)
-        val searchView: SearchView = item.actionView as SearchView
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText != null) {
-
-                    val filteredProducts = productsList.filter {
-                        it.title.contains(newText, true)
-                    }
-
-                    //Log.d("TAG", "filter: ${filteredProducts.size}")
-
-                    //Get search product from firebase
-                    implementMainGridLayoutRecyclerView(filteredProducts as ArrayList<Product>)
-                    if (filteredProducts.isNotEmpty()) {
-                        binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
-                    } else {
-//                        Toast.makeText(requireActivity(),
-//                            "This product is not available yet. Search for another product",
-//                            Toast.LENGTH_LONG).show()
-                    }
-
-                }
-
-                return false
-            }
-
-        })
-        super.onCreateOptionsMenu(menu, inflater)
-    }
+    /**
+     * Search
+     */
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        requireActivity().menuInflater.inflate(R.menu.menu, menu)
+//        val item: MenuItem = menu!!.findItem(R.id.action_search)
+//        val searchView: SearchView = item.actionView as SearchView
+//
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String?): Boolean {
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String?): Boolean {
+//                if (newText != null) {
+//
+//                    val filteredProducts = productsList.filter {
+//                        it.title.contains(newText, true)
+//                    }
+//
+//                    Log.d("TAG", "filter: ${filteredProducts.size}")
+//
+//                    //Get search product from firebase
+//                    implementMainGridLayoutRecyclerView(filteredProducts as ArrayList<Product>)
+//                    if (filteredProducts.isNotEmpty()) {
+//                        binding.progressBarLayout.fragmentMainProgressBar.visibility = View.GONE
+//                    } else {
+////                        Toast.makeText(requireActivity(),
+////                            "This product is not available yet. Search for another product",
+////                            Toast.LENGTH_LONG).show()
+//                    }
+//
+//                }
+//
+//                return false
+//            }
+//
+//        })
+//        super.onCreateOptionsMenu(menu, inflater)
+//    }
 
 
     override fun onDestroyView() {

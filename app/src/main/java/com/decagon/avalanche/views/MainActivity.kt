@@ -1,7 +1,9 @@
 package com.decagon.avalanche.views
 
 
-import android.app.Application
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -14,19 +16,26 @@ import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
 import com.decagon.avalanche.api.JavaMailApi
+import com.decagon.avalanche.data.Product
+import com.decagon.avalanche.data.PushNotification
+import com.decagon.avalanche.data.PushNotificationData
 import com.decagon.avalanche.databinding.ActivityMainBinding
+import com.decagon.avalanche.network.RetroInstance
 import com.decagon.avalanche.viewmodels.StoreViewModel
-import com.rommansabbir.networkx.NetworkX
-import com.rommansabbir.networkx.NetworkXObservingStrategy
-import com.rommansabbir.networkx.isInternetConnectedLiveData
-import kotlin.properties.Delegates
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 
+const val TOPIC = "/topics/product"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -50,6 +59,11 @@ class MainActivity : AppCompatActivity() {
 
 
         //sendMail()
+
+        /**
+         * Subscribe to push notification topic
+         */
+        FirebaseMessaging.getInstance().subscribeToTopic("product")
 
         /**
          * Hide admin drawer menu option
@@ -110,9 +124,28 @@ class MainActivity : AppCompatActivity() {
                         R.id.actionAdmin -> {
                             if (isAdmin) {
                                 findNavController(R.id.nav_host_fragment).navigate(R.id.adminFragment)
-                                //                            finish()
                             }
+                        }
 
+                        R.id.actionContact -> {
+                            val installed: Boolean = whatsappInstalledOrNot("com.whatsapp")
+
+                            if (installed) {
+                                val intent = Intent(Intent.ACTION_VIEW)
+                                intent.data =
+                                    Uri.parse("http://api.whatsapp.com/send?phone=+2348165264168&text=" + "Hello Avalanche")
+                                startActivity(intent)
+                            } else {
+                                Toast.makeText(
+                                    this,
+                                    "Whatsapp not installed on this device. Please install Whatsapp.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+
+                        R.id.actionLogOut -> {
+                            finish()
                         }
                     }
                     it.isChecked = true
@@ -140,6 +173,18 @@ class MainActivity : AppCompatActivity() {
 
             }
         })
+    }
+
+    private fun whatsappInstalledOrNot(url: String): Boolean {
+        val packageManager = packageManager
+
+        return try {
+            packageManager.getPackageInfo(url, PackageManager.GET_ACTIVITIES)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+
     }
 
 

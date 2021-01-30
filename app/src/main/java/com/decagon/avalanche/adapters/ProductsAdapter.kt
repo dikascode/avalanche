@@ -30,7 +30,7 @@ class ProductsAdapter(
         val product = products[position]
         Picasso.get().load(product.photoUrl).into(holder.image)
         holder.title.text = product.title
-        holder.price.text = product.price.toString()
+        holder.price.text = "N" + product.price.toString()
 
         if (product.isOnSale) holder.isOnSaleIcon.visibility = View.VISIBLE
 
@@ -48,9 +48,10 @@ class ProductsAdapter(
                     holder.itemView,
                     "${product.title} added to cart.",
                     Snackbar.LENGTH_LONG
-                ).setAction("Checkout") {
-                    holder.itemView.findNavController().navigate(R.id.cartFragment)
-                }.show()
+                )
+//                    .setAction("Checkout") {
+//                    holder.itemView.findNavController().navigate(R.id.cartFragment)
+//                }.show()
             } else {
                 Snackbar.make(
                     holder.itemView,

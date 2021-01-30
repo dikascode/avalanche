@@ -38,7 +38,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
             android:text="@string/select_product_image"
-            android:textColor="@color/black"
+            android:textColor="@color/accent_color"
             android:textStyle="bold" />
 
         <ImageView
@@ -95,14 +95,13 @@
     <include
         android:id="@+id/progress_bar_layout"
         layout="@layout/progress_bar"
-        app:layout_constraintTop_toBottomOf="@id/product_desc_et"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        />
+        android:layout_marginTop="20dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/product_desc_et" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/admin_fragment_submitBtn"

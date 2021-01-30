@@ -118,7 +118,7 @@ class AdminFragment : Fragment() {
 
                         PushNotification(
                             PushNotificationData(
-                                "New product", "$title | $price"),
+                                "New product", "$title | N$price"),
                             TOPIC
                         ).also {
                             sendNotification(it)

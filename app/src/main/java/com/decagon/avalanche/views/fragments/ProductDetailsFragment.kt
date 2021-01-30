@@ -82,7 +82,7 @@ class ProductDetailsFragment : Fragment() {
 
     private fun bindProductDataToLayout(productDetails: Product) {
         binding.productTitleTv.text = productDetails.title
-        binding.productPriceTv.text = productDetails.price.toString()
+        binding.productPriceTv.text = "N" + productDetails.price.toString()
         binding.productDescTv.text = productDetails.desc
         val photoUrl = productDetails.photoUrl
         Picasso.get().load(photoUrl).into(binding.productImageIv)
@@ -95,9 +95,7 @@ class ProductDetailsFragment : Fragment() {
                     requireView(),
                     "${productDetails.title} added to cart.",
                     Snackbar.LENGTH_LONG
-                ).setAction("Checkout") {
-                    requireView().findNavController().navigate(R.id.cartFragment)
-                }.show()
+                )
             } else {
                 Snackbar.make(
                     requireView(),

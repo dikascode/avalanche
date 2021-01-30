@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.decagon.avalanche.R
 import com.decagon.avalanche.adapters.CartListAdapter
+import com.decagon.avalanche.constants.Constants.Companion.formatter
 import com.decagon.avalanche.data.CartItem
 import com.decagon.avalanche.data.Transaction
 import com.decagon.avalanche.databinding.FragmentCartBinding
@@ -77,7 +78,8 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         })
 
         storeViewModel.getTotalPrice()?.observe(viewLifecycleOwner, {
-            binding.price.text = it.toString()
+            val price = formatter?.format(it)
+            binding.price.text = price
         })
 
         return binding.root

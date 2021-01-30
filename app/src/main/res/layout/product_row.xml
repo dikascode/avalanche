@@ -36,14 +36,28 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="TextView"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.016"
+        app:layout_constraintStart_toStartOf="@+id/product_row_iv"
         app:layout_constraintTop_toBottomOf="@+id/product_row_iv"
-        app:layout_constraintVertical_bias="0.034" />
+        app:layout_constraintVertical_bias="0.043" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:text="N"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/add_product_to_cart_btn"
+        app:layout_constraintStart_toStartOf="@+id/product_row_iv"
+        app:layout_constraintTop_toBottomOf="@+id/product_title_tv" />
 
     <TextView
         android:id="@+id/product_price"
@@ -55,20 +69,22 @@
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/product_title_tv"
-        tools:text="N100" />
+        tools:text="100" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/add_product_to_cart_btn"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="Add to Cart"
+        android:textAlignment="center"
         android:textColor="@color/blue"
         android:textStyle="bold"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:textAlignment="center"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/product_price"/>
+        app:layout_constraintTop_toBottomOf="@id/product_price" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

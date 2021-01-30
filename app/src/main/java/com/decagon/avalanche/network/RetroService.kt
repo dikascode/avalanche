@@ -17,7 +17,7 @@ interface RetroService {
 //    @GET("api/ecommerce/v1/allProducts")
 //    suspend fun getAllProducts(): Response<List<Product>>
 
-    @Headers("Authorization: key=${SERVER_KEY}", "Content-Type:${CONTENT_TYPE}")
+    @Headers("Authorization: key=$SERVER_KEY", "Content-Type:$CONTENT_TYPE")
     @POST("fcm/send")
     suspend fun postNotification(
         @Body notification: PushNotification

@@ -27,13 +27,15 @@ import com.decagon.avalanche.data.PushNotificationData
 import com.decagon.avalanche.databinding.ActivityMainBinding
 import com.decagon.avalanche.network.RetroInstance
 import com.decagon.avalanche.viewmodels.StoreViewModel
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 
-const val TOPIC = "/newProducts/Product"
+const val TOPIC = "/topics/product"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -58,8 +60,16 @@ class MainActivity : AppCompatActivity() {
 
         //sendMail()
 
-        PushNotification(PushNotificationData(
-            "New product", "Mini Skirt", "2000"), TOPIC).also {
+        /**
+         * Subscribe to notification topic
+         */
+        FirebaseMessaging.getInstance().subscribeToTopic("product")
+
+        PushNotification(
+            PushNotificationData(
+                "New product", "Mini Skirt | N2000"),
+            TOPIC
+        ).also {
             sendNotification(it)
         }
 
@@ -92,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
                 if (response.isSuccessful) {
                     Log.d("TAG", "sendNotificationSuccess: ${
-                        Gson().toJson(response)
+                        Gson().toJson(response.message())
                     }")
                 } else {
                     Log.e("TAG", response.errorBody().toString())

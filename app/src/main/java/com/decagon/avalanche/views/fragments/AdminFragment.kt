@@ -18,8 +18,16 @@ import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.decagon.avalanche.cloudinary.CloudinaryManager
 import com.decagon.avalanche.data.Product
+import com.decagon.avalanche.data.PushNotification
+import com.decagon.avalanche.data.PushNotificationData
 import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.firebase.FirebaseReference
+import com.decagon.avalanche.network.RetroInstance
+import com.decagon.avalanche.views.TOPIC
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class AdminFragment : Fragment() {
@@ -108,6 +116,14 @@ class AdminFragment : Fragment() {
                         progressBar.visibility = View.GONE
                         makeToast("Product saved to database successfully")
 
+                        PushNotification(
+                            PushNotificationData(
+                                "New product", "$title | $price"),
+                            TOPIC
+                        ).also {
+                            sendNotification(it)
+                        }
+
                         /**
                          * Clear input fields
                          */
@@ -184,6 +200,24 @@ class AdminFragment : Fragment() {
             }
         }
     }
+
+
+    private fun sendNotification(notification: PushNotification) =
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = RetroInstance.api.postNotification(notification)
+
+                if (response.isSuccessful) {
+                    Log.d("TAG", "sendNotificationSuccess: ${
+                        Gson().toJson(response.body())
+                    }")
+                } else {
+                    Log.e("TAG", response.errorBody().toString())
+                }
+            } catch (e: Exception) {
+                Log.e("TAG", "sendNotification: $e")
+            }
+        }
 
 
     override fun onDestroyView() {

@@ -61,17 +61,9 @@ class MainActivity : AppCompatActivity() {
         //sendMail()
 
         /**
-         * Subscribe to notification topic
+         * Subscribe to push notification topic
          */
         FirebaseMessaging.getInstance().subscribeToTopic("product")
-
-        PushNotification(
-            PushNotificationData(
-                "New product", "Mini Skirt | N2000"),
-            TOPIC
-        ).also {
-            sendNotification(it)
-        }
 
         /**
          * Hide admin drawer menu option
@@ -94,23 +86,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
-    private fun sendNotification(notification: PushNotification) =
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = RetroInstance.api.postNotification(notification)
-
-                if (response.isSuccessful) {
-                    Log.d("TAG", "sendNotificationSuccess: ${
-                        Gson().toJson(response.message())
-                    }")
-                } else {
-                    Log.e("TAG", response.errorBody().toString())
-                }
-            } catch (e: Exception) {
-                Log.e("TAG", "sendNotification: $e")
-            }
-        }
 
     private fun sendMail() {
         val javaMailApi = JavaMailApi(this,

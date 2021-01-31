@@ -99,6 +99,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         binding.cartSubmitBtn.setOnClickListener {
             makePayment()
             storeViewModel.resetCart()
+            productTitleList.clear()
         }
 
     }
@@ -106,6 +107,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
     }
 
     override fun deleteItem(cartItem: CartItem?) {

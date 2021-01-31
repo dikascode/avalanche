@@ -1,17 +1,17 @@
 package com.decagon.avalanche.views.fragments
 
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.appcompat.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.decagon.avalanche.R
 import com.decagon.avalanche.adapters.CategoriesAdapter
 import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
@@ -27,6 +27,8 @@ class MainFragment : Fragment() {
     lateinit var adapter: ProductsAdapter
     var productsList = ArrayList<Product>()
 
+    lateinit var loggedOnSharePref: SharedPreferences
+
     private val reference = FirebaseReference.productReference
 
     override fun onCreateView(
@@ -36,8 +38,20 @@ class MainFragment : Fragment() {
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        return binding.root
 
+        /**
+         *   Save value to indicate user has reached main fragment previously and pass it
+         *   through shared preference
+         */
+
+        loggedOnSharePref = requireContext().getSharedPreferences(
+            "loggedOn",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        var editor: SharedPreferences.Editor = loggedOnSharePref.edit()
+        editor.putBoolean("firstTime", false)
+        editor.commit()
+        return binding.root
     }
 
 
@@ -81,7 +95,7 @@ class MainFragment : Fragment() {
     private fun implementMainGridLayoutRecyclerView(productsList: ArrayList<Product>) {
         val recyclerView = binding.fragmentMainRv
 
-       recyclerView.addItemDecoration(
+        recyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireActivity(),
                 DividerItemDecoration.VERTICAL

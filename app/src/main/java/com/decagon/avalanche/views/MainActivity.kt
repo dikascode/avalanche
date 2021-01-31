@@ -2,10 +2,10 @@ package com.decagon.avalanche.views
 
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,19 +21,9 @@ import androidx.navigation.findNavController
 import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
 import com.decagon.avalanche.api.JavaMailApi
-import com.decagon.avalanche.data.Product
-import com.decagon.avalanche.data.PushNotification
-import com.decagon.avalanche.data.PushNotificationData
 import com.decagon.avalanche.databinding.ActivityMainBinding
-import com.decagon.avalanche.network.RetroInstance
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
 
 const val TOPIC = "/topics/product"
 
@@ -41,24 +31,33 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var navController: NavController
     lateinit var storeViewModel: StoreViewModel
-    lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
+    private var userManager = com.decagon.avalanche.preferencesdatastore.UserManager(this)
+
+    lateinit var loggedOnSharePref: SharedPreferences
 
     var isAdmin = false
-
     private var cartQuantity = 0
+
+    override fun onStart() {
+        super.onStart()
+        /** Check onBoarding user status */
+        checkIfUserLoggedOn()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //View binding instance
         binding = ActivityMainBinding.inflate(layoutInflater)
-
-        //get reference to root view
-        val view = binding.root
-        setContentView(view)
-
+        setContentView(binding.root)
 
         //sendMail()
+
+        userManager.userAdminFlow.asLiveData().observe(this, { admin ->
+            isAdmin = admin
+            if (isAdmin)
+                binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = true
+        })
 
         /**
          * Subscribe to push notification topic
@@ -70,17 +69,9 @@ class MainActivity : AppCompatActivity() {
          */
         binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = false
 
-        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(this)
-
         val networkConnection = NetworkStatusChecker(this)
 
         storeViewModel = ViewModelProvider(this).get(StoreViewModel::class.java)
-
-        userManager.userAdminFlow.asLiveData().observe(this, { admin ->
-            isAdmin = admin
-            if (isAdmin)
-                binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = true
-        })
 
         checkNetworkStatus(networkConnection)
 
@@ -226,6 +217,19 @@ class MainActivity : AppCompatActivity() {
             onOptionsItemSelected(menuItem)
         }
         return true
+    }
+
+
+    private fun checkIfUserLoggedOn() {
+
+        loggedOnSharePref = this.getSharedPreferences("loggedOn", MODE_PRIVATE)
+        var isFirstTime: Boolean = loggedOnSharePref.getBoolean("firstTime", true)
+
+
+        /** Check if user has not logged on before, else move to login screen */
+        if (!isFirstTime) {
+            findNavController(R.id.nav_host_fragment).navigate(R.id.loginFragment)
+        }
     }
 
 }

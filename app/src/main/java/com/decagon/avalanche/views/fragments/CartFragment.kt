@@ -1,6 +1,8 @@
 package com.decagon.avalanche.views.fragments
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.decagon.avalanche.R
 import com.decagon.avalanche.adapters.CartListAdapter
+import com.decagon.avalanche.api.JavaMailApi
 import com.decagon.avalanche.constants.Constants.Companion.formatter
 import com.decagon.avalanche.data.CartItem
 import com.decagon.avalanche.data.Transaction
@@ -78,8 +81,8 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         })
 
         storeViewModel.getTotalPrice()?.observe(viewLifecycleOwner, {
-            val price = formatter?.format(it)
-            binding.price.text = price
+            //val price = formatter?.format(it)
+            binding.price.text = it.toString()
         })
 
         return binding.root
@@ -99,14 +102,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         binding.cartSubmitBtn.setOnClickListener {
             makePayment()
             storeViewModel.resetCart()
-            productTitleList.clear()
         }
-
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
 
     }
 
@@ -138,11 +134,10 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             .initialize()
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        var productTitles = productTitleList.joinToString()
+        var productTitles = productTitleList.toSet().joinToString()
         Log.i("TAG", "activity result titles: $productTitles")
 
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
@@ -160,46 +155,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                         val amount = transactionResponse.get("amount")
                         val tranxRef = transactionResponse.get("txRef")
 
-                        Toast.makeText(requireActivity(), "SUCCESS", Toast.LENGTH_LONG).show()
-                        Log.d("Successful Transaction", "Transaction amount: $amount")
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction IP: ${transactionResponse.get("IP")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction status: ${transactionResponse.get("status")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction fraud status: ${transactionResponse.get("fraud_status")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction ref: ${transactionResponse.get("txRef")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction customer name: ${transactionResponse.get("customer.fullName")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction customer email: ${transactionResponse.get("customer.email")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction customer phone: ${transactionResponse.get("customer.phone")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction payment type: ${transactionResponse.get("paymentType")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction msg: ${transactionResponse.get("vbvrespmessage")}"
-                        )
-
-                        findNavController().navigate(R.id.orderFragment)
+                        makeToast("SUCCESSFUL")
 
                         val reference = FirebaseReference.transactionRef
                         val newTransaction = Transaction(tranxRef.toString(),
@@ -219,8 +175,35 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                             .addOnSuccessListener {
                                 // Write was successful!
                                 makeToast("Transaction saved successfully")
-                                findNavController().navigate(R.id.orderFragment)
-                                productTitleList.clear()
+
+                                val customerMailMessage =
+                                    "Avalanche has successfully received your order for: $productTitles\n" +
+                                            "Total price: N$amount.\n" +
+                                            "You will be contacted soon to have your delivery within three days."
+
+                                val avalancheMailMessage =
+                                    "You have an order from ${transactionResponse.get("customer.fullName")}\n " +
+                                            "Total Price: N$amount\n " +
+                                            "Items Purchased: $productTitles"
+
+                                //Retrieve user saved email
+                                val emailSharedPref = requireActivity().getSharedPreferences("userEmail",
+                                    Context.MODE_PRIVATE).getString("email", null)
+
+                                    //Send mail to customer
+                                    sendMail(emailSharedPref!!,
+                                        "Avalanche Transaction Receipt",
+                                        customerMailMessage)
+
+                                    //Send mail to avalanche
+                                    sendMail("northwrite19@gmail.com",
+                                        "You have a new Order",
+                                        avalancheMailMessage)
+
+                                    productTitleList.clear()
+                                    findNavController().navigate(R.id.orderFragment)
+
+
 
                             }
                             .addOnFailureListener { error ->
@@ -267,9 +250,26 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         }
     }
 
+
     private fun makeToast(str: String) {
         Toast.makeText(requireActivity(),
             str,
             Toast.LENGTH_LONG).show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+
+    }
+
+
+    private fun sendMail(email: String, mailSubject: String, emailMessage: String) {
+        val javaMailApi = JavaMailApi(requireActivity(),
+            email,
+            mailSubject,
+            emailMessage)
+
+        javaMailApi.execute()
     }
 }

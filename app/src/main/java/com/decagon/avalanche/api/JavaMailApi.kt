@@ -35,7 +35,7 @@ class JavaMailApi(
         mProgressDialog!!.dismiss()
 
         //Show success toast
-        Toast.makeText(mContext, "Message Sent", Toast.LENGTH_SHORT).show()
+        Toast.makeText(mContext, "Successful", Toast.LENGTH_SHORT).show()
     }
 
     override fun doInBackground(vararg params: Void?): Void? {

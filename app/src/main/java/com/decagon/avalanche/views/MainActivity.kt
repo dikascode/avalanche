@@ -20,7 +20,6 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
-import com.decagon.avalanche.api.JavaMailApi
 import com.decagon.avalanche.databinding.ActivityMainBinding
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.google.firebase.messaging.FirebaseMessaging
@@ -51,8 +50,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //sendMail()
-
         userManager.userAdminFlow.asLiveData().observe(this, { admin ->
             isAdmin = admin
             if (isAdmin)
@@ -78,14 +75,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun sendMail() {
-        val javaMailApi = JavaMailApi(this,
-            "emmanuelututu27@gmail.com",
-            "Test Mail",
-            "This is is a test mail from Avalanche android project")
 
-        javaMailApi.execute()
-    }
 
     private fun checkNetworkStatus(networkConnection: NetworkStatusChecker) {
         networkConnection.observe(this, Observer { isConnected ->

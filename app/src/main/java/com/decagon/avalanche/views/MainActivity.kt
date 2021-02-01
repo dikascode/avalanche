@@ -29,19 +29,12 @@ const val TOPIC = "/topics/product"
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var navController: NavController
-    lateinit var storeViewModel: StoreViewModel
+    private lateinit var storeViewModel: StoreViewModel
     private var userManager = com.decagon.avalanche.preferencesdatastore.UserManager(this)
-
-    lateinit var loggedOnSharePref: SharedPreferences
 
     var isAdmin = false
     private var cartQuantity = 0
 
-    override fun onStart() {
-        super.onStart()
-        /** Check onBoarding user status */
-        checkIfUserLoggedOn()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -207,19 +200,6 @@ class MainActivity : AppCompatActivity() {
             onOptionsItemSelected(menuItem)
         }
         return true
-    }
-
-
-    private fun checkIfUserLoggedOn() {
-
-        loggedOnSharePref = this.getSharedPreferences("loggedOn", MODE_PRIVATE)
-        var isFirstTime: Boolean = loggedOnSharePref.getBoolean("firstTime", true)
-
-
-        /** Check if user has not logged on before, else move to login screen */
-        if (!isFirstTime) {
-            findNavController(R.id.nav_host_fragment).navigate(R.id.loginFragment)
-        }
     }
 
 }

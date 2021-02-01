@@ -187,24 +187,22 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                                             "Items Purchased: $productTitles"
 
                                 //Retrieve user saved email
-                                val emailSharedPref = requireActivity().getSharedPreferences("userEmail",
-                                    Context.MODE_PRIVATE).getString("email", null)
+                                val emailSharedPref =
+                                    requireActivity().getSharedPreferences("userEmail",
+                                        Context.MODE_PRIVATE).getString("email", null)
 
-                                    //Send mail to customer
-                                    sendMail(emailSharedPref!!,
-                                        "Avalanche Transaction Receipt",
-                                        customerMailMessage)
+                                //Send mail to customer
+                                sendMail(emailSharedPref!!,
+                                    "Avalanche Transaction Receipt",
+                                    customerMailMessage)
 
-                                    //Send mail to avalanche
-                                    sendMail("northwrite19@gmail.com",
-                                        "You have a new Order",
-                                        avalancheMailMessage)
+                                //Send mail to avalanche
+                                sendMail("northwrite19@gmail.com",
+                                    "You have a new Order",
+                                    avalancheMailMessage)
 
-                                    productTitleList.clear()
-                                    findNavController().navigate(R.id.orderFragment)
-
-
-
+                                productTitleList.clear()
+                                findNavController().navigate(R.id.orderFragment)
                             }
                             .addOnFailureListener { error ->
                                 // Write failed

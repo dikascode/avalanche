@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentForgotPasswordBinding
@@ -30,6 +31,11 @@ class ForgotPasswordFragment : Fragment() {
     lateinit var nextBtn: MaterialButton
 
 
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,6 +53,11 @@ class ForgotPasswordFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onDestroy() {

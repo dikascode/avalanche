@@ -24,6 +24,8 @@ class WelcomeFragment : Fragment() {
 
         /** Check onBoarding user status */
         checkIfUserLoggedOn()
+
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
     }
 
     override fun onCreateView(
@@ -53,6 +55,11 @@ class WelcomeFragment : Fragment() {
         if (!isFirstTime) {
             findNavController().navigate(R.id.loginFragment)
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
 

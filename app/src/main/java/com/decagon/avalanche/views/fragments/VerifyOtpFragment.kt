@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.chaos.view.PinView
@@ -49,6 +50,11 @@ class VerifyOtpFragment : Fragment() {
     private lateinit var fName: String
     private lateinit var email: String
     private lateinit var intention: String
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
 
 
     override fun onCreateView(
@@ -209,6 +215,11 @@ class VerifyOtpFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
 

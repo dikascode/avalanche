@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentForgotPasswordSelectionBinding
 import com.decagon.avalanche.databinding.FragmentVerifyOtpBinding
@@ -21,6 +22,16 @@ class ForgotPasswordSelectionFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentForgotPasswordSelectionBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onDestroy() {

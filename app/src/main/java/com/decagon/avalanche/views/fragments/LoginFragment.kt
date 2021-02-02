@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
@@ -35,6 +36,11 @@ class LoginFragment : Fragment() {
     lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
 
     val reference = FirebaseReference.userReference
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -223,6 +229,11 @@ class LoginFragment : Fragment() {
                 true
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onDestroy() {

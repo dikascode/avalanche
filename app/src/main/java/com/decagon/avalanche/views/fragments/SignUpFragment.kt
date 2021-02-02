@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentSignUpBinding
@@ -29,6 +30,11 @@ class SignUpFragment : Fragment() {
     lateinit var phoneNumber: TextInputLayout
     lateinit var countryCodePicker: CountryCodePicker
     lateinit var progressBar: ProgressBar
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -205,6 +211,11 @@ class SignUpFragment : Fragment() {
         })
 
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
 }

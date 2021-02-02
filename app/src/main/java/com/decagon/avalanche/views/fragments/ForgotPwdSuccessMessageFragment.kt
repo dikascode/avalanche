@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentForgotPasswordBinding
@@ -17,6 +18,11 @@ class ForgotPwdSuccessMessageFragment : Fragment() {
     private var _binding: FragmentForgotPwdSucesssMessageBinding? = null
     private val binding get() = _binding!!
 
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,6 +34,11 @@ class ForgotPwdSuccessMessageFragment : Fragment() {
             findNavController().navigate(R.id.loginFragment)
         }
         return binding.root
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onDestroy() {

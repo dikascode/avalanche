@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.decagon.avalanche.R
@@ -33,6 +34,11 @@ class SetNewPasswordFragment : Fragment() {
 
     //SafeArgs Data
     private lateinit var phoneNumber: String
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -118,6 +124,11 @@ class SetNewPasswordFragment : Fragment() {
                 true
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onDestroy() {

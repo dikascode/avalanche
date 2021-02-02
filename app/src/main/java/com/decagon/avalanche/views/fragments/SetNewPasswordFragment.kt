@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentSetNewPasswordBinding
+import com.decagon.avalanche.utils.showToast
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -46,17 +47,18 @@ class SetNewPasswordFragment : Fragment() {
         /**
          * Handle back press
          */
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                requireActivity().finish()
-            }
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().finish()
+                }
 
-        })
+            })
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentSetNewPasswordBinding.inflate(inflater, container, false)
@@ -88,7 +90,7 @@ class SetNewPasswordFragment : Fragment() {
 
         fireBaseReference.child(phoneNumber).child("password").setValue(_newPassword)
 
-        Toast.makeText(requireActivity(), "Password Updated Successfully", Toast.LENGTH_LONG).show()
+        showToast("Password Updated Successfully", requireActivity())
 
         findNavController().navigate(R.id.forgotPwdSuccessMessageFragment)
     }

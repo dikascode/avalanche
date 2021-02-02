@@ -15,5 +15,7 @@
     <color name="primary_text_color">#212121</color>
     <color name="secondary_text_color">#757575</color>
 
+    <color name="error_color">#ed4337</color>
+
     <color name="light_grey">#E1E1E1</color>
 </resources>

@@ -1,6 +1,7 @@
 package com.decagon.avalanche.views
 
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -21,6 +22,8 @@ import androidx.navigation.findNavController
 import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.ActivityMainBinding
+import com.decagon.avalanche.utils.showAlertDialog
+import com.decagon.avalanche.utils.showToast
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 
@@ -110,16 +113,17 @@ class MainActivity : AppCompatActivity() {
                                     Uri.parse("http://api.whatsapp.com/send?phone=+2348165264168&text=" + "Hello Avalanche")
                                 startActivity(intent)
                             } else {
-                                Toast.makeText(
-                                    this,
-                                    "Whatsapp not installed on this device. Please install Whatsapp.",
-                                    Toast.LENGTH_LONG
-                                ).show()
+
+                                showToast("Whatsapp not installed on this device. Please install Whatsapp.", this)
                             }
                         }
 
                         R.id.actionLogOut -> {
-                            finish()
+                            val dialogInterface = DialogInterface.OnClickListener { dialog, _ ->
+                                finish()
+                                dialog.cancel()
+                            }
+                            showAlertDialog("Are you sure you want to log out?", "Log Out", dialogInterface)
                         }
                     }
                     it.isChecked = true
@@ -136,11 +140,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
             } else {
-                Toast.makeText(
-                    this,
-                    "Oops. Please check your internet connection and try again",
-                    Toast.LENGTH_LONG
-                ).show()
+
+                showToast("Oops. Please check your internet connection and try again", this)
 
                 storeViewModel.getCart()?.removeObservers(this)
                 binding.noInternetView.noInternetIv.visibility = View.VISIBLE

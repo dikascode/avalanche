@@ -2,13 +2,11 @@ package com.decagon.avalanche.views.fragments
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
@@ -17,11 +15,11 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.decagon.avalanche.R
 import com.decagon.avalanche.adapters.CartListAdapter
 import com.decagon.avalanche.api.JavaMailApi
-import com.decagon.avalanche.constants.Constants.Companion.formatter
 import com.decagon.avalanche.data.CartItem
 import com.decagon.avalanche.data.Transaction
 import com.decagon.avalanche.databinding.FragmentCartBinding
 import com.decagon.avalanche.firebase.FirebaseReference
+import com.decagon.avalanche.utils.showToast
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.flutterwave.raveandroid.RavePayActivity
 import com.flutterwave.raveandroid.RaveUiManager
@@ -160,7 +158,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                         val amount = transactionResponse.get("amount")
                         val tranxRef = transactionResponse.get("txRef")
 
-                        makeToast("SUCCESSFUL")
+                        showToast("SUCCESSFUL", requireActivity())
 
                         val reference = FirebaseReference.transactionRef
                         val newTransaction = Transaction(tranxRef.toString(),
@@ -179,7 +177,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                         reference.child(tranxRef.toString()).setValue(newTransaction)
                             .addOnSuccessListener {
                                 // Write was successful!
-                                makeToast("Transaction saved successfully")
+                                showToast("Transaction saved successfully", requireActivity())
 
                                 val customerMailMessage =
                                     "Avalanche has successfully received your order for: $productTitles\n" +
@@ -212,7 +210,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                             .addOnFailureListener { error ->
                                 // Write failed
                                 Log.i("TAG", "transactionFailed: ${error.message}")
-                                makeToast("Transaction not saved successfully.")
+                                showToast("Transaction not saved successfully.", requireActivity())
 
                                 findNavController().navigate(R.id.failedTransactionFragment)
                                 productTitleList.clear()
@@ -220,7 +218,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
                     }
                     RavePayActivity.RESULT_ERROR -> {
-                        Toast.makeText(requireActivity(), "ERROR", Toast.LENGTH_LONG).show()
+                        showToast("ERROR", requireActivity())
                         Log.d(
                             "Failed Transaction",
                             "Transaction status: ${transactionResponse.get("status")}"
@@ -233,7 +231,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                         findNavController().navigate(R.id.failedTransactionFragment)
                     }
                     RavePayActivity.RESULT_CANCELLED -> {
-                        Toast.makeText(requireActivity(), "CANCELLED", Toast.LENGTH_LONG).show()
+                        showToast("CANCELLED", requireActivity())
                         Log.d(
                             "Failed Transaction",
                             "Transaction status: ${transactionResponse.get("status")}"
@@ -251,13 +249,6 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         } else {
             //Redirect to failed page
         }
-    }
-
-
-    private fun makeToast(str: String) {
-        Toast.makeText(requireActivity(),
-            str,
-            Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroyView() {

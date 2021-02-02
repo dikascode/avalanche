@@ -16,6 +16,7 @@ import com.chaos.view.PinView
 import com.decagon.avalanche.R
 import com.decagon.avalanche.data.User
 import com.decagon.avalanche.databinding.FragmentVerifyOtpBinding
+import com.decagon.avalanche.utils.showToast
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -62,12 +63,13 @@ class VerifyOtpFragment : Fragment() {
         /**
          * Handle back press
          */
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                requireActivity().finish()
-            }
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().finish()
+                }
 
-        })
+            })
     }
 
 
@@ -105,7 +107,7 @@ class VerifyOtpFragment : Fragment() {
             if (code.isNotEmpty()) {
                 verifyVerificationCode(code)
             } else {
-                Toast.makeText(requireActivity(), "Code not received", Toast.LENGTH_LONG).show()
+                showToast("Code not received", requireActivity())
             }
 
         }
@@ -130,10 +132,10 @@ class VerifyOtpFragment : Fragment() {
 
                 if (e is FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
-                    Toast.makeText(requireActivity(), "Invalid request", Toast.LENGTH_LONG).show()
+                    showToast("Invalid request", requireActivity())
                 } else if (e is FirebaseTooManyRequestsException) {
                     // The SMS quota for the project has been exceeded
-                    Toast.makeText(requireActivity(), "Too many requests", Toast.LENGTH_LONG).show()
+                    showToast("Too many requests", requireActivity())
                 }
 
                 // Show a message and update the UI
@@ -162,9 +164,7 @@ class VerifyOtpFragment : Fragment() {
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Toast.makeText(requireActivity(), "Verification completed.", Toast.LENGTH_LONG)
-                        .show()
-
+                    showToast("Verification completed.", requireActivity())
                     progressBar.visibility = View.GONE
 
                     if (intention == "updateData") {
@@ -180,12 +180,8 @@ class VerifyOtpFragment : Fragment() {
                     Log.w("TAG", "signInWithCredential:failure", task.exception)
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         // The verification code entered was invalid
-                        Toast.makeText(
-                            requireActivity(),
-                            "Verification code is invalid. Try again!",
-                            Toast.LENGTH_LONG
-                        ).show()
-
+                        showToast(
+                            "Verification code is invalid. Try again!", requireActivity())
                         pinFromUser.setText("")
                     }
                 }

@@ -24,6 +24,7 @@ import com.decagon.avalanche.data.PushNotificationData
 import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.firebase.FirebaseReference
 import com.decagon.avalanche.network.RetroInstance
+import com.decagon.avalanche.utils.showToast
 import com.decagon.avalanche.views.TOPIC
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -68,7 +69,7 @@ class AdminFragment : Fragment() {
 
         binding.adminFragmentSubmitBtn.setOnClickListener {
             if (url.isBlank() || url == "") {
-                makeToast("Please select an Image to proceed")
+                showToast("Please select an Image to proceed", requireActivity())
             }
         }
 
@@ -100,11 +101,11 @@ class AdminFragment : Fragment() {
             when {
                 title.isEmpty() -> {
                     binding.productNameEt.error = "Please input a title"
-                    makeToast("Please fill title field")
+                    showToast("Please fill title field", requireActivity())
                 }
                 price.isEmpty() -> {
                     binding.productPriceEt.error = "Price field cannot be empty"
-                    makeToast("Please fill price field")
+                    showToast("Please fill price field", requireActivity())
                 }
 
                 desc.isEmpty() -> {
@@ -122,7 +123,7 @@ class AdminFragment : Fragment() {
                     reference.child(title.toString()).setValue(newProduct).addOnSuccessListener {
                         // Write was successful!
                         progressBar.visibility = View.GONE
-                        makeToast("Product saved to database successfully")
+                        showToast("Product saved to database successfully", requireActivity())
 
                         PushNotification(
                             PushNotificationData(
@@ -143,7 +144,7 @@ class AdminFragment : Fragment() {
                     }
                         .addOnFailureListener {
                             // Write failed
-                            makeToast("Product not added successfully. Please check input fields and try again")
+                            showToast("Product not added successfully. Please check input fields and try again", requireActivity())
                             progressBar.visibility = View.GONE
                         }
                 }
@@ -155,7 +156,7 @@ class AdminFragment : Fragment() {
     private fun uploadToCloudinary(filepath: Uri?) {
         MediaManager.get().upload(filepath).unsigned("avalanche").callback(object : UploadCallback {
             override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
-                makeToast("Image upload successfully")
+                showToast("Image upload successfully", requireActivity())
 
                 /**
                  * get upload url from callback resultData
@@ -231,12 +232,6 @@ class AdminFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun makeToast(str: String) {
-        Toast.makeText(requireActivity(),
-            str,
-            Toast.LENGTH_LONG).show()
     }
 
 }

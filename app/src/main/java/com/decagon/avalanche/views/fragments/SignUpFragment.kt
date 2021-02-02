@@ -213,9 +213,4 @@ class SignUpFragment : Fragment() {
 
     }
 
-    override fun onStop() {
-        super.onStop()
-        (requireActivity() as AppCompatActivity).supportActionBar?.show()
-    }
-
 }

@@ -57,12 +57,6 @@ class WelcomeFragment : Fragment() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        (requireActivity() as AppCompatActivity).supportActionBar?.show()
-    }
-
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

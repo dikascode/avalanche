@@ -55,10 +55,6 @@ class ForgotPasswordFragment : Fragment() {
         return binding.root
     }
 
-    override fun onStop() {
-        super.onStop()
-        (requireActivity() as AppCompatActivity).supportActionBar?.show()
-    }
 
     override fun onDestroy() {
         super.onDestroy()

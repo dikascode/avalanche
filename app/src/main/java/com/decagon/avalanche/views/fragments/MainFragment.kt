@@ -115,19 +115,6 @@ class MainFragment : Fragment() {
     private fun implementMainGridLayoutRecyclerView(productsList: ArrayList<Product>) {
         val recyclerView = binding.fragmentMainRv
 
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                requireActivity(),
-                DividerItemDecoration.VERTICAL
-            )
-        )
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                requireActivity(),
-                DividerItemDecoration.HORIZONTAL
-            )
-        )
-
         adapter =
             ProductsAdapter(
                 productsList,

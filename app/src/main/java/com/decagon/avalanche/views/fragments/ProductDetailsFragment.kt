@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.decagon.avalanche.R
 import com.decagon.avalanche.constants.Constants.Companion.formatter
@@ -40,6 +41,13 @@ class ProductDetailsFragment : Fragment() {
 
         firebaseProducts = FirebaseProducts()
 //        firebaseProducts.getProductsFromFirebase()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.backBtn.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     override fun onCreateView(

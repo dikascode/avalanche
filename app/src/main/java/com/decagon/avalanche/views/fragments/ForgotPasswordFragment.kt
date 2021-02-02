@@ -48,6 +48,10 @@ class ForgotPasswordFragment : Fragment() {
         countryCodePicker = binding.countryCodePicker
         nextBtn = binding.nextBtn
 
+        binding.backBtn.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         nextBtn.setOnClickListener {
             verifyPhoneNumber()
         }

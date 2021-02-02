@@ -50,6 +50,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentCartBinding.inflate(inflater, container, false)
+
         storeViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
 
         userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireActivity())
@@ -102,6 +103,10 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         binding.cartSubmitBtn.setOnClickListener {
             makePayment()
             storeViewModel.resetCart()
+        }
+
+        binding.backBtn.setOnClickListener {
+            findNavController().popBackStack()
         }
 
     }

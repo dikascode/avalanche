@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
@@ -76,6 +77,13 @@ class AdminFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.backBtn.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun selectImageIntent() {

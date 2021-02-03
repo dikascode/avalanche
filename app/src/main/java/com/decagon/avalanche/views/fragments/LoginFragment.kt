@@ -1,6 +1,9 @@
 package com.decagon.avalanche.views.fragments
 
 import android.content.Context.MODE_PRIVATE
+import android.graphics.Color
+import android.graphics.Color.parseColor
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater

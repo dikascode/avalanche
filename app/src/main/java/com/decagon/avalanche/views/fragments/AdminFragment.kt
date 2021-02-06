@@ -135,9 +135,7 @@ class AdminFragment : Fragment() {
                         sendNotification(it)
                     }
 
-                    /**
-                     * Clear input fields
-                     */
+                    /** Clear input fields */
 
                     title.clear()
                     price.clear()
@@ -147,7 +145,8 @@ class AdminFragment : Fragment() {
                 }
                     .addOnFailureListener {
                         // Write failed
-                        showToast("Product not added successfully. Please check input fields and try again", requireActivity())
+                        showToast("Product not added successfully. Please check input fields and try again",
+                            requireActivity())
                         mProgressDialog!!.dismiss()
                     }
             }
@@ -160,9 +159,7 @@ class AdminFragment : Fragment() {
             override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
                 showToast("Image upload successfully", requireActivity())
 
-                /**
-                 * get upload url from callback resultData
-                 */
+                /** get upload url from callback resultData */
                 MediaManager.get().url().generate(resultData?.entries?.forEach {
                     if (it.key == "secure_url") {
                         //Log.d("TAG", "URL: ${it.key}, ${it.value}")

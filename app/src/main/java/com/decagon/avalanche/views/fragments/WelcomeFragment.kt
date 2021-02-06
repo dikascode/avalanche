@@ -22,7 +22,7 @@ class WelcomeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        /** Check onBoarding user status */
+        /** Check loggedOn user status */
         checkIfUserLoggedOn()
 
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()

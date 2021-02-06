@@ -52,14 +52,10 @@ class MainActivity : AppCompatActivity() {
                 binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = true
         })
 
-        /**
-         * Subscribe to push notification topic
-         */
+        /** Subscribe to push notification topic */
         FirebaseMessaging.getInstance().subscribeToTopic("product")
 
-        /**
-         * Hide admin drawer menu option
-         */
+        /** Hide admin drawer menu option */
         binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = false
 
         val networkConnection = NetworkStatusChecker(this)

@@ -28,3 +28,4 @@ fun Activity.showAlertDialog(
 fun showToast(text: String, context: Context) {
     Toast.makeText(context, text, Toast.LENGTH_LONG).show()
 }
+

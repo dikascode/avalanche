@@ -43,12 +43,13 @@ class MainFragment : Fragment() {
         /**
          * Handle back press
          */
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                requireActivity().finish()
-            }
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().finish()
+                }
 
-        })
+            })
     }
 
     override fun onCreateView(
@@ -59,18 +60,16 @@ class MainFragment : Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
 
-        /**
-         *   Save value to indicate user has reached main fragment previously and pass it
-         *   through shared preference
-         */
-
+        /** Save value to indicate user has reached main fragment previously and pass it through shared preference */
         loggedOnSharePref = requireContext().getSharedPreferences(
             "loggedOn",
             AppCompatActivity.MODE_PRIVATE
         )
+
         var editor: SharedPreferences.Editor = loggedOnSharePref.edit()
         editor.putBoolean("firstTime", false)
         editor.commit()
+
         return binding.root
     }
 
@@ -88,11 +87,8 @@ class MainFragment : Fragment() {
                 if (snapshot.exists()) {
                     for (dataSnapshot in snapshot.children) {
                         product = dataSnapshot.getValue(Product::class.java)!!
-                        //Log.d("TAG", "Products: ${product?.title}")
-                        if (!productsList.contains(product)) {
                             productsList.add(product)
 //                            Log.d("TAG", "size: ${productsList.size}")
-                        }
                     }
 
                     implementMainGridLayoutRecyclerView(productsList)
@@ -129,10 +125,9 @@ class MainFragment : Fragment() {
             }
 
         adapter.notifyDataSetChanged()
+
         recyclerView.layoutManager = GridLayoutManager(activity, 2)
-
         recyclerView.adapter = adapter
-
     }
 
     private fun implementLinearRecyclerViewForCategories() {
@@ -187,9 +182,4 @@ class MainFragment : Fragment() {
 //        super.onCreateOptionsMenu(menu, inflater)
 //    }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

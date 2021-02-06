@@ -1,6 +1,7 @@
 package com.decagon.avalanche.views.fragments
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -45,6 +46,8 @@ class AdminFragment : Fragment() {
     private val PICK_IMAGE_CODE = 0
     lateinit var url: String
 
+    private var mProgressDialog: ProgressDialog? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,7 +68,7 @@ class AdminFragment : Fragment() {
         price = binding.productPriceEt.text!!
         desc = binding.productDescEt.text!!
 
-        progressBar = binding.progressBarLayout.fragmentMainProgressBar
+//        progressBar = binding.progressBarLayout.fragmentMainProgressBar
 
         binding.adminFragmentSubmitBtn.setOnClickListener {
             if (url.isBlank() || url == "") {
@@ -97,57 +100,56 @@ class AdminFragment : Fragment() {
     }
 
     private fun saveProductToFirebase(url: String) {
-        if (title != null && price != null && desc != null) {
-            when {
-                title.isEmpty() -> {
-                    binding.productNameEt.error = "Please input a title"
-                    showToast("Please fill title field", requireActivity())
-                }
-                price.isEmpty() -> {
-                    binding.productPriceEt.error = "Price field cannot be empty"
-                    showToast("Please fill price field", requireActivity())
-                }
+        when {
+            title.isEmpty() -> {
+                binding.productNameEt.error = "Please input a title"
+                showToast("Please fill title field", requireActivity())
+            }
+            price.isEmpty() -> {
+                binding.productPriceEt.error = "Price field cannot be empty"
+                showToast("Please fill price field", requireActivity())
+            }
 
-                desc.isEmpty() -> {
-                    binding.productDescEt.error = "Description field cannot be empty"
-                }
-                else -> {
-                    //save data to firebase
-                    val newProduct = Product(title.toString(),
-                        url,
-                        price.toString().toDouble(),
-                        desc.toString(),
-                        true)
-                    val reference = FirebaseReference.productReference
+            desc.isEmpty() -> {
+                binding.productDescEt.error = "Description field cannot be empty"
+            }
+            else -> {
+                //save data to firebase
+                val newProduct = Product(title.toString(),
+                    url,
+                    price.toString().toDouble(),
+                    desc.toString(),
+                    true)
+                val reference = FirebaseReference.productReference
 
-                    reference.child(title.toString()).setValue(newProduct).addOnSuccessListener {
-                        // Write was successful!
-                        progressBar.visibility = View.GONE
-                        showToast("Product saved to database successfully", requireActivity())
+                reference.child(title.toString()).setValue(newProduct).addOnSuccessListener {
+                    // Write was successful!
+                    mProgressDialog!!.dismiss()
+                    showToast("Product saved to database successfully", requireActivity())
 
-                        PushNotification(
-                            PushNotificationData(
-                                "New product", "$title | N$price"),
-                            TOPIC
-                        ).also {
-                            sendNotification(it)
-                        }
-
-                        /**
-                         * Clear input fields
-                         */
-
-                        title.clear()
-                        price.clear()
-                        desc.clear()
-
+                    PushNotification(
+                        PushNotificationData(
+                            "New product", "$title | N$price"),
+                        TOPIC
+                    ).also {
+                        sendNotification(it)
                     }
-                        .addOnFailureListener {
-                            // Write failed
-                            showToast("Product not added successfully. Please check input fields and try again", requireActivity())
-                            progressBar.visibility = View.GONE
-                        }
+
+                    /**
+                     * Clear input fields
+                     */
+
+                    title.clear()
+                    price.clear()
+                    desc.clear()
+//                    image.setImageURI(null)
+
                 }
+                    .addOnFailureListener {
+                        // Write failed
+                        showToast("Product not added successfully. Please check input fields and try again", requireActivity())
+                        mProgressDialog!!.dismiss()
+                    }
             }
         }
 
@@ -163,7 +165,7 @@ class AdminFragment : Fragment() {
                  */
                 MediaManager.get().url().generate(resultData?.entries?.forEach {
                     if (it.key == "secure_url") {
-                        Log.d("TAG", "URL: ${it.key}, ${it.value}")
+                        //Log.d("TAG", "URL: ${it.key}, ${it.value}")
                         url = it.value as String
                     }
                 }.toString())
@@ -171,7 +173,15 @@ class AdminFragment : Fragment() {
 
                 //Save product into firebase
                 binding.adminFragmentSubmitBtn.setOnClickListener {
-                    progressBar.visibility = View.VISIBLE
+                    mProgressDialog =
+                        ProgressDialog.show(
+                            requireActivity(),
+                            "Saving Product",
+                            "Please wait...",
+                            false,
+                            false
+                        )
+
                     saveProductToFirebase(url)
                 }
 

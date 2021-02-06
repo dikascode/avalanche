@@ -36,7 +36,7 @@ class ProductsAdapter(
         val price = formatter?.format(product.price)
         holder.price.text = price.toString()
 
-        if (product.isOnSale) holder.isOnSaleIcon.visibility = View.VISIBLE
+//        if (product.isOnSale) holder.isOnSaleIcon.visibility = View.VISIBLE
 
         //Invoke onClickProduct on click of image
         holder.image.setOnClickListener {

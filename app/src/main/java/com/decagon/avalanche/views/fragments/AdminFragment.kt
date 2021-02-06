@@ -142,7 +142,7 @@ class AdminFragment : Fragment() {
                     title.clear()
                     price.clear()
                     desc.clear()
-//                    image.setImageURI(null)
+                    image.setImageURI(null)
 
                 }
                     .addOnFailureListener {

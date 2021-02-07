@@ -104,7 +104,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         }
 
         binding.backBtn.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.mainFragment)
         }
 
     }

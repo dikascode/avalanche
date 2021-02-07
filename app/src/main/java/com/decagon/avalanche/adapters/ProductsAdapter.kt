@@ -22,7 +22,7 @@ import java.text.DecimalFormat
 class ProductsAdapter(
     private val products: ArrayList<Product>,
     private val viewModelStoreOwner: ViewModelStoreOwner,
-    private val onClickProduct: (title: String, photoUrl: String, photoView: View) -> Unit
+    private val onClickProduct: (title: String, photoUrl: String, photoView: View) -> Unit,
 ) :
     RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
     lateinit var storeViewModel: StoreViewModel

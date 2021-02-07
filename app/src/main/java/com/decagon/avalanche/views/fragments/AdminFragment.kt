@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.decagon.avalanche.R
 import com.decagon.avalanche.cloudinary.CloudinaryManager
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.data.PushNotification
@@ -86,7 +87,7 @@ class AdminFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.backBtn.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.mainFragment)
         }
     }
 

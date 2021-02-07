@@ -19,6 +19,7 @@ import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.firebase.FirebaseReference
 import com.google.firebase.database.*
+import java.lang.RuntimeException
 
 
 class MainFragment : Fragment() {

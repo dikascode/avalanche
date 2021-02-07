@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import at.favre.lib.crypto.bcrypt.BCrypt
 import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.ActivityMainBinding

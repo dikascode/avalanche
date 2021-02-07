@@ -1,9 +1,6 @@
 package com.decagon.avalanche.views.fragments
 
 import android.content.Context.MODE_PRIVATE
-import android.graphics.Color
-import android.graphics.Color.parseColor
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,6 +13,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
+import at.favre.lib.crypto.bcrypt.BCrypt
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentLoginBinding
 import com.decagon.avalanche.firebase.FirebaseReference
@@ -48,12 +46,13 @@ class LoginFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                requireActivity().finish()
-            }
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().finish()
+                }
 
-        })
+            })
     }
 
     override fun onCreateView(
@@ -153,50 +152,50 @@ class LoginFragment : Fragment() {
                     phone.error = null
                     phone.isErrorEnabled = false
 
-                    val systemPassword =
-                        snapshot.child(_enteredNumber).child("password")
+                    val hashPassword =
+                        snapshot.child(_enteredNumber).child("password").value.toString()
+
+                    //decrypt pwd
+                    val result = BCrypt.verifyer().verify(_password.toCharArray(), hashPassword)
+
+                    if (result.verified) {
+                        password.error = null
+                        password.isErrorEnabled = false
+
+                        val fname = snapshot.child(_enteredNumber).child("firstName")
+                            .getValue(String::class.java)
+                        val lname = snapshot.child(_enteredNumber).child("lastName")
+                            .getValue(String::class.java)
+                        val email =
+                            snapshot.child(_enteredNumber).child("email")
+                                .getValue(String::class.java)
+                        val phone = snapshot.child(_enteredNumber).child("phoneNumber")
                             .getValue(String::class.java)
 
-                    if (systemPassword != null) {
-                        if (systemPassword == _password) {
-                            password.error = null
-                            password.isErrorEnabled = false
+                        val adminStatus = snapshot.child(_enteredNumber).child("admin")
+                            .getValue(Boolean::class.java)
 
-                            val fname = snapshot.child(_enteredNumber).child("firstName")
-                                .getValue(String::class.java)
-                            val lname = snapshot.child(_enteredNumber).child("lastName")
-                                .getValue(String::class.java)
-                            val email =
-                                snapshot.child(_enteredNumber).child("email")
-                                    .getValue(String::class.java)
-                            val phone = snapshot.child(_enteredNumber).child("phoneNumber")
-                                .getValue(String::class.java)
+                        //Email sharedPref
+                        requireActivity().getSharedPreferences("userEmail", MODE_PRIVATE).edit()
+                            .putString("email", email).apply()
 
-                            val adminStatus = snapshot.child(_enteredNumber).child("admin")
-                                .getValue(Boolean::class.java)
-
-                            //Email sharedPref
-                            requireActivity().getSharedPreferences("userEmail", MODE_PRIVATE).edit()
-                                .putString("email", email).apply()
-
-                            //Save user login data to DataStore
-                            GlobalScope.launch {
-                                userManager.storeUser(fname!!,
-                                    lname!!,
-                                    email!!,
-                                    phone!!,
-                                    adminStatus!!)
-                            }
-
-                            findNavController().navigate(R.id.mainFragment)
-                        } else {
-                            progressBar.visibility = View.GONE
-                            Toast.makeText(
-                                requireActivity(),
-                                "Password does not match!",
-                                Toast.LENGTH_LONG
-                            ).show()
+                        //Save user login data to DataStore
+                        GlobalScope.launch {
+                            userManager.storeUser(fname!!,
+                                lname!!,
+                                email!!,
+                                phone!!,
+                                adminStatus!!)
                         }
+
+                        findNavController().navigate(R.id.mainFragment)
+                    } else {
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(
+                            requireActivity(),
+                            "Password does not match!",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 } else {
                     progressBar.visibility = View.GONE

@@ -12,6 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import at.favre.lib.crypto.bcrypt.BCrypt
 import com.chaos.view.PinView
 import com.decagon.avalanche.R
 import com.decagon.avalanche.data.User
@@ -95,7 +96,10 @@ class VerifyOtpFragment : Fragment() {
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
         progressBar.visibility = View.VISIBLE
 
-        addNewUser = User(fName, lName, email, phoneNumber, pwd, false)
+        //Encrypt pwd
+        val passHash = BCrypt.withDefaults().hashToString(12, pwd.toCharArray())
+
+        addNewUser = User(fName, lName, email, phoneNumber, passHash, false)
 
         //Log.d("TAG", "onVerificationCompleted:$intention")
 

@@ -7,12 +7,10 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
@@ -20,7 +18,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import at.favre.lib.crypto.bcrypt.BCrypt
 import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.ActivityMainBinding
@@ -70,7 +67,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun checkNetworkStatus(networkConnection: NetworkStatusChecker) {
         networkConnection.observe(this, Observer { isConnected ->
             if (isConnected) {
@@ -112,7 +108,8 @@ class MainActivity : AppCompatActivity() {
                                 startActivity(intent)
                             } else {
 
-                                showToast("Whatsapp not installed on this device. Please install Whatsapp.", this)
+                                showToast("Whatsapp not installed on this device. Please install Whatsapp.",
+                                    this)
                             }
                         }
 
@@ -120,8 +117,19 @@ class MainActivity : AppCompatActivity() {
                             val dialogInterface = DialogInterface.OnClickListener { dialog, _ ->
                                 finish()
                                 dialog.cancel()
+
+                                val loggedOnSharePref = getSharedPreferences(
+                                    "loggedOn",
+                                    AppCompatActivity.MODE_PRIVATE
+                                )
+
+                                var editor: SharedPreferences.Editor = loggedOnSharePref.edit()
+                                editor.putBoolean("firstTime", true)
+                                editor.commit()
                             }
-                            showAlertDialog("Are you sure you want to log out?", "Log Out", dialogInterface)
+                            showAlertDialog("Are you sure you want to log out?",
+                                "Log Out",
+                                dialogInterface)
                         }
                     }
                     it.isChecked = true

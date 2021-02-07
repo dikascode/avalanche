@@ -53,7 +53,7 @@ class WelcomeFragment : Fragment() {
 
         /** Check if user has not logged on before, else move to login screen */
         if (!isFirstTime) {
-            findNavController().navigate(R.id.loginFragment)
+            findNavController().navigate(R.id.mainFragment)
         }
     }
 

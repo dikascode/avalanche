@@ -15,7 +15,7 @@
 
 <!--        Product details page-->
         <item name="productTitle">@color/black</item>
-        <item name="productButton">@color/purple_700</item>
+        <item name="productButton">@color/primary_dark_color</item>
 
         <item name="fontFamily">@font/open_sans</item>
     </style>
@@ -25,12 +25,17 @@
     </style>
 
     <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:textColor">@color/primary_dark_color</item>
+        <item name="android:textColor">@color/primary_color</item>
     </style>
 
 
     <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="splashScreenTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_image</item>
+        <item name="android:statusBarColor">@color/primary_color</item>
     </style>
 </resources>

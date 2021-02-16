@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         //View binding instance
         binding = ActivityMainBinding.inflate(layoutInflater)
+        setTheme(R.style.Theme_Avalanche)
         setContentView(binding.root)
 
         userManager.userAdminFlow.asLiveData().observe(this, { admin ->

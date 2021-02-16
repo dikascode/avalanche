@@ -1,6 +1,5 @@
 package com.decagon.avalanche.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,16 +7,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.decagon.avalanche.R
-import com.decagon.avalanche.constants.Constants.Companion.formatter
+import com.decagon.avalanche.constants.Constants.Companion.FORMATTER
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
-import java.text.DecimalFormat
 
 class ProductsAdapter(
     private val products: ArrayList<Product>,
@@ -33,7 +30,7 @@ class ProductsAdapter(
         Picasso.get().load(product.photoUrl).into(holder.image)
         holder.title.text = product.title
 
-        val price = formatter?.format(product.price)
+        val price = FORMATTER?.format(product.price)
         holder.price.text = price.toString()
 
 //        if (product.isOnSale) holder.isOnSaleIcon.visibility = View.VISIBLE

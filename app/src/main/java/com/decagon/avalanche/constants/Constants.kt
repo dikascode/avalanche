@@ -12,9 +12,7 @@ class Constants {
         const val EMAIL = "lexypoet@gmail.com"
         const val PASSWORD = "bestiemi"
 
-        /**
-         * Formatting prices
-         */
-        val formatter: DecimalFormat? = DecimalFormat("#,###,###")
+        /** Formatting prices */
+        val FORMATTER: DecimalFormat? = DecimalFormat("#,###,###")
     }
 }

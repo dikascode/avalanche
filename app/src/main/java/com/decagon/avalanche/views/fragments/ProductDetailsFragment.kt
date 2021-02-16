@@ -7,11 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.decagon.avalanche.R
-import com.decagon.avalanche.constants.Constants.Companion.formatter
+import com.decagon.avalanche.constants.Constants.Companion.FORMATTER
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.databinding.FragmentProductDetailsBinding
 import com.decagon.avalanche.firebase.FirebaseProducts
@@ -91,7 +89,7 @@ class ProductDetailsFragment : Fragment() {
 
     private fun bindProductDataToLayout(productDetails: Product) {
         binding.productTitleTv.text = productDetails.title
-        binding.productPriceTv.text = formatter?.format(productDetails.price)
+        binding.productPriceTv.text = FORMATTER?.format(productDetails.price)
         binding.productDescTv.text = productDetails.desc
         val photoUrl = productDetails.photoUrl
         Picasso.get().load(photoUrl).into(binding.productImageIv)

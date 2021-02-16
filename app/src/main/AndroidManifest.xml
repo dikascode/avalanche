@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Avalanche">
+        android:theme="@style/splashScreenTheme">
 
         <service
             android:name=".firebase.FirebaseService"

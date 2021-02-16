@@ -129,10 +129,10 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             .setPublicKey("FLWPUBK_TEST-6921d097ab745d1e299bccf98fbc7ac1-X")
             .setEncryptionKey("FLWSECK_TESTb5408b7e58ee")
             .setTxRef(System.currentTimeMillis().toString() + "Ref")
-            .acceptAccountPayments(true)
             .acceptCardPayments(true)
             .onStagingEnv(true)
-            .shouldDisplayFee(true)
+            .shouldDisplayFee(false)
+            .allowSaveCardFeature(true)
             .showStagingLabel(true)
             .initialize()
     }

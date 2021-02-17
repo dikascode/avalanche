@@ -11,6 +11,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import at.favre.lib.crypto.bcrypt.BCrypt
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentSetNewPasswordBinding
 import com.decagon.avalanche.utils.showToast
@@ -88,7 +89,10 @@ class SetNewPasswordFragment : Fragment() {
 
         progressBar.visibility = View.VISIBLE
 
-        fireBaseReference.child(phoneNumber).child("password").setValue(_newPassword)
+        //Encrypt pwd
+        val passHash = BCrypt.withDefaults().hashToString(12, _newPassword.toCharArray())
+
+        fireBaseReference.child(phoneNumber).child("password").setValue(passHash)
 
         showToast("Password Updated Successfully", requireActivity())
 

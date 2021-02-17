@@ -7,8 +7,8 @@
         <item name="colorAccent">@color/accent_color</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/accent_color</item>
-        <item name="colorSecondaryVariant">@color/accent_color</item>
+        <item name="colorSecondary">@color/primary_color</item>
+        <item name="colorSecondaryVariant">@color/primary_color</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
@@ -16,7 +16,7 @@
 
 <!--        Product details page-->
         <item name="productTitle">@color/black</item>
-        <item name="productButton">@color/primary_dark_color</item>
+        <item name="productButton">@color/primary_color</item>
 
         <item name="fontFamily">@font/open_sans</item>
     </style>

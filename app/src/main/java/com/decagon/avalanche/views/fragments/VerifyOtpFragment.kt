@@ -184,8 +184,8 @@ class VerifyOtpFragment : Fragment() {
                     Log.w("TAG", "signInWithCredential:failure", task.exception)
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         // The verification code entered was invalid
-                        showToast(
-                            "Verification code is invalid. Try again!", requireActivity())
+//                        showToast(
+//                            "Verification code is invalid. Try again!", requireActivity())
                         pinFromUser.setText("")
                     }
                 }

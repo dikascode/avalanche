@@ -126,11 +126,11 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             .setlName(userData[1] + " " + userData[3] + " " + userData[2])
             .setNarration("Purchase of cloths from Avalanche")
             .setCurrency("NGN")
-            .setPublicKey("FLWPUBK_TEST-6921d097ab745d1e299bccf98fbc7ac1-X")
-            .setEncryptionKey("FLWSECK_TESTb5408b7e58ee")
+            .setPublicKey("FLWPUBK-716de398e434ea87112ce1d1b84f1f30-X")
+            .setEncryptionKey("94c29dd8354ea616dfcba212")
             .setTxRef(System.currentTimeMillis().toString() + "Ref")
             .acceptCardPayments(true)
-            .onStagingEnv(true)
+            .onStagingEnv(false)
             .shouldDisplayFee(false)
             .allowSaveCardFeature(true)
             .showStagingLabel(true)
@@ -201,6 +201,10 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
                                 //Send mail to avalanche
                                 sendMail("northwrite19@gmail.com",
+                                    "You have a new Order",
+                                    avalancheMailMessage)
+
+                                sendMail("dutchezglintz@gmail.com",
                                     "You have a new Order",
                                     avalancheMailMessage)
 

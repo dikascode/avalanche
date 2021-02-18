@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="20dp"
     tools:context=".views.fragments.ForgotPwdSuccessMessageFragment">
@@ -59,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
-            android:backgroundTint="@color/primary_dark_color"
+            android:backgroundTint="@color/primary_color"
             android:text="@string/login"
             android:textSize="26sp"
             app:cornerRadius="5dp" />

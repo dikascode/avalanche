@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentForgotPasswordBinding
 import com.decagon.avalanche.databinding.FragmentVerifyOtpBinding
+import com.decagon.avalanche.utils.showToast
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DataSnapshot
@@ -30,6 +32,11 @@ class ForgotPasswordFragment : Fragment() {
     lateinit var nextBtn: MaterialButton
 
 
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,12 +49,17 @@ class ForgotPasswordFragment : Fragment() {
         countryCodePicker = binding.countryCodePicker
         nextBtn = binding.nextBtn
 
+        binding.backBtn.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         nextBtn.setOnClickListener {
             verifyPhoneNumber()
         }
 
         return binding.root
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -96,14 +108,14 @@ class ForgotPasswordFragment : Fragment() {
 
                 } else {
                     progressBar.visibility = View.GONE
-                    Toast.makeText(requireActivity(), "No such user exists!", Toast.LENGTH_LONG)
-                        .show()
+                   showToast("No such user exists!", requireActivity())
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(requireActivity(), error.message, Toast.LENGTH_LONG).show()
+                showToast("An error occurred", requireActivity())
+//                Toast.makeText(requireActivity(), error.message, Toast.LENGTH_LONG).show()
             }
 
         })

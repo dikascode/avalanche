@@ -11,12 +11,12 @@
             android:title="Home" />
 
 
-        <item
-            android:id="@+id/actionSettings"
-            android:orderInCategory="100"
-            app:showAsAction="never"
-            android:icon="@drawable/settings_24"
-            android:title="Settings" />
+<!--        <item-->
+<!--            android:id="@+id/actionProfile"-->
+<!--            android:orderInCategory="100"-->
+<!--            app:showAsAction="never"-->
+<!--            android:icon="@drawable/settings_24"-->
+<!--            android:title="Settings" />-->
 
         <item
             android:id="@+id/actionAdmin"

@@ -3,14 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="cartItem"
-            type="com.decagon.avalanche.data.CartItem"/>
+            type="com.decagon.avalanche.data.CartItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/custom_view"
+        android:elevation="5dp">
 
 
         <ImageView
@@ -21,8 +25,7 @@
             android:src="@drawable/african_lady_gown"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/cart_product_name_tv"
@@ -53,11 +56,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:entries="@array/cart_quantity_string_array"
+            android:setVal="@{cartItem.quantity}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             app:layout_constraintBottom_toBottomOf="@+id/cart_quantity_title_tv"
             app:layout_constraintStart_toEndOf="@+id/cart_quantity_title_tv"
-            app:layout_constraintTop_toTopOf="@+id/cart_quantity_title_tv"
-            android:setVal="@{cartItem.quantity}"/>
+            app:layout_constraintTop_toTopOf="@+id/cart_quantity_title_tv" />
 
         <ImageButton
             android:id="@+id/delete_product_btn"

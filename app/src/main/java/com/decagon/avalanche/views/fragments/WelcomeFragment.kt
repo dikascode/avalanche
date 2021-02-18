@@ -1,11 +1,14 @@
 package com.decagon.avalanche.views.fragments
 
 import android.app.ActivityOptions
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentWelcomeBinding
@@ -14,6 +17,17 @@ import com.decagon.avalanche.databinding.FragmentWelcomeBinding
 class WelcomeFragment : Fragment() {
     private var _binding: FragmentWelcomeBinding? = null
     private val binding get() = _binding!!
+    lateinit var loggedOnSharePref: SharedPreferences
+
+    override fun onStart() {
+        super.onStart()
+
+        /** Check loggedOn user status */
+        checkIfUserLoggedOn()
+
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -22,12 +36,6 @@ class WelcomeFragment : Fragment() {
         _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
 
         binding.loginBtn.setOnClickListener {
-//            val pairs: Array<Pair<View, String>?> = arrayOfNulls(1)
-//            pairs[0] = Pair<View, String>(binding.loginBtn, "transition_login")
-//
-//            val options =
-//                ActivityOptions.makeSceneTransitionAnimation(requireActivity(), pairs)
-
             findNavController().navigate(R.id.loginFragment)
         }
 
@@ -37,6 +45,17 @@ class WelcomeFragment : Fragment() {
         return binding.root
     }
 
+    private fun checkIfUserLoggedOn() {
+
+        loggedOnSharePref = requireActivity().getSharedPreferences("loggedOn", AppCompatActivity.MODE_PRIVATE)
+        var isFirstTime: Boolean = loggedOnSharePref.getBoolean("firstTime", true)
+
+
+        /** Check if user has not logged on before, else move to login screen */
+        if (!isFirstTime) {
+            findNavController().navigate(R.id.mainFragment)
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()

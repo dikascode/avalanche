@@ -1,12 +1,12 @@
 package com.decagon.avalanche.views.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
@@ -14,11 +14,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.decagon.avalanche.R
 import com.decagon.avalanche.adapters.CartListAdapter
-import com.decagon.avalanche.constants.Constants.Companion.formatter
+import com.decagon.avalanche.api.JavaMailApi
 import com.decagon.avalanche.data.CartItem
 import com.decagon.avalanche.data.Transaction
 import com.decagon.avalanche.databinding.FragmentCartBinding
 import com.decagon.avalanche.firebase.FirebaseReference
+import com.decagon.avalanche.utils.showToast
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.flutterwave.raveandroid.RavePayActivity
 import com.flutterwave.raveandroid.RaveUiManager
@@ -47,6 +48,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentCartBinding.inflate(inflater, container, false)
+
         storeViewModel = ViewModelProvider(requireActivity()).get(StoreViewModel::class.java)
 
         userManager = com.decagon.avalanche.preferencesdatastore.UserManager(requireActivity())
@@ -78,8 +80,8 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         })
 
         storeViewModel.getTotalPrice()?.observe(viewLifecycleOwner, {
-            val price = formatter?.format(it)
-            binding.price.text = price
+            //val price = formatter?.format(it)
+            binding.price.text = it.toString()
         })
 
         return binding.root
@@ -101,11 +103,10 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             storeViewModel.resetCart()
         }
 
-    }
+        binding.backBtn.setOnClickListener {
+            findNavController().navigate(R.id.mainFragment)
+        }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun deleteItem(cartItem: CartItem?) {
@@ -125,22 +126,21 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             .setlName(userData[1] + " " + userData[3] + " " + userData[2])
             .setNarration("Purchase of cloths from Avalanche")
             .setCurrency("NGN")
-            .setPublicKey("FLWPUBK_TEST-6921d097ab745d1e299bccf98fbc7ac1-X")
-            .setEncryptionKey("FLWSECK_TESTb5408b7e58ee")
+            .setPublicKey("FLWPUBK-716de398e434ea87112ce1d1b84f1f30-X")
+            .setEncryptionKey("94c29dd8354ea616dfcba212")
             .setTxRef(System.currentTimeMillis().toString() + "Ref")
-            .acceptAccountPayments(true)
             .acceptCardPayments(true)
-            .onStagingEnv(true)
-            .shouldDisplayFee(true)
+            .onStagingEnv(false)
+            .shouldDisplayFee(false)
+            .allowSaveCardFeature(true)
             .showStagingLabel(true)
             .initialize()
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        var productTitles = productTitleList.joinToString()
+        var productTitles = productTitleList.toSet().joinToString()
         Log.i("TAG", "activity result titles: $productTitles")
 
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
@@ -158,46 +158,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                         val amount = transactionResponse.get("amount")
                         val tranxRef = transactionResponse.get("txRef")
 
-                        Toast.makeText(requireActivity(), "SUCCESS", Toast.LENGTH_LONG).show()
-                        Log.d("Successful Transaction", "Transaction amount: $amount")
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction IP: ${transactionResponse.get("IP")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction status: ${transactionResponse.get("status")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction fraud status: ${transactionResponse.get("fraud_status")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction ref: ${transactionResponse.get("txRef")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction customer name: ${transactionResponse.get("customer.fullName")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction customer email: ${transactionResponse.get("customer.email")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction customer phone: ${transactionResponse.get("customer.phone")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction payment type: ${transactionResponse.get("paymentType")}"
-                        )
-                        Log.d(
-                            "Successful Transaction",
-                            "Transaction msg: ${transactionResponse.get("vbvrespmessage")}"
-                        )
-
-                        findNavController().navigate(R.id.orderFragment)
+                        showToast("SUCCESSFUL", requireActivity())
 
                         val reference = FirebaseReference.transactionRef
                         val newTransaction = Transaction(tranxRef.toString(),
@@ -216,15 +177,44 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                         reference.child(tranxRef.toString()).setValue(newTransaction)
                             .addOnSuccessListener {
                                 // Write was successful!
-                                makeToast("Transaction saved successfully")
-                                findNavController().navigate(R.id.orderFragment)
-                                productTitleList.clear()
+                                showToast("Transaction saved successfully", requireActivity())
 
+                                val customerMailMessage =
+                                    "Avalanche has successfully received your order for: $productTitles\n" +
+                                            "Total price: N$amount.\n" +
+                                            "You will be contacted soon to have your delivery within three days."
+
+                                val avalancheMailMessage =
+                                    "You have an order from ${transactionResponse.get("customer.fullName")}\n " +
+                                            "Total Price: N$amount\n " +
+                                            "Items Purchased: $productTitles"
+
+                                //Retrieve user saved email
+                                val emailSharedPref =
+                                    requireActivity().getSharedPreferences("userEmail",
+                                        Context.MODE_PRIVATE).getString("email", null)
+
+                                //Send mail to customer
+                                sendMail(emailSharedPref!!,
+                                    "Avalanche Transaction Receipt",
+                                    customerMailMessage)
+
+                                //Send mail to avalanche
+                                sendMail("northwrite19@gmail.com",
+                                    "You have a new Order",
+                                    avalancheMailMessage)
+
+                                sendMail("dutchezglintz@gmail.com",
+                                    "You have a new Order",
+                                    avalancheMailMessage)
+
+                                productTitleList.clear()
+                                findNavController().navigate(R.id.orderFragment)
                             }
                             .addOnFailureListener { error ->
                                 // Write failed
                                 Log.i("TAG", "transactionFailed: ${error.message}")
-                                makeToast("Transaction not saved successfully.")
+                                showToast("Transaction not saved successfully.", requireActivity())
 
                                 findNavController().navigate(R.id.failedTransactionFragment)
                                 productTitleList.clear()
@@ -232,7 +222,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
 
                     }
                     RavePayActivity.RESULT_ERROR -> {
-                        Toast.makeText(requireActivity(), "ERROR", Toast.LENGTH_LONG).show()
+                        showToast("ERROR", requireActivity())
                         Log.d(
                             "Failed Transaction",
                             "Transaction status: ${transactionResponse.get("status")}"
@@ -245,7 +235,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                         findNavController().navigate(R.id.failedTransactionFragment)
                     }
                     RavePayActivity.RESULT_CANCELLED -> {
-                        Toast.makeText(requireActivity(), "CANCELLED", Toast.LENGTH_LONG).show()
+                        showToast("CANCELLED", requireActivity())
                         Log.d(
                             "Failed Transaction",
                             "Transaction status: ${transactionResponse.get("status")}"
@@ -265,9 +255,19 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
         }
     }
 
-    private fun makeToast(str: String) {
-        Toast.makeText(requireActivity(),
-            str,
-            Toast.LENGTH_LONG).show()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+
+    }
+
+
+    private fun sendMail(email: String, mailSubject: String, emailMessage: String) {
+        val javaMailApi = JavaMailApi(requireActivity(),
+            email,
+            mailSubject,
+            emailMessage)
+
+        javaMailApi.execute()
     }
 }

@@ -5,7 +5,8 @@ import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import android.widget.Toast
-import com.decagon.avalanche.utils.Utils
+import com.decagon.avalanche.constants.Constants.Companion.EMAIL
+import com.decagon.avalanche.constants.Constants.Companion.PASSWORD
 import java.util.*
 import javax.mail.*
 import javax.mail.internet.InternetAddress
@@ -35,7 +36,7 @@ class JavaMailApi(
         mProgressDialog!!.dismiss()
 
         //Show success toast
-        Toast.makeText(mContext, "Message Sent", Toast.LENGTH_SHORT).show()
+        Toast.makeText(mContext, "Successful", Toast.LENGTH_SHORT).show()
     }
 
     override fun doInBackground(vararg params: Void?): Void? {
@@ -55,7 +56,7 @@ class JavaMailApi(
             object : Authenticator() {
                 //Authenticating the password
                 override fun getPasswordAuthentication(): PasswordAuthentication {
-                    return PasswordAuthentication(Utils.EMAIL, Utils.PASSWORD)
+                    return PasswordAuthentication(EMAIL, PASSWORD)
                 }
             })
         try {
@@ -63,7 +64,7 @@ class JavaMailApi(
             val mm = MimeMessage(mSession)
 
             //Setting sender address
-            mm.setFrom(InternetAddress(Utils.EMAIL))
+            mm.setFrom(InternetAddress(EMAIL))
             //Adding receiver
             mm.addRecipient(Message.RecipientType.TO, InternetAddress(mEmail))
             //Adding subject

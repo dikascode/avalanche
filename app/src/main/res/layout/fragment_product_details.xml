@@ -31,6 +31,19 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/african_lady_gown" />
 
+            <ImageView
+                android:id="@+id/back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/arrow_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.026"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
+
             <TextView
                 android:id="@+id/product_title_tv"
                 android:layout_width="wrap_content"

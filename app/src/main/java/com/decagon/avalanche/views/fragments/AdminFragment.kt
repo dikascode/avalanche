@@ -1,6 +1,7 @@
 package com.decagon.avalanche.views.fragments
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,9 +14,11 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.decagon.avalanche.R
 import com.decagon.avalanche.cloudinary.CloudinaryManager
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.data.PushNotification
@@ -23,6 +26,7 @@ import com.decagon.avalanche.data.PushNotificationData
 import com.decagon.avalanche.databinding.FragmentAdminBinding
 import com.decagon.avalanche.firebase.FirebaseReference
 import com.decagon.avalanche.network.RetroInstance
+import com.decagon.avalanche.utils.showToast
 import com.decagon.avalanche.views.TOPIC
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -42,6 +46,8 @@ class AdminFragment : Fragment() {
 
     private val PICK_IMAGE_CODE = 0
     lateinit var url: String
+
+    private var mProgressDialog: ProgressDialog? = null
 
 
     override fun onCreateView(
@@ -63,11 +69,11 @@ class AdminFragment : Fragment() {
         price = binding.productPriceEt.text!!
         desc = binding.productDescEt.text!!
 
-        progressBar = binding.progressBarLayout.fragmentMainProgressBar
+//        progressBar = binding.progressBarLayout.fragmentMainProgressBar
 
         binding.adminFragmentSubmitBtn.setOnClickListener {
             if (url.isBlank() || url == "") {
-                makeToast("Please select an Image to proceed")
+                showToast("Please select an Image to proceed", requireActivity())
             }
         }
 
@@ -76,6 +82,13 @@ class AdminFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.backBtn.setOnClickListener {
+            findNavController().navigate(R.id.mainFragment)
+        }
     }
 
     private fun selectImageIntent() {
@@ -88,57 +101,55 @@ class AdminFragment : Fragment() {
     }
 
     private fun saveProductToFirebase(url: String) {
-        if (title != null && price != null && desc != null) {
-            when {
-                title.isEmpty() -> {
-                    binding.productNameEt.error = "Please input a title"
-                    makeToast("Please fill title field")
-                }
-                price.isEmpty() -> {
-                    binding.productPriceEt.error = "Price field cannot be empty"
-                    makeToast("Please fill price field")
-                }
+        when {
+            title.isEmpty() -> {
+                binding.productNameEt.error = "Please input a title"
+                showToast("Please fill title field", requireActivity())
+            }
+            price.isEmpty() -> {
+                binding.productPriceEt.error = "Price field cannot be empty"
+                showToast("Please fill price field", requireActivity())
+            }
 
-                desc.isEmpty() -> {
-                    binding.productDescEt.error = "Description field cannot be empty"
-                }
-                else -> {
-                    //save data to firebase
-                    val newProduct = Product(title.toString(),
-                        url,
-                        price.toString().toDouble(),
-                        desc.toString(),
-                        true)
-                    val reference = FirebaseReference.productReference
+            desc.isEmpty() -> {
+                binding.productDescEt.error = "Description field cannot be empty"
+            }
+            else -> {
+                //save data to firebase
+                val newProduct = Product(title.toString(),
+                    url,
+                    price.toString().toDouble(),
+                    desc.toString(),
+                    true)
+                val reference = FirebaseReference.productReference
 
-                    reference.child(title.toString()).setValue(newProduct).addOnSuccessListener {
-                        // Write was successful!
-                        progressBar.visibility = View.GONE
-                        makeToast("Product saved to database successfully")
+                reference.child(title.toString()).setValue(newProduct).addOnSuccessListener {
+                    // Write was successful!
+                    mProgressDialog!!.dismiss()
+                    showToast("Product saved to database successfully", requireActivity())
 
-                        PushNotification(
-                            PushNotificationData(
-                                "New product", "$title | N$price"),
-                            TOPIC
-                        ).also {
-                            sendNotification(it)
-                        }
-
-                        /**
-                         * Clear input fields
-                         */
-
-                        title.clear()
-                        price.clear()
-                        desc.clear()
-
+                    PushNotification(
+                        PushNotificationData(
+                            "New product", "$title | N$price"),
+                        TOPIC
+                    ).also {
+                        sendNotification(it)
                     }
-                        .addOnFailureListener {
-                            // Write failed
-                            makeToast("Product not added successfully. Please check input fields and try again")
-                            progressBar.visibility = View.GONE
-                        }
+
+                    /** Clear input fields */
+
+                    title.clear()
+                    price.clear()
+                    desc.clear()
+                    image.setImageURI(null)
+
                 }
+                    .addOnFailureListener {
+                        // Write failed
+                        showToast("Product not added successfully. Please check input fields and try again",
+                            requireActivity())
+                        mProgressDialog!!.dismiss()
+                    }
             }
         }
 
@@ -147,14 +158,12 @@ class AdminFragment : Fragment() {
     private fun uploadToCloudinary(filepath: Uri?) {
         MediaManager.get().upload(filepath).unsigned("avalanche").callback(object : UploadCallback {
             override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
-                makeToast("Image upload successfully")
+                showToast("Image upload successfully", requireActivity())
 
-                /**
-                 * get upload url from callback resultData
-                 */
+                /** get upload url from callback resultData */
                 MediaManager.get().url().generate(resultData?.entries?.forEach {
                     if (it.key == "secure_url") {
-                        Log.d("TAG", "URL: ${it.key}, ${it.value}")
+                        //Log.d("TAG", "URL: ${it.key}, ${it.value}")
                         url = it.value as String
                     }
                 }.toString())
@@ -162,7 +171,15 @@ class AdminFragment : Fragment() {
 
                 //Save product into firebase
                 binding.adminFragmentSubmitBtn.setOnClickListener {
-                    progressBar.visibility = View.VISIBLE
+                    mProgressDialog =
+                        ProgressDialog.show(
+                            requireActivity(),
+                            "Saving Product",
+                            "Please wait...",
+                            false,
+                            false
+                        )
+
                     saveProductToFirebase(url)
                 }
 
@@ -223,12 +240,6 @@ class AdminFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun makeToast(str: String) {
-        Toast.makeText(requireActivity(),
-            str,
-            Toast.LENGTH_LONG).show()
     }
 
 }

@@ -14,7 +14,7 @@
     <string name="enter_email">Enter Email</string>
     <string name="create_account">Create Account</string>
     <string name="verify_code">Verify Code</string>
-    <string name="please_send_the_code_msg">Please send the code sent to: 081*******49</string>
+    <string name="please_send_the_code_msg">Sending code to phone number</string>
     <string name="verification">Verification</string>
     <string name="code">Code</string>
     <string name="enter_first_name">Enter First Name</string>

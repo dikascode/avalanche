@@ -7,10 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import at.favre.lib.crypto.bcrypt.BCrypt
 import com.decagon.avalanche.R
 import com.decagon.avalanche.databinding.FragmentSetNewPasswordBinding
+import com.decagon.avalanche.utils.showToast
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -34,9 +38,28 @@ class SetNewPasswordFragment : Fragment() {
     //SafeArgs Data
     private lateinit var phoneNumber: String
 
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        /**
+         * Handle back press
+         */
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().finish()
+                }
+
+            })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentSetNewPasswordBinding.inflate(inflater, container, false)
@@ -66,9 +89,12 @@ class SetNewPasswordFragment : Fragment() {
 
         progressBar.visibility = View.VISIBLE
 
-        fireBaseReference.child(phoneNumber).child("password").setValue(_newPassword)
+        //Encrypt pwd
+        val passHash = BCrypt.withDefaults().hashToString(12, _newPassword.toCharArray())
 
-        Toast.makeText(requireActivity(), "Password Updated Successfully", Toast.LENGTH_LONG).show()
+        fireBaseReference.child(phoneNumber).child("password").setValue(passHash)
+
+        showToast("Password Updated Successfully", requireActivity())
 
         findNavController().navigate(R.id.forgotPwdSuccessMessageFragment)
     }

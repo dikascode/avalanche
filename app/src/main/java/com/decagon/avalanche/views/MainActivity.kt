@@ -1,16 +1,16 @@
 package com.decagon.avalanche.views
 
 
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
@@ -20,61 +20,31 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.decagon.avalanche.NetworkStatusChecker
 import com.decagon.avalanche.R
-import com.decagon.avalanche.api.JavaMailApi
-import com.decagon.avalanche.data.Product
-import com.decagon.avalanche.data.PushNotification
-import com.decagon.avalanche.data.PushNotificationData
 import com.decagon.avalanche.databinding.ActivityMainBinding
-import com.decagon.avalanche.network.RetroInstance
+import com.decagon.avalanche.utils.showAlertDialog
+import com.decagon.avalanche.utils.showToast
 import com.decagon.avalanche.viewmodels.StoreViewModel
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
 
 const val TOPIC = "/topics/product"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     lateinit var navController: NavController
-    lateinit var storeViewModel: StoreViewModel
-    lateinit var userManager: com.decagon.avalanche.preferencesdatastore.UserManager
+    private lateinit var storeViewModel: StoreViewModel
+    private var userManager = com.decagon.avalanche.preferencesdatastore.UserManager(this)
 
     var isAdmin = false
-
     private var cartQuantity = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //View binding instance
         binding = ActivityMainBinding.inflate(layoutInflater)
-
-        //get reference to root view
-        val view = binding.root
-        setContentView(view)
-
-
-        //sendMail()
-
-        /**
-         * Subscribe to push notification topic
-         */
-        FirebaseMessaging.getInstance().subscribeToTopic("product")
-
-        /**
-         * Hide admin drawer menu option
-         */
-        binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = false
-
-        userManager = com.decagon.avalanche.preferencesdatastore.UserManager(this)
-
-        val networkConnection = NetworkStatusChecker(this)
-
-        storeViewModel = ViewModelProvider(this).get(StoreViewModel::class.java)
+        setTheme(R.style.Theme_Avalanche)
+        setContentView(binding.root)
 
         userManager.userAdminFlow.asLiveData().observe(this, { admin ->
             isAdmin = admin
@@ -82,19 +52,21 @@ class MainActivity : AppCompatActivity() {
                 binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = true
         })
 
+        /** Subscribe to push notification topic */
+        FirebaseMessaging.getInstance().subscribeToTopic("product")
+
+        /** Hide admin drawer menu option */
+        binding.navigationView.menu.findItem(R.id.actionAdmin).isVisible = false
+
+        val networkConnection = NetworkStatusChecker(this)
+
+        storeViewModel = ViewModelProvider(this).get(StoreViewModel::class.java)
+
         checkNetworkStatus(networkConnection)
 
 
     }
 
-    private fun sendMail() {
-        val javaMailApi = JavaMailApi(this,
-            "emmanuelututu27@gmail.com",
-            "Test Mail",
-            "This is is a test mail from Avalanche android project")
-
-        javaMailApi.execute()
-    }
 
     private fun checkNetworkStatus(networkConnection: NetworkStatusChecker) {
         networkConnection.observe(this, Observer { isConnected ->
@@ -136,16 +108,29 @@ class MainActivity : AppCompatActivity() {
                                     Uri.parse("http://api.whatsapp.com/send?phone=+2348165264168&text=" + "Hello Avalanche")
                                 startActivity(intent)
                             } else {
-                                Toast.makeText(
-                                    this,
-                                    "Whatsapp not installed on this device. Please install Whatsapp.",
-                                    Toast.LENGTH_LONG
-                                ).show()
+
+                                showToast("Whatsapp not installed on this device. Please install Whatsapp.",
+                                    this)
                             }
                         }
 
                         R.id.actionLogOut -> {
-                            finish()
+                            val dialogInterface = DialogInterface.OnClickListener { dialog, _ ->
+                                finish()
+                                dialog.cancel()
+
+                                val loggedOnSharePref = getSharedPreferences(
+                                    "loggedOn",
+                                    AppCompatActivity.MODE_PRIVATE
+                                )
+
+                                var editor: SharedPreferences.Editor = loggedOnSharePref.edit()
+                                editor.putBoolean("firstTime", true)
+                                editor.commit()
+                            }
+                            showAlertDialog("Are you sure you want to log out?",
+                                "Log Out",
+                                dialogInterface)
                         }
                     }
                     it.isChecked = true
@@ -162,11 +147,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
             } else {
-                Toast.makeText(
-                    this,
-                    "Oops. Please check your internet connection and try again",
-                    Toast.LENGTH_LONG
-                ).show()
+
+                showToast("Oops. Please check your internet connection and try again", this)
 
                 storeViewModel.getCart()?.removeObservers(this)
                 binding.noInternetView.noInternetIv.visibility = View.VISIBLE

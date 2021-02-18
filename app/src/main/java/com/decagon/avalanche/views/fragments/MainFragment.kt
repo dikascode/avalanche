@@ -1,23 +1,25 @@
 package com.decagon.avalanche.views.fragments
 
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.appcompat.widget.SearchView
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.decagon.avalanche.R
 import com.decagon.avalanche.adapters.CategoriesAdapter
 import com.decagon.avalanche.adapters.ProductsAdapter
 import com.decagon.avalanche.databinding.FragmentMainBinding
 import com.decagon.avalanche.data.Product
 import com.decagon.avalanche.firebase.FirebaseReference
 import com.google.firebase.database.*
+import java.lang.RuntimeException
 
 
 class MainFragment : Fragment() {
@@ -27,7 +29,27 @@ class MainFragment : Fragment() {
     lateinit var adapter: ProductsAdapter
     var productsList = ArrayList<Product>()
 
+    lateinit var loggedOnSharePref: SharedPreferences
+
     private val reference = FirebaseReference.productReference
+
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        /** Handle back press */
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().finish()
+                }
+
+            })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +58,18 @@ class MainFragment : Fragment() {
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
-        return binding.root
 
+        /** Save value to indicate user has reached main fragment previously and pass it through shared preference */
+        loggedOnSharePref = requireContext().getSharedPreferences(
+            "loggedOn",
+            AppCompatActivity.MODE_PRIVATE
+        )
+
+        var editor: SharedPreferences.Editor = loggedOnSharePref.edit()
+        editor.putBoolean("firstTime", false)
+        editor.commit()
+
+        return binding.root
     }
 
 
@@ -54,11 +86,8 @@ class MainFragment : Fragment() {
                 if (snapshot.exists()) {
                     for (dataSnapshot in snapshot.children) {
                         product = dataSnapshot.getValue(Product::class.java)!!
-                        //Log.d("TAG", "Products: ${product?.title}")
-                        if (!productsList.contains(product)) {
                             productsList.add(product)
 //                            Log.d("TAG", "size: ${productsList.size}")
-                        }
                     }
 
                     implementMainGridLayoutRecyclerView(productsList)
@@ -81,19 +110,6 @@ class MainFragment : Fragment() {
     private fun implementMainGridLayoutRecyclerView(productsList: ArrayList<Product>) {
         val recyclerView = binding.fragmentMainRv
 
-       recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                requireActivity(),
-                DividerItemDecoration.VERTICAL
-            )
-        )
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                requireActivity(),
-                DividerItemDecoration.HORIZONTAL
-            )
-        )
-
         adapter =
             ProductsAdapter(
                 productsList,
@@ -108,10 +124,9 @@ class MainFragment : Fragment() {
             }
 
         adapter.notifyDataSetChanged()
+
         recyclerView.layoutManager = GridLayoutManager(activity, 2)
-
         recyclerView.adapter = adapter
-
     }
 
     private fun implementLinearRecyclerViewForCategories() {
@@ -166,9 +181,4 @@ class MainFragment : Fragment() {
 //        super.onCreateOptionsMenu(menu, inflater)
 //    }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

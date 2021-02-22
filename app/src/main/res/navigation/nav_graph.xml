@@ -6,7 +6,7 @@
     app:startDestination="@id/welcomeFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.decagon.avalanche.views.fragments.MainFragment"
+        android:name="com.dikascode.avalanche.views.fragments.MainFragment"
         android:label="MainFragment" >
         <action
             android:id="@+id/action_mainFragment_to_productDetailsFragment"
@@ -14,16 +14,16 @@
     </fragment>
     <fragment
         android:id="@+id/orderFragment"
-        android:name="com.decagon.avalanche.views.fragments.OrderFragment"
+        android:name="com.dikascode.avalanche.views.fragments.OrderFragment"
         android:label="fragment_order"
         tools:layout="@layout/fragment_order" />
     <fragment
         android:id="@+id/adminFragment"
-        android:name="com.decagon.avalanche.views.fragments.AdminFragment"
+        android:name="com.dikascode.avalanche.views.fragments.AdminFragment"
         android:label="AdminFragment" />
     <fragment
         android:id="@+id/productDetailsFragment"
-        android:name="com.decagon.avalanche.views.fragments.ProductDetailsFragment"
+        android:name="com.dikascode.avalanche.views.fragments.ProductDetailsFragment"
         android:label="fragment_product_details"
         tools:layout="@layout/fragment_product_details" >
         <argument
@@ -32,27 +32,27 @@
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
-        android:name="com.decagon.avalanche.views.fragments.CartFragment"
+        android:name="com.dikascode.avalanche.views.fragments.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
     <fragment
         android:id="@+id/failedTransactionFragment"
-        android:name="com.decagon.avalanche.views.fragments.FailedTransactionFragment"
+        android:name="com.dikascode.avalanche.views.fragments.FailedTransactionFragment"
         android:label="fragment_failed_transaction"
         tools:layout="@layout/fragment_failed_transaction" />
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.decagon.avalanche.views.fragments.WelcomeFragment"
+        android:name="com.dikascode.avalanche.views.fragments.WelcomeFragment"
         android:label="fragment_welcome"
         tools:layout="@layout/fragment_welcome" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.decagon.avalanche.views.fragments.LoginFragment"
+        android:name="com.dikascode.avalanche.views.fragments.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.decagon.avalanche.views.fragments.SignUpFragment"
+        android:name="com.dikascode.avalanche.views.fragments.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
@@ -61,7 +61,7 @@
     </fragment>
     <fragment
         android:id="@+id/verifyOtpFragment"
-        android:name="com.decagon.avalanche.views.fragments.VerifyOtpFragment"
+        android:name="com.dikascode.avalanche.views.fragments.VerifyOtpFragment"
         android:label="fragment_verify_otp"
         tools:layout="@layout/fragment_verify_otp" >
         <argument
@@ -89,7 +89,7 @@
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
-        android:name="com.decagon.avalanche.views.fragments.ForgotPasswordFragment"
+        android:name="com.dikascode.avalanche.views.fragments.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" >
         <action
@@ -99,17 +99,17 @@
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordSelectionFragment"
-        android:name="com.decagon.avalanche.views.fragments.ForgotPasswordSelectionFragment"
+        android:name="com.dikascode.avalanche.views.fragments.ForgotPasswordSelectionFragment"
         android:label="fragment_forgot_password_selection"
         tools:layout="@layout/fragment_forgot_password_selection" />
     <fragment
         android:id="@+id/forgotPwdSuccessMessageFragment"
-        android:name="com.decagon.avalanche.views.fragments.ForgotPwdSuccessMessageFragment"
+        android:name="com.dikascode.avalanche.views.fragments.ForgotPwdSuccessMessageFragment"
         android:label="fragment_forgot_pwd_sucesss_message"
         tools:layout="@layout/fragment_forgot_pwd_sucesss_message" />
     <fragment
         android:id="@+id/setNewPasswordFragment"
-        android:name="com.decagon.avalanche.views.fragments.SetNewPasswordFragment"
+        android:name="com.dikascode.avalanche.views.fragments.SetNewPasswordFragment"
         android:label="fragment_set_new_password"
         tools:layout="@layout/fragment_set_new_password" >
         <argument

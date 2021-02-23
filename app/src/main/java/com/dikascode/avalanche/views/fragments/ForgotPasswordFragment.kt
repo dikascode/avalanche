@@ -44,7 +44,7 @@ class ForgotPasswordFragment : Fragment() {
 
         phone = binding.userPhoneEt
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
-        countryCodePicker = binding.countryCodePicker
+//        countryCodePicker = binding.countryCodePicker
         nextBtn = binding.nextBtn
 
         binding.backBtn.setOnClickListener {
@@ -77,7 +77,7 @@ class ForgotPasswordFragment : Fragment() {
             _phone = _phone.substring(1)
         }
 
-        val _enteredNumber = "+" + countryCodePicker.fullNumber + _phone
+        val _enteredNumber = "+234$_phone"
 
         //DB query
         val checkUser =

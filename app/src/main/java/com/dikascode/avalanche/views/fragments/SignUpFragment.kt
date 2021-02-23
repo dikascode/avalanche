@@ -48,7 +48,7 @@ class SignUpFragment : Fragment() {
         email = binding.userEmailEt
         password = binding.userPasswordEt
         phoneNumber = binding.userNumberEt
-        countryCodePicker = binding.countryCodePicker
+//        countryCodePicker = binding.countryCodePicker
 
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
 
@@ -80,10 +80,11 @@ class SignUpFragment : Fragment() {
 
         return if (string.isEmpty()) {
             firstName.error = "Field cannot be empty"
+            firstName.requestFocus()
             false
         } else {
             firstName.error = null
-            firstName.isEnabled = false
+//            firstName.isEnabled = false
             true
         }
     }
@@ -93,10 +94,11 @@ class SignUpFragment : Fragment() {
 
         return if (string.isEmpty()) {
             lastName.error = "Field cannot be empty"
+            lastName.requestFocus()
             false
         } else {
             lastName.error = null
-            lastName.isEnabled = false
+//            lastName.isEnabled = false
             true
         }
     }
@@ -107,13 +109,15 @@ class SignUpFragment : Fragment() {
 
         return if (string.isEmpty()) {
             email.error = "Field cannot be empty"
+            email.requestFocus()
             false
         } else if (!string.matches(checkEmail.toRegex())) {
             email.error = "Invalid Email!"
+            email.requestFocus()
             false
         } else {
             email.error = null
-            email.isEnabled = false
+//            email.isEnabled = false
             true
         }
     }
@@ -133,10 +137,11 @@ class SignUpFragment : Fragment() {
 
                 return if (string.isEmpty()) {
                     password.error = "Field cannot be empty"
+                    password.requestFocus()
                     false
                 } else {
                     password.error = null
-                    password.isEnabled = false
+//                    password.isEnabled = false
                     true
                 }
     }
@@ -147,10 +152,15 @@ class SignUpFragment : Fragment() {
 
         return if (string.isEmpty()) {
             phoneNumber.error = "Field cannot be empty"
+            phoneNumber.requestFocus()
+            false
+        } else if(string.length > 11)  {
+            phoneNumber.error = "Phone number can't be more than 11 digits"
+            phoneNumber.requestFocus()
             false
         } else {
             phoneNumber.error = null
-            phoneNumber.isEnabled = false
+//            phoneNumber.isEnabled = false
             true
         }
     }
@@ -169,7 +179,7 @@ class SignUpFragment : Fragment() {
             _enteredPhoneNumber = _enteredPhoneNumber.substring(1)
         }
 
-        val _phoneNo = "+" + countryCodePicker.fullNumber + _enteredPhoneNumber
+        val _phoneNo = "+234$_enteredPhoneNumber"
 
 
         //Verify if user exists

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_color"
+    android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
     tools:context=".views.fragments.SignUpFragment">
 
 
@@ -99,18 +100,18 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
-        <com.hbb20.CountryCodePicker
-            android:id="@+id/country_code_picker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/black_border"
-            android:padding="5dp"
-            app:ccp_autoDetectCountry="true"
-            app:ccp_showFlag="true"
-            app:ccp_showFullName="true"
-            app:ccp_showNameCode="true"
-            app:ccp_showPhoneCode="true" />
+        <!--        <com.hbb20.CountryCodePicker-->
+        <!--            android:id="@+id/country_code_picker"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="5dp"-->
+        <!--            android:background="@drawable/black_border"-->
+        <!--            android:padding="5dp"-->
+        <!--            app:ccp_autoDetectCountry="true"-->
+        <!--            app:ccp_showFlag="true"-->
+        <!--            app:ccp_showFullName="true"-->
+        <!--            app:ccp_showNameCode="true"-->
+        <!--            app:ccp_showPhoneCode="true" />-->
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/user_number_et"

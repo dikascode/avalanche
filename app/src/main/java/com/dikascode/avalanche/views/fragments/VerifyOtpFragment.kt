@@ -166,13 +166,13 @@ class VerifyOtpFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     showToast("Verification completed.", requireActivity())
-                    progressBar.visibility = View.GONE
 
                     if (intention == "updateData") {
                         updateOldUserData()
                     } else {
                         storeNewUserDataInFirebase()
                         sendMail(email, "Welcome to Avalanche", "Thank you for signing up with Avalanche. Do enjoy a beautiful shopping experience.")
+                        progressBar.visibility = View.GONE
                         findNavController().navigate(R.id.mainFragment)
                     }
 
@@ -215,8 +215,6 @@ class VerifyOtpFragment : Fragment() {
             .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
             .build()
         PhoneAuthProvider.verifyPhoneNumber(options)
-
-        progressBar.visibility = View.GONE
     }
 
     private fun verifyVerificationCode(code: String) {

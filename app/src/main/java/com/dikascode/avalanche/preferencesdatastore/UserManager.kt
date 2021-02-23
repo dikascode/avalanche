@@ -36,11 +36,10 @@ class UserManager(context: Context) {
     }
 
 
-    suspend fun createRememberMeSession(phone: String, password: String, cCode: String) {
+    suspend fun createRememberMeSession(phone: String, password: String) {
         rmDataStore.edit {
             it[USER_PASSWORD] = password
             it[USER_PHONE_KEY] = phone
-            it[USER_cCODE] = cCode
         }
     }
 

@@ -68,7 +68,7 @@ class LoginFragment : Fragment() {
         phone = binding.userPhoneEt
         password = binding.userPasswordEt
         progressBar = binding.progressBarLayout.fragmentMainProgressBar
-        countryCodePicker = binding.countryCodePicker
+//        countryCodePicker = binding.countryCodePicker
         rememberMe = binding.rememberMe
 
 
@@ -110,11 +110,11 @@ class LoginFragment : Fragment() {
             }
         })
 
-        userManager.rmCountryCodeFlow.asLiveData().observe(requireActivity(), { code ->
-            if (code != "") {
-                countryCodePicker.setCountryForPhoneCode(code.toInt())
-            }
-        })
+//        userManager.rmCountryCodeFlow.asLiveData().observe(requireActivity(), { code ->
+//            if (code != "") {
+//                countryCodePicker.setCountryForPhoneCode(code.toInt())
+//            }
+//        })
     }
 
     private fun letUserLoggedIn() {
@@ -131,12 +131,12 @@ class LoginFragment : Fragment() {
             _phone = _phone.substring(1)
         }
 
-        val _enteredNumber = "+" + countryCodePicker.fullNumber + _phone
+        val _enteredNumber = "+234$_phone"
 
         if (rememberMe.isChecked) {
             //Save user login data to DataStore
             GlobalScope.launch {
-                userManager.createRememberMeSession(_phone, _password, countryCodePicker.fullNumber)
+                userManager.createRememberMeSession(_phone, _password)
             }
         }
 

@@ -14,6 +14,7 @@ import androidx.navigation.fragment.navArgs
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.chaos.view.PinView
 import com.dikascode.avalanche.R
+import com.dikascode.avalanche.api.JavaMailApi
 import com.dikascode.avalanche.data.User
 import com.dikascode.avalanche.databinding.FragmentVerifyOtpBinding
 import com.dikascode.avalanche.utils.showToast
@@ -171,6 +172,7 @@ class VerifyOtpFragment : Fragment() {
                         updateOldUserData()
                     } else {
                         storeNewUserDataInFirebase()
+                        sendMail(email, "Welcome to Avalanche", "Thank you for signing up with Avalanche. Do enjoy a beautiful shopping experience.")
                         findNavController().navigate(R.id.mainFragment)
                     }
 
@@ -225,6 +227,15 @@ class VerifyOtpFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun sendMail(email: String, mailSubject: String, emailMessage: String) {
+        val javaMailApi = JavaMailApi(requireActivity(),
+            email,
+            mailSubject,
+            emailMessage)
+
+        javaMailApi.execute()
     }
 
 }

@@ -32,7 +32,7 @@ class LoginFragment : Fragment() {
     lateinit var phone: TextInputLayout
     lateinit var password: TextInputLayout
     lateinit var progressBar: ProgressBar
-    lateinit var countryCodePicker: CountryCodePicker
+    //lateinit var countryCodePicker: CountryCodePicker
     lateinit var rememberMe: CheckBox
 
     lateinit var userManager: com.dikascode.avalanche.preferencesdatastore.UserManager

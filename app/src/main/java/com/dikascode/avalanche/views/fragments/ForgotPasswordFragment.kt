@@ -26,7 +26,7 @@ class ForgotPasswordFragment : Fragment() {
 
     lateinit var phone: TextInputLayout
     lateinit var progressBar: ProgressBar
-    lateinit var countryCodePicker: CountryCodePicker
+    //lateinit var countryCodePicker: CountryCodePicker
     lateinit var nextBtn: MaterialButton
 
 

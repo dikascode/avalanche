@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.dikascode.avalanche.R
@@ -27,12 +28,25 @@ class SignUpFragment : Fragment() {
     lateinit var email: TextInputLayout
     lateinit var password: TextInputLayout
     lateinit var phoneNumber: TextInputLayout
-    lateinit var countryCodePicker: CountryCodePicker
+
+    //lateinit var countryCodePicker: CountryCodePicker
     lateinit var progressBar: ProgressBar
 
     override fun onStart() {
         super.onStart()
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().navigate(R.id.welcomeFragment)
+                }
+
+            })
     }
 
     override fun onCreateView(
@@ -63,7 +77,7 @@ class SignUpFragment : Fragment() {
         }
 
         binding.backBtn.setOnClickListener {
-            findNavController().navigateUp()
+            findNavController().navigate(R.id.welcomeFragment)
         }
 
 
@@ -154,7 +168,7 @@ class SignUpFragment : Fragment() {
             phoneNumber.error = "Field cannot be empty"
             phoneNumber.requestFocus()
             false
-        } else if(string.length > 11)  {
+        } else if (string.length > 11) {
             phoneNumber.error = "Phone number can't be more than 11 digits"
             phoneNumber.requestFocus()
             false

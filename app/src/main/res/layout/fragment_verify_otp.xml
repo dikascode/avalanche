@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
-            android:backgroundTint="@color/primary_dark_color"
+            android:backgroundTint="@color/primary_color"
             android:text="@string/verify_code"
             android:textSize="26sp"
             app:cornerRadius="5dp" />

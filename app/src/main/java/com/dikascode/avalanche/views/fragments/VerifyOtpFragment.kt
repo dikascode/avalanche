@@ -103,6 +103,10 @@ class VerifyOtpFragment : Fragment() {
         //hooks
         pinFromUser = binding.pinView
 
+        binding.closeBtn.setOnClickListener {
+            findNavController().navigate(R.id.welcomeFragment)
+        }
+
         binding.verifyBtn.setOnClickListener {
             val code = pinFromUser.text.toString()
             if (code.isNotEmpty()) {
@@ -171,7 +175,9 @@ class VerifyOtpFragment : Fragment() {
                         updateOldUserData()
                     } else {
                         storeNewUserDataInFirebase()
-                        sendMail(email, "Welcome to Avalanche", "Thank you for signing up with Avalanche. Do enjoy a beautiful shopping experience.")
+                        sendMail(email,
+                            "Welcome to Avalanche",
+                            "Thank you for signing up with Avalanche. Do enjoy a beautiful shopping experience.")
                         progressBar.visibility = View.GONE
                         findNavController().navigate(R.id.mainFragment)
                     }

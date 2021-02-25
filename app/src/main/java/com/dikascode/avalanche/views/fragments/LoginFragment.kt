@@ -199,7 +199,7 @@ class LoginFragment : Fragment() {
                     }
                 } else {
                     progressBar.visibility = View.GONE
-                    Toast.makeText(requireActivity(), "No such user exists!", Toast.LENGTH_LONG)
+                    Toast.makeText(requireActivity(), "No such user exists! Please enter correct phone number", Toast.LENGTH_LONG)
                         .show()
                 }
             }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -26,9 +27,24 @@ class WelcomeFragment : Fragment() {
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
     }
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        /**
+         * Handle back press
+         */
+        requireActivity().onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    requireActivity().finish()
+                }
+
+            })
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
@@ -45,7 +61,8 @@ class WelcomeFragment : Fragment() {
 
     private fun checkIfUserLoggedOn() {
 
-        loggedOnSharePref = requireActivity().getSharedPreferences("loggedOn", AppCompatActivity.MODE_PRIVATE)
+        loggedOnSharePref =
+            requireActivity().getSharedPreferences("loggedOn", AppCompatActivity.MODE_PRIVATE)
         var isFirstTime: Boolean = loggedOnSharePref.getBoolean("firstTime", true)
 
 

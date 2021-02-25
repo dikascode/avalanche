@@ -95,7 +95,7 @@ class JavaMailApi(
 //            mm.setContent(multipart);
         } catch (e: MessagingException) {
             e.printStackTrace()
-            Log.i("TAG", "doInBackground: ${e.message}")
+            Log.i("TAG", "doInBackground: $e")
         }
         return null
     }

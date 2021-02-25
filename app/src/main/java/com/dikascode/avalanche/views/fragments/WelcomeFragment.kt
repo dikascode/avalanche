@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.dikascode.avalanche.R
+import com.dikascode.avalanche.api.JavaMailApi
 import com.dikascode.avalanche.databinding.FragmentWelcomeBinding
 
 
@@ -49,6 +50,9 @@ class WelcomeFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentWelcomeBinding.inflate(inflater, container, false)
 
+        /** FOR TESTING MAIL SERVICE */
+//        sendMail("lexypoet@gmail.com", "Hi Test", "It's working again")
+
         binding.loginBtn.setOnClickListener {
             findNavController().navigate(R.id.loginFragment)
         }
@@ -75,5 +79,14 @@ class WelcomeFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun sendMail(email: String, mailSubject: String, emailMessage: String) {
+        val javaMailApi = JavaMailApi(requireActivity(),
+            email,
+            mailSubject,
+            emailMessage)
+
+        javaMailApi.execute()
     }
 }

@@ -124,7 +124,7 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
             .setAmount(totalPrice.toDouble())
             .setfName(userData[0])
             .setlName(userData[1] + " " + userData[3] + " " + userData[2])
-            .setNarration("Purchase of cloths from Avalanche")
+            .setNarration("Purchase of clothes from Avalanche")
             .setCurrency("NGN")
             .setPublicKey("FLWPUBK-716de398e434ea87112ce1d1b84f1f30-X")
             .setEncryptionKey("94c29dd8354ea616dfcba212")
@@ -199,10 +199,10 @@ class CartFragment : Fragment(), CartListAdapter.CartInterface {
                                     "Avalanche Transaction Receipt",
                                     customerMailMessage)
 
-                                //Send mail to avalanche
-                                sendMail("northwrite19@gmail.com",
-                                    "You have a new Order",
-                                    avalancheMailMessage)
+                                /**Send mail to avalanche */
+//                                sendMail("northwrite19@gmail.com",
+//                                    "You have a new Order",
+//                                    avalancheMailMessage)
 
                                 sendMail("dutchezglintz@gmail.com",
                                     "You have a new Order",
